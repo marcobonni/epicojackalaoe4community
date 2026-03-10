@@ -302,7 +302,7 @@ export default async function AoeDiscordLandingPage() {
             <a target="_blank" rel="noopener noreferrer"               href={inviteUrl}
               className="mt-6 inline-flex rounded-2xl bg-white px-5 py-3 font-semibold text-slate-950 transition hover:-translate-y-0.5"
             >
-              Vai al Discord
+              Vai al Discord!
             </a>
           </div>
         </div>

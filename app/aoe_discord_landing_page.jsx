@@ -106,7 +106,7 @@ export default async function AoeDiscordLandingPage() {
                 Un server pensato per appassionati di Age of Empires: partite, eventi, tornei, consigli strategici e una community con cui giocare davvero.
               </p>
               <div className="mt-8 flex flex-wrap gap-4">
-                <a rel="noopener noreferrer"                   href="#join"
+                <a rel="noopener noreferrer"                   href="https://discord.gg/pjAakCz9"
                   className="rounded-2xl bg-amber-400 px-6 py-3 text-base font-semibold text-slate-950 shadow-lg shadow-amber-500/20 transition hover:-translate-y-0.5"
                 >
                   Entra nel server

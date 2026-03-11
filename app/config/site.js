@@ -100,6 +100,6 @@ export const COACHES = [
     price: "TBD / ora",
     availability: "Sera",
     contactUrl: "https://discord.gg/pjAakCz9",
-    profileUrl: null,
+    profileUrl: "https://www.twitch.tv/taffuz_gg",
   },
 ];

@@ -1,4 +1,16 @@
-export default function CoachingSection({ coaches = [] }) {
+type Coach = {
+  name: string
+  badge: string
+  role: string
+  description: string
+  specialty: string
+  price: string
+  availability: string
+  contactUrl: string
+  profileUrl: string | null
+}
+
+export default function CoachingSection({ coaches = [],}: {coaches?: Coach[]}) {
   return (
     <section className="mx-auto max-w-7xl px-6 py-20 lg:px-8">
       <div className="max-w-2xl">

@@ -1,6 +1,6 @@
 export const TARGET_VOICE_CHANNEL_ID = 'VOCALE_ZOZZA_CHANNEL_ID';
 
-export const TWITCH_PARENT_DOMAINS = ['localhost'];
+export const TWITCH_PARENT_DOMAINS = ['epicojackalaoe4community.vercel.app'];
 
 export const TWITCH_STREAMER_PRIORITY = ['ScapoloCaldo667', 'Taffuz_Gg', 'IKasiya', 'RaionOn'];
 

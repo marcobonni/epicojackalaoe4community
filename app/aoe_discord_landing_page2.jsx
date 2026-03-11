@@ -1,14 +1,15 @@
-const SERVER_CONFIG = {
-  name: 'Age of Empires Hub',
-  inviteUrl: 'https://discord.gg/pjAakCz9',
-  widgetServerId: '470883209614458881',
-};
-
+const TARGET_VOICE_CHANNEL_ID = 'VOCALE_ZOZZA_CHANNEL_ID';
 const TWITCH_PARENT_DOMAINS = ['localhost'];
 const TWITCH_STREAMERS = [
   'ScapoloCaldo667',
   'Taffuz_Gg',
 ];
+
+const SERVER_CONFIG = {
+  name: 'Age of Empires Hub',
+  inviteUrl: 'https://discord.gg/tuo-invito',
+  widgetServerId: '470883209614458881',
+};
 
 async function getDiscordWidgetData(serverId) {
   if (!serverId) {
@@ -33,12 +34,14 @@ async function getDiscordWidgetData(serverId) {
 export default async function AoeDiscordLandingPage() {
   const widgetData = await getDiscordWidgetData(SERVER_CONFIG.widgetServerId);
 
-  const serverName = "EpicoJackal's Aoe4 Community"
+  const serverName = widgetData?.name || SERVER_CONFIG.name;
   const inviteUrl = widgetData?.instant_invite || SERVER_CONFIG.inviteUrl;
   const onlineMembers = widgetData?.presence_count ?? null;
   const totalMembers = widgetData?.members?.length ?? null;
   const visibleChannels = (widgetData?.channels || []).slice(0, 5);
-  const visibleMembers = (widgetData?.members || []).slice(0, 6);
+  const visibleMembers = (widgetData?.members || [])
+    .filter((member) => member.channel_id === TARGET_VOICE_CHANNEL_ID)
+    .slice(0, 12);
 
   const features = [
     {
@@ -68,30 +71,34 @@ export default async function AoeDiscordLandingPage() {
   const liveStats = [
     { value: totalMembers ?? '—', label: 'Utenti visibili nel widget' },
     { value: onlineMembers ?? '—', label: 'Online ora' },
+    { value: visibleChannels.length ?? '—', label: 'Canali visibili' },
+    { value: visibleMembers.length ?? '—', label: 'Nella stanza' },
     { value: '3', label: 'Eventi in arrivo' },
   ];
+
+  const liveStreams = TWITCH_STREAMERS.filter((streamer) => !streamer.startsWith('NOME_STREAMER'));
 
   const upcomingEvents = [
     {
       day: '12 MAR',
-      title: 'Sniping in the jungle',
-      time: '02:00',
+      title: 'Team Game Night 4v4',
+      time: '21:30',
       type: 'Community Night',
-      desc: 'Serata aperta a tutti per sniperare Taffuz .',
+      desc: 'Serata aperta a tutti con lobby bilanciate e voice channels dedicati.',
     },
     {
       day: '15 MAR',
-      title: 'Zozza Day',
+      title: 'Torneo Weekend Bo3',
       time: '18:00',
       type: 'Torneo',
-      desc: 'Zozza Day con il nostro bot matchmaking!',
+      desc: 'Mini torneo con bracket rapido per i membri della community.',
     },
     {
       day: '18 MAR',
-      title: 'TurboSmurf',
+      title: 'Coaching & Replay Review',
       time: '20:45',
       type: 'Strategia',
-      desc: 'Tempo di boostare dal basso con tutti gli smurf',
+      desc: 'Analisi replay, build order e consigli pratici sulle civiltà.',
     },
   ];
 
@@ -112,30 +119,25 @@ export default async function AoeDiscordLandingPage() {
                 Un server pensato per appassionati di Age of Empires: partite, eventi, tornei, consigli strategici e una community con cui giocare davvero.
               </p>
               <div className="mt-8 flex flex-wrap gap-4">
-                <a rel="noopener noreferrer"                   href="https://discord.gg/pjAakCz9"
+                <a target="_blank" rel="noopener noreferrer"                   href="#join"
                   className="rounded-2xl bg-amber-400 px-6 py-3 text-base font-semibold text-slate-950 shadow-lg shadow-amber-500/20 transition hover:-translate-y-0.5"
                 >
                   Entra nel server
                 </a>
-                <a rel="noopener noreferrer"                   href="#events"
+                <a target="_blank" rel="noopener noreferrer"                   href="#events"
                   className="rounded-2xl border border-slate-700 bg-slate-900/70 px-6 py-3 text-base font-semibold text-slate-100 transition hover:border-slate-500"
                 >
                   Vedi gli eventi
                 </a>
-                <a target="_blank" rel="noopener noreferrer"                   href="https://aoeitalia.com/classifiche/aoe4"
+                <a target="_blank" rel="noopener noreferrer"                   href="https://discord.com/channels/470883209614458881/CLASSIFICHE_CHANNEL_ID"
                   className="rounded-2xl bg-blue-600 px-6 py-3 text-base font-semibold text-white shadow-lg transition hover:-translate-y-0.5"
                 >
-                                    <span className="inline-flex items-center gap-2"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M20.317 4.369A19.791 19.791 0 0 0 15.126 3c-.23.41-.5.965-.684 1.396a18.27 18.27 0 0 0-4.884 0A13.87 13.87 0 0 0 8.873 3a19.736 19.736 0 0 0-5.19 1.369C.533 9.046-.32 13.579.099 18.057A19.9 19.9 0 0 0 6.13 21c.487-.667.92-1.372 1.294-2.11-.712-.27-1.39-.61-2.022-1.01.17-.125.337-.255.5-.389 3.905 1.82 8.14 1.82 12.001 0 .164.134.331.264.5.389-.633.4-1.312.74-2.025 1.01.375.738.808 1.443 1.295 2.11a19.86 19.86 0 0 0 6.03-2.943c.49-5.177-.84-9.67-3.386-13.688ZM8.02 15.331c-1.183 0-2.156-1.085-2.156-2.419 0-1.333.954-2.418 2.156-2.418 1.211 0 2.175 1.095 2.156 2.418 0 1.334-.954 2.419-2.156 2.419Zm7.974 0c-1.183 0-2.156-1.085-2.156-2.419 0-1.333.954-2.418 2.156-2.418 1.211 0 2.175 1.095 2.156 2.418 0 1.334-.945 2.419-2.156 2.419Z"/></svg>Iscriviti alle classifiche</span>
+                  <span className="inline-flex items-center gap-2"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M20.317 4.369A19.791 19.791 0 0 0 15.126 3c-.23.41-.5.965-.684 1.396a18.27 18.27 0 0 0-4.884 0A13.87 13.87 0 0 0 8.873 3a19.736 19.736 0 0 0-5.19 1.369C.533 9.046-.32 13.579.099 18.057A19.9 19.9 0 0 0 6.13 21c.487-.667.92-1.372 1.294-2.11-.712-.27-1.39-.61-2.022-1.01.17-.125.337-.255.5-.389 3.905 1.82 8.14 1.82 12.001 0 .164.134.331.264.5.389-.633.4-1.312.74-2.025 1.01.375.738.808 1.443 1.295 2.11a19.86 19.86 0 0 0 6.03-2.943c.49-5.177-.84-9.67-3.386-13.688ZM8.02 15.331c-1.183 0-2.156-1.085-2.156-2.419 0-1.333.954-2.418 2.156-2.418 1.211 0 2.175 1.095 2.156 2.418 0 1.334-.954 2.419-2.156 2.419Zm7.974 0c-1.183 0-2.156-1.085-2.156-2.419 0-1.333.954-2.418 2.156-2.418 1.211 0 2.175 1.095 2.156 2.418 0 1.334-.945 2.419-2.156 2.419Z"/></svg>Iscriviti alle classifiche</span>
                 </a>
                 <a target="_blank" rel="noopener noreferrer"                   href="https://discord.com/channels/470883209614458881/VOCALE_ZOZZA_CHANNEL_ID"
                   className="rounded-2xl bg-purple-600 px-6 py-3 text-base font-semibold text-white shadow-lg transition hover:-translate-y-0.5"
                 >
                   Gioca una zozza con il nostro bot!
-                </a>
-                                <a target="_blank" rel="noopener noreferrer"                   href="https://aoeitalia.com/ruota"
-                  className="rounded-2xl bg-red-600 px-6 py-3 text-base font-semibold text-white shadow-lg transition hover:-translate-y-0.5"
-                >
-                  Ruota delle civ
                 </a>
               </div>
             </div>
@@ -143,7 +145,8 @@ export default async function AoeDiscordLandingPage() {
             <div className="rounded-[2rem] border border-slate-800 bg-slate-900/80 p-6 shadow-2xl shadow-black/30 backdrop-blur">
               <div className="mb-4 flex items-center justify-between">
                 <div>
-                  <p className="text-sm uppercase tracking-[0.3em] text-amber-300">{serverName}</p>
+                  <p className="text-sm uppercase tracking-[0.3em] text-amber-300">Server Preview</p>
+                  <h2 className="mt-2 text-2xl font-semibold text-white">{serverName}</h2>
                 </div>
                 <div className="rounded-xl border border-emerald-400/30 bg-emerald-400/10 px-3 py-1 text-sm text-emerald-300">
                   {widgetData ? 'Live' : 'Setup richiesto'}
@@ -181,7 +184,11 @@ export default async function AoeDiscordLandingPage() {
           <div className="rounded-[2rem] border border-slate-800 bg-slate-900 p-8 shadow-lg shadow-black/20">
             <div className="flex items-center justify-between gap-4">
               <div>
-                <p className="text-sm font-semibold uppercase tracking-[0.3em] text-amber-300">Live del Discord</p>
+                <p className="text-sm font-semibold uppercase tracking-[0.3em] text-amber-300">Live widget</p>
+                <h2 className="mt-3 text-3xl font-bold text-white">Anteprima live del Discord</h2>
+                <p className="mt-3 max-w-xl text-sm leading-7 text-slate-400">
+                  Ora il sito legge il nome server, i canali, l’invite e gli utenti online direttamente dal widget pubblico Discord.
+                </p>
               </div>
               <a target="_blank" rel="noopener noreferrer"                 href={inviteUrl}
                 className="hidden rounded-2xl bg-amber-400 px-5 py-3 text-sm font-semibold text-slate-950 transition hover:-translate-y-0.5 md:inline-flex"
@@ -191,14 +198,10 @@ export default async function AoeDiscordLandingPage() {
             </div>
 
             <div className="mt-6 overflow-hidden rounded-[1.5rem] border border-slate-800 bg-slate-950/70">
-              <iframe
-                title="Discord Server Widget"
-                src={`https://discord.com/widget?id=${SERVER_CONFIG.widgetServerId}&theme=dark`}
-                width="100%"
-                height="420"
-                loading="lazy"
-                sandbox="allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts"
-              />
+              {/* Discord widget removed to avoid exposing member names */}
+              <div className="flex items-center justify-center h-[420px] text-slate-400 text-sm">
+                Anteprima Discord disabilitata per privacy dei membri.
+              </div>
             </div>
           </div>
 
@@ -206,7 +209,7 @@ export default async function AoeDiscordLandingPage() {
             <p className="text-sm font-semibold uppercase tracking-[0.3em] text-amber-300">Stato del server</p>
             <h2 className="mt-3 text-3xl font-bold text-white">Numeri che danno fiducia</h2>
             <p className="mt-3 text-sm leading-7 text-slate-400">
-              I dati qui sotto sono dei giocatori della nostra community!
+              I dati qui sotto arrivano dal widget pubblico del server. Se il widget non è attivo, vedrai valori vuoti o di fallback.
             </p>
 
             <div className="mt-8 grid gap-4 sm:grid-cols-2">
@@ -232,7 +235,20 @@ export default async function AoeDiscordLandingPage() {
               </div>
             </div>
 
-
+            <div className="mt-6 rounded-2xl border border-slate-800 bg-slate-950/80 p-5">
+              <p className="text-sm font-semibold text-white">Membri visibili nel widget</p>
+              <div className="mt-4 grid gap-3 sm:grid-cols-2">
+                {visibleMembers.length > 0 ? (
+                  visibleMembers.map((member) => (
+                    <div key={member.id} className="rounded-xl border border-slate-800 bg-slate-900/80 px-4 py-3 text-sm text-slate-300">
+                      {member.username}
+                    </div>
+                  ))
+                ) : (
+                  <div className="text-sm text-slate-500">Nessun giocatore nella stanza selezionata.</div>
+                )}
+              </div>
+            </div>
           </div>
         </div>
       </section>
@@ -253,7 +269,8 @@ export default async function AoeDiscordLandingPage() {
           ))}
         </div>
       </section>
-            <section className="mx-auto max-w-7xl px-6 py-20 lg:px-8">
+
+      <section className="mx-auto max-w-7xl px-6 py-20 lg:px-8">
         <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
           <div className="max-w-2xl">
             <p className="text-sm font-semibold uppercase tracking-[0.3em] text-amber-300">Live su Twitch</p>
@@ -265,7 +282,8 @@ export default async function AoeDiscordLandingPage() {
             </p>
           </div>
         </div>
-                <div className="mt-10 grid gap-6 lg:grid-cols-2 xl:grid-cols-3">
+
+        <div className="mt-10 grid gap-6 lg:grid-cols-2 xl:grid-cols-3">
           {liveStreams.length > 0 ? (
             liveStreams.map((streamer) => (
               <div key={streamer} className="overflow-hidden rounded-[2rem] border border-slate-800 bg-slate-900 p-4 shadow-lg shadow-black/20">
@@ -309,6 +327,9 @@ export default async function AoeDiscordLandingPage() {
             <h2 className="mt-4 text-3xl font-bold text-white sm:text-4xl">
               Prossimi appuntamenti della community
             </h2>
+            <p className="mt-3 text-sm leading-7 text-slate-400">
+              Questa sezione è pronta per essere collegata a eventi automatici del tuo server, Google Calendar o foglio eventi della community.
+            </p>
           </div>
           <a target="_blank" rel="noopener noreferrer"             href={inviteUrl}
             className="inline-flex rounded-2xl border border-slate-700 bg-slate-900/70 px-5 py-3 text-sm font-semibold text-slate-100 transition hover:border-slate-500"
@@ -341,29 +362,31 @@ export default async function AoeDiscordLandingPage() {
           <div className="rounded-[2rem] border border-slate-800 bg-slate-900 p-8 lg:col-span-2">
             <p className="text-sm font-semibold uppercase tracking-[0.3em] text-amber-300">Cosa trovi dentro</p>
             <ul className="mt-6 space-y-4 text-slate-300">
-              <li>Canali dedicati alle civiltà, alle strategie e ai replay (NO RAION)</li>
+              <li>Canali dedicati alle civiltà, alle strategie e ai replay</li>
               <li>Eventi community per giocare insieme e conoscere nuovi player</li>
-              <li>Spazio per creator, clip, meme e discussioni competitive (NO MARCOTAMBY)</li>
-              <li>Organizzazione semplice per tornei, team game e serate speciali (NO ORGANIZZATI DA COOP)</li>
+              <li>Spazio per creator, clip, meme e discussioni competitive</li>
+              <li>Organizzazione semplice per tornei, team game e serate speciali</li>
             </ul>
           </div>
           <div id="join" className="rounded-[2rem] border border-amber-400/30 bg-amber-400/10 p-8">
             <p className="text-sm font-semibold uppercase tracking-[0.3em] text-amber-200">Join now</p>
-            <h3 className="mt-4 text-2xl font-bold text-white">Porta il tuo gameplay al livello successivo</h3>
+            <h3 className="mt-4 text-2xl font-bold text-white">Porta la tua community al livello successivo</h3>
             <p className="mt-4 text-sm leading-7 text-amber-50/90">
-             Clicca qui e inizia a giocare subito! 
+              Inserisci qui il tuo vero invito Discord e trasforma questa pagina nella landing del tuo server.
             </p>
             <a target="_blank" rel="noopener noreferrer"               href={inviteUrl}
               className="mt-6 inline-flex rounded-2xl bg-white px-5 py-3 font-semibold text-slate-950 transition hover:-translate-y-0.5"
             >
-              Vai al Discord!
+              Vai al Discord
             </a>
           </div>
         </div>
       </section>
-            <footer className="border-t border-slate-800 bg-slate-950 py-8 text-center text-xs text-slate-400">
-        Produced by EpicoJackal™ , all right reserved. Ogni fatto o riferimenti a personaggi della vita vera sono puramente casuali. Sito per memare Aoe4italia
+
+      <footer className="border-t border-slate-800 bg-slate-950 py-8 text-center text-xs text-slate-400">
+        Produced by EpicoJackal, all right reserved. Ogni fatto o riferimenti a personaggi della vita vera sono puramente casuali. Sito per memare Aoe4italia
       </footer>
+
     </div>
   );
 }

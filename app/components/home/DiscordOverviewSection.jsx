@@ -2,7 +2,6 @@ export default function DiscordOverviewSection({
   inviteUrl,
   onlineMembers,
   liveStats,
-  visibleMembers,
 }) {
   return (
     <section className="mx-auto max-w-7xl px-6 py-20 lg:px-8">

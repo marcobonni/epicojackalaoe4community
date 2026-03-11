@@ -104,7 +104,7 @@ export default function CoachingSection({ coaches = [] }) {
           ))
         ) : (
           <div className="rounded-[2rem] border border-slate-800 bg-slate-900 p-8 text-sm text-slate-400 md:col-span-2 xl:col-span-3">
-            Nessun coach configurato al momento.
+            Nessun coachs configurato al momento.
           </div>
         )}
       </div>

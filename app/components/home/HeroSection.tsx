@@ -1,4 +1,5 @@
 import { SERVER_CONFIG, HERO_STATS } from "@/app/config/site";
+import Link from "next/link"
 
 export default function HeroSection() {
   return (
@@ -25,39 +26,39 @@ export default function HeroSection() {
 
             <div className="mt-8 flex flex-wrap gap-4">
 
-              <a
+              <Link
                 target="_blank"
                 rel="noopener noreferrer"
                 href={SERVER_CONFIG.inviteUrl}
                 className="rounded-2xl bg-amber-400 px-6 py-3 text-base font-semibold text-slate-950 shadow-lg shadow-amber-500/20 transition hover:-translate-y-0.5"
               >
                 Entra nel server
-              </a>
+              </Link>
 
-              <a
+              <Link
                 target="_blank"
                 rel="noopener noreferrer"
-                href="https://aoeitalia.com/classifiche/aoe4"
+                href="/leaderboard"
                 className="rounded-2xl bg-blue-600 px-6 py-3 text-base font-semibold text-white shadow-lg transition hover:-translate-y-0.5"
               >
-                Iscriviti alle classifiche
-              </a>
+                Classifica italiana 🇮🇹
+              </Link>
 
-              <a
+              <Link
                 target="_blank"
                 rel="noopener noreferrer"
                 href="https://aoeitalia.com/ruota"
                 className="rounded-2xl bg-red-600 px-6 py-3 text-base font-semibold text-white shadow-lg transition hover:-translate-y-0.5"
               >
                 Ruota delle civ
-              </a>
+              </Link>
 
             </div>
           </div>
 
           <div className="rounded-[2rem] border border-slate-800 bg-slate-900/80 p-6 shadow-2xl shadow-black/30 backdrop-blur">
             <p className="text-sm uppercase tracking-[0.3em] text-amber-300">
-              EpicoJackal's Aoe4 Community
+              EpicoJackal&apos;s Aoe4 Community
             </p>
 
             <div className="mt-6 grid gap-4 sm:grid-cols-3">

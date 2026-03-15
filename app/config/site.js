@@ -12,6 +12,7 @@ export const TWITCH_STREAMER_PRIORITY = [
   'IKasiya',
   'RaionOn',
   'FRADIBIS',
+  'EpicoJackal'
 ];
 
 export const TWITCH_STREAMERS = TWITCH_STREAMER_PRIORITY.map((name) => ({
@@ -81,10 +82,10 @@ export const COACHES = [
       "Sessioni dedicate a macro, build order, scouting e decision making.",
     specialty:
       "Ottimizzazione build, review replay, mindset competitivo",
-    price: "TBD / ora",
+    price: null,
     availability: "Sera e weekend",
-    contactUrl: "https://discord.gg/pjAakCz9",
-    profileUrl: "https://www.twitch.tv/ScapoloCaldo667",
+    contactUrl: "https://discord.com/users/240210612582481922",
+    profileUrl: "https://www.twitch.tv/epicojackal",
   },
 
   {
@@ -95,9 +96,9 @@ export const COACHES = [
       "Allenamenti focalizzati su macro avanzata, timing push e gestione delle civiltà meta.",
     specialty:
       "Strategie meta, timing attack, decision making mid game",
-    price: "TBD / ora",
+    price: null,
     availability: "Weekend",
-    contactUrl: "https://discord.gg/pjAakCz9",
+    contactUrl: "https://discord.com/users/702542802432688270",
     profileUrl: "https://www.twitch.tv/taffuz_gg",
   },
 
@@ -109,9 +110,9 @@ export const COACHES = [
       "Sessioni di analisi replay per migliorare macro, scouting e adattamento strategico.",
     specialty:
       "Replay analysis, macro management, map control",
-    price: "TBD / ora",
+    price: null,
     availability: "Sera",
-    contactUrl: "https://discord.gg/pjAakCz9",
-    profileUrl: "https://www.twitch.tv/taffuz_gg",
+    contactUrl: "https://discord.com/users/725895228531146794",
+    profileUrl: "https://www.twitch.tv/IKasiya",
   },
 ];

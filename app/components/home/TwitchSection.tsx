@@ -7,10 +7,8 @@ export default function TwitchSection({
 }) {
   return (
     <section className="mx-auto max-w-7xl px-6 py-20 lg:px-8">
-
       <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
         <div className="max-w-2xl">
-
           <p className="text-sm font-semibold uppercase tracking-[0.3em] text-amber-300">
             Live su Twitch
           </p>
@@ -20,24 +18,18 @@ export default function TwitchSection({
           </h2>
 
           <p className="mt-3 text-sm leading-7 text-slate-400">
-            Lo streamer principale viene scelto automaticamente in base alla
-            lista di priorità. Se il primo è offline viene selezionato il
-            successivo.
+            Lo streamer principale viene scelto automaticamente tra quelli live,
+            dando priorità a chi ha più spettatori. Se nessuno è online, viene
+            mostrato uno streamer di fallback.
           </p>
-
         </div>
       </div>
 
       <div className="mt-10 space-y-8">
-
-        {/* STREAM PRINCIPALE */}
         {primaryStreamer ? (
           <div className="overflow-hidden rounded-[2rem] border border-slate-800 bg-slate-900 p-5 shadow-lg shadow-black/20">
-
             <div className="mb-4 flex items-center justify-between gap-4">
-
               <div>
-
                 <p className="text-sm font-semibold uppercase tracking-[0.2em] text-amber-300">
                   Streamer in evidenza
                 </p>
@@ -47,7 +39,6 @@ export default function TwitchSection({
                 </h3>
 
                 <div className="mt-3 flex flex-wrap items-center gap-3 text-sm text-slate-300">
-
                   <TwitchStatusBadge isLive={primaryStreamer.isLive} />
 
                   {primaryStreamer.gameName && (
@@ -57,7 +48,6 @@ export default function TwitchSection({
                   {typeof primaryStreamer.viewerCount === "number" && (
                     <span>{primaryStreamer.viewerCount} spettatori</span>
                   )}
-
                 </div>
 
                 {primaryStreamer.title && (
@@ -65,7 +55,6 @@ export default function TwitchSection({
                     {primaryStreamer.title}
                   </p>
                 )}
-
               </div>
 
               <a
@@ -76,11 +65,9 @@ export default function TwitchSection({
               >
                 Apri su Twitch
               </a>
-
             </div>
 
             <div className="overflow-hidden rounded-[1.5rem] border border-slate-800 bg-black">
-
               <iframe
                 title={`Twitch player ${primaryStreamer.name}`}
                 src={`https://player.twitch.tv/?channel=${primaryStreamer.name}&parent=${TWITCH_PARENT_DOMAINS.join(
@@ -91,14 +78,11 @@ export default function TwitchSection({
                 allowFullScreen
                 loading="lazy"
               />
-
             </div>
           </div>
         ) : null}
 
-        {/* STREAM SECONDARI */}
         <div>
-
           <div className="mb-4">
             <p className="text-sm font-semibold uppercase tracking-[0.2em] text-slate-300">
               Streamer secondari
@@ -110,18 +94,14 @@ export default function TwitchSection({
           </div>
 
           <div className="grid gap-6 lg:grid-cols-2 xl:grid-cols-3">
-
             {secondaryStreamers.length > 0 ? (
               secondaryStreamers.map((streamer) => (
                 <div
                   key={streamer.name}
                   className="overflow-hidden rounded-[2rem] border border-slate-800 bg-slate-900 p-4 shadow-lg shadow-black/20"
                 >
-
                   <div className="mb-4 flex items-start justify-between gap-4">
-
                     <div>
-
                       <p className="text-sm font-semibold uppercase tracking-[0.2em] text-purple-300">
                         Twitch Stream
                       </p>
@@ -131,17 +111,13 @@ export default function TwitchSection({
                       </h3>
 
                       <div className="mt-3 flex flex-wrap items-center gap-3 text-sm text-slate-300">
-
                         <TwitchStatusBadge isLive={streamer.isLive} />
 
-                        {streamer.gameName && (
-                          <span>{streamer.gameName}</span>
-                        )}
+                        {streamer.gameName && <span>{streamer.gameName}</span>}
 
                         {typeof streamer.viewerCount === "number" && (
                           <span>{streamer.viewerCount} spettatori</span>
                         )}
-
                       </div>
 
                       {streamer.title && (
@@ -149,7 +125,6 @@ export default function TwitchSection({
                           {streamer.title}
                         </p>
                       )}
-
                     </div>
 
                     <a
@@ -160,11 +135,9 @@ export default function TwitchSection({
                     >
                       Apri su Twitch
                     </a>
-
                   </div>
 
                   <div className="overflow-hidden rounded-[1.5rem] border border-slate-800 bg-black">
-
                     <iframe
                       title={`Twitch player ${streamer.name}`}
                       src={`https://player.twitch.tv/?channel=${streamer.name}&parent=${TWITCH_PARENT_DOMAINS.join(
@@ -173,11 +146,9 @@ export default function TwitchSection({
                       height="320"
                       width="100%"
                       allowFullScreen
-                      loading = "lazy"
+                      loading="lazy"
                     />
-
                   </div>
-
                 </div>
               ))
             ) : (
@@ -185,7 +156,6 @@ export default function TwitchSection({
                 Nessuno streamer configurato.
               </div>
             )}
-
           </div>
         </div>
       </div>

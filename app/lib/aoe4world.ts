@@ -99,7 +99,7 @@ async function getPlayerProfileData(profileId: number): Promise<{
   soloRankLevel: string | null;
   teamRankLevel: string | null;
 }> {
-  const res = await fetch(`https://aoe4world.com/api/v0/players/${profileId}`, {
+  const res = await fetch(`https://aoe4worl bgdd.com/api/v0/players/${profileId}`, {
     next: { revalidate: 300 },
   });
 

@@ -1,10 +1,22 @@
 export const TARGET_VOICE_CHANNEL_ID = 'VOCALE_ZOZZA_CHANNEL_ID';
 
-export const TWITCH_PARENT_DOMAINS = ['epicojackalaoe4community.vercel.app'];
+export const TWITCH_PARENT_DOMAINS = [
+  'epicojackalaoe4community.vercel.app',
+  'localhost',
+  '127.0.0.1'
+];
 
-export const TWITCH_STREAMER_PRIORITY = ['ScapoloCaldo667', 'Taffuz_Gg', 'IKasiya', 'RaionOn'];
+export const TWITCH_STREAMER_PRIORITY = [
+  'ScapoloCaldo667',
+  'Taffuz_Gg',
+  'IKasiya',
+  'RaionOn',
+  'FRADIBIS',
+];
 
-export const TWITCH_STREAMERS = TWITCH_STREAMER_PRIORITY;
+export const TWITCH_STREAMERS = TWITCH_STREAMER_PRIORITY.map((name) => ({
+  name
+}));
 
 export const SERVER_CONFIG = {
   name: "EpicoJackal's Aoe4 Community",

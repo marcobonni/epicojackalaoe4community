@@ -9,10 +9,8 @@ import FooterSection from "./components/home/FooterSection";
 
 import {
   SERVER_CONFIG,
-  TARGET_VOICE_CHANNEL_ID,
-  TWITCH_STREAMER_PRIORITY,
   TWITCH_STREAMERS,
-  COACHES
+  COACHES,
 } from "./config/site";
 
 import { getDiscordWidgetData } from "./lib/discord";
@@ -21,38 +19,43 @@ import { getTwitchLiveMap } from "./lib/twitch";
 export default async function Page() {
   const widgetData = await getDiscordWidgetData(SERVER_CONFIG.widgetServerId);
 
-  const configuredStreamers = TWITCH_STREAMERS.filter(Boolean);
-  const twitchLiveMap = await getTwitchLiveMap(configuredStreamers);
+  const configuredStreamers = TWITCH_STREAMERS.filter(
+    (streamer) => streamer?.name
+  );
+
+  const twitchLiveMap = await getTwitchLiveMap(
+    configuredStreamers.map((streamer) => streamer.name)
+  );
 
   const enrichedStreamers = configuredStreamers.map((streamer) => {
-    const liveData = twitchLiveMap[streamer.toLowerCase()];
+    const liveData = twitchLiveMap[streamer.name.toLowerCase()];
 
     return {
-      name: streamer,
-      isLive: Boolean(liveData?.isLive),
+      ...streamer,
+      isLive: Boolean(liveData),
       title: liveData?.title ?? null,
       gameName: liveData?.gameName ?? null,
-      viewerCount: liveData?.viewerCount ?? null,
+      viewerCount: liveData?.viewerCount ?? 0,
       startedAt: liveData?.startedAt ?? null,
       thumbnailUrl: liveData?.thumbnailUrl ?? null,
     };
   });
 
-  const primaryStreamer =
-    TWITCH_STREAMER_PRIORITY.map((priorityName) =>
-      enrichedStreamers.find(
-        (streamer) =>
-          streamer.name.toLowerCase() === priorityName.toLowerCase() &&
-          streamer.isLive
-      )
-    ).find(Boolean) ||
-    enrichedStreamers.find((streamer) => streamer.isLive) ||
-    enrichedStreamers[0] ||
-    null;
+  const liveStreamers = enrichedStreamers
+    .filter((streamer) => streamer.isLive)
+    .sort((a, b) => b.viewerCount - a.viewerCount);
 
-  const secondaryStreamers = enrichedStreamers.filter(
-    (streamer) => streamer.name !== primaryStreamer?.name
-  );
+  const primaryStreamer = liveStreamers[0] ?? enrichedStreamers[0] ?? null;
+
+  const secondaryStreamers = enrichedStreamers
+    .filter((streamer) => streamer.name !== primaryStreamer?.name)
+    .sort((a, b) => {
+      if (a.isLive !== b.isLive) {
+        return Number(b.isLive) - Number(a.isLive);
+      }
+
+      return (b.viewerCount ?? 0) - (a.viewerCount ?? 0);
+    });
 
   const inviteUrl = widgetData?.instant_invite || SERVER_CONFIG.inviteUrl;
   const onlineMembers = widgetData?.presence_count ?? null;
@@ -81,6 +84,7 @@ export default async function Page() {
         primaryStreamer={primaryStreamer}
         secondaryStreamers={secondaryStreamers}
       />
+
       <CoachingSection coaches={COACHES} />
 
       <EventsSection />

@@ -1,7 +1,7 @@
 export const TARGET_VOICE_CHANNEL_ID = 'VOCALE_ZOZZA_CHANNEL_ID';
 
 export const TWITCH_PARENT_DOMAINS = [
-  'epicojackalaoe4community.vercel.app',
+  'aoe4community.vercel.app',
   'localhost',
   '127.0.0.1'
 ];

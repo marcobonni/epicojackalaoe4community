@@ -1,10 +1,25 @@
 import TwitchStatusBadge from "@/app/components/home/TwitchStatusBadge";
 import { TWITCH_PARENT_DOMAINS } from "@/app/config/site";
 
+type TwitchStreamer = {
+  name: string;
+  isLive?: boolean;
+  title?: string | null;
+  gameName?: string | null;
+  viewerCount?: number;
+  startedAt?: string | null;
+  thumbnailUrl?: string | null;
+};
+
+type TwitchSectionProps = {
+  primaryStreamer: TwitchStreamer | null;
+  secondaryStreamers: TwitchStreamer[];
+};
+
 export default function TwitchSection({
   primaryStreamer,
   secondaryStreamers,
-}) {
+}: TwitchSectionProps) {
   return (
     <section className="mx-auto max-w-7xl px-6 py-20 lg:px-8">
       <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
@@ -39,7 +54,7 @@ export default function TwitchSection({
                 </h3>
 
                 <div className="mt-3 flex flex-wrap items-center gap-3 text-sm text-slate-300">
-                  <TwitchStatusBadge isLive={primaryStreamer.isLive} />
+                  <TwitchStatusBadge isLive={Boolean(primaryStreamer.isLive)} />
 
                   {primaryStreamer.gameName && (
                     <span>{primaryStreamer.gameName}</span>
@@ -111,7 +126,7 @@ export default function TwitchSection({
                       </h3>
 
                       <div className="mt-3 flex flex-wrap items-center gap-3 text-sm text-slate-300">
-                        <TwitchStatusBadge isLive={streamer.isLive} />
+                        <TwitchStatusBadge isLive={Boolean(streamer.isLive)} />
 
                         {streamer.gameName && <span>{streamer.gameName}</span>}
 

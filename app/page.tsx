@@ -47,16 +47,16 @@ export default async function Page() {
 
   const primaryStreamer = liveStreamers[0] ?? enrichedStreamers[0] ?? null;
 
-  const secondaryStreamers = enrichedStreamers
-    .filter((streamer) => streamer.name !== primaryStreamer?.name)
-    .sort((a, b) => {
-      if (a.isLive !== b.isLive) {
-        return Number(b.isLive) - Number(a.isLive);
-      }
+const secondaryStreamers = enrichedStreamers
+  .filter((streamer) => streamer.name !== primaryStreamer?.name)
+  .sort((a, b) => {
+    if (a.isLive !== b.isLive) {
+      return Number(b.isLive) - Number(a.isLive);
+    }
 
-      return (b.viewerCount ?? 0) - (a.viewerCount ?? 0);
-    });
-
+    return (b.viewerCount ?? 0) - (a.viewerCount ?? 0);
+  })
+  .slice(0, 3);
   const inviteUrl = widgetData?.instant_invite || SERVER_CONFIG.inviteUrl;
   const onlineMembers = widgetData?.presence_count ?? null;
   const totalMembers = widgetData?.members?.length ?? null;

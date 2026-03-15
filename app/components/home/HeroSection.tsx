@@ -47,7 +47,7 @@ export default function HeroSection() {
               <Link
                 target="_blank"
                 rel="noopener noreferrer"
-                href="https://aoeitalia.com/ruota"
+                href="https://wheelofnames.com/it/52k-e26"
                 className="rounded-2xl bg-red-600 px-6 py-3 text-base font-semibold text-white shadow-lg transition hover:-translate-y-0.5"
               >
                 Ruota delle civ

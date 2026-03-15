@@ -134,12 +134,6 @@ export default function TwitchSection({
                           <span>{streamer.viewerCount} spettatori</span>
                         )}
                       </div>
-
-                      {streamer.title && (
-                        <p className="mt-3 text-sm text-slate-400">
-                          {streamer.title}
-                        </p>
-                      )}
                     </div>
 
                     <a

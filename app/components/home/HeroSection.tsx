@@ -3,23 +3,29 @@ import Link from "next/link";
 
 export default function HeroSection() {
   return (
-    <section className="relative overflow-hidden border-b border-amber-500/20">
+    <section className="relative overflow-hidden  bg-[#020617]">
+      {/* background image */}
       <div className="absolute inset-0">
         <img
-          src="/images/aoe_hero.png"
-          alt="Castello medievale al tramonto"
-          className="h-full w-full object-cover opacity-100"
+          src="/images/hero_top.png"
+          alt="Age of Empires background"
+          className="h-full w-full object-cover object-center"
         />
-
-        <div className="absolute inset-0 bg-slate-950/80" />
-
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(245,158,11,0.22),transparent_35%),radial-gradient(circle_at_bottom_right,rgba(59,130,246,0.12),transparent_30%)]" />
       </div>
+
+      {/* dark overlay for readability */}
+      <div className="absolute inset-0 bg-slate-950/45" />
+
+      {/* vignette */}
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_48%,rgba(2,6,23,0.65))]" />
+
+      {/* bottom fade into next section */}
+      <div className="absolute inset-x-0 bottom-0 h-52 bg-gradient-to-b from-transparent via-[#020617] to-[#020617]" />
 
       <div className="relative mx-auto max-w-7xl px-6 py-24 lg:px-8">
         <div className="grid items-center gap-12 lg:grid-cols-2">
           <div>
-            <div className="mb-4 inline-flex items-center rounded-full border border-amber-400/30 bg-amber-400/10 px-4 py-1 text-sm text-amber-300 backdrop-blur">
+            <div className="mb-4 inline-flex items-center rounded-full border border-amber-400/30 bg-amber-400/10 px-4 py-1 text-sm text-amber-300">
               Age of Empires Community Discord
             </div>
 
@@ -44,8 +50,6 @@ export default function HeroSection() {
               </Link>
 
               <Link
-                target="_blank"
-                rel="noopener noreferrer"
                 href="/leaderboard"
                 className="rounded-2xl bg-blue-600 px-6 py-3 text-base font-semibold text-white shadow-lg transition hover:-translate-y-0.5"
               >
@@ -63,22 +67,22 @@ export default function HeroSection() {
             </div>
           </div>
 
-          <div className="rounded-[2rem] border border-slate-700/80 bg-slate-900/70 p-6 shadow-2xl shadow-black/40 backdrop-blur-md">
+          <div className="rounded-[2rem] border border-slate-800 bg-slate-900/80 p-6 shadow-2xl shadow-black/30 backdrop-blur">
             <p className="text-sm uppercase tracking-[0.3em] text-amber-300">
-              EpicoJackal&apos;s Aoe4 Community
+              EpicoJackal&apos;s AoE4 Community
             </p>
 
             <div className="mt-6 grid gap-4 sm:grid-cols-3">
               {HERO_STATS.map((stat) => (
                 <div
                   key={stat.label}
-                  className="rounded-2xl border border-slate-700/80 bg-slate-950/70 p-4 text-center backdrop-blur"
+                  className="rounded-2xl border border-slate-800 bg-slate-950/80 p-4 text-center"
                 >
                   <div className="text-2xl font-bold text-amber-300">
                     {stat.value}
                   </div>
 
-                  <div className="mt-1 text-sm text-slate-300">
+                  <div className="mt-1 text-sm text-slate-400">
                     {stat.label}
                   </div>
                 </div>

@@ -42,13 +42,15 @@ type PlayerProfileResponse = {
     full?: string | null;
   } | null;
 
-  rm_solo?: RankedMode | null;
-  rm_team?: RankedMode | null;
 
-  rm_1v1_elo?: EloMode | null;
-  rm_2v2_elo?: EloMode | null;
-  rm_3v3_elo?: EloMode | null;
-  rm_4v4_elo?: EloMode | null;
+  modes?: {
+    rm_1v1_elo?: EloMode | null;
+    rm_2v2_elo?: EloMode | null;
+    rm_3v3_elo?: EloMode | null;
+    rm_4v4_elo?: EloMode | null;
+    rm_solo?: RankedMode | null;
+    rm_team?: RankedMode | null;
+  } 
 };
 
 function normalizeLeaderboardResponse(data: LeaderboardResponse): LeaderboardPlayer[] {
@@ -116,15 +118,14 @@ async function getPlayerProfileData(profileId: number): Promise<{
   }
 
   const data: PlayerProfileResponse = await res.json();
-
   return {
     avatarSmall: toNullableString(data.avatars?.small),
-    rating1v1: toNullableNumber(data.rm_1v1_elo?.rating),
-    rating2v2: toNullableNumber(data.rm_2v2_elo?.rating),
-    rating3v3: toNullableNumber(data.rm_3v3_elo?.rating),
-    rating4v4: toNullableNumber(data.rm_4v4_elo?.rating),
-    soloRankLevel: toNullableString(data.rm_solo?.rank_level),
-    teamRankLevel: toNullableString(data.rm_team?.rank_level),
+    rating1v1: toNullableNumber(data.modes?.rm_1v1_elo?.rating),
+    rating2v2: toNullableNumber(data.modes?.rm_2v2_elo?.rating),
+    rating3v3: toNullableNumber(data.modes?.rm_3v3_elo?.rating),
+    rating4v4: toNullableNumber(data.modes?.rm_4v4_elo?.rating),
+    soloRankLevel: toNullableString(data.modes?.rm_solo?.rank_level),
+    teamRankLevel: toNullableString(data.modes?.rm_team?.rank_level),
   };
 }
 

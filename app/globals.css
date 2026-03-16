@@ -24,3 +24,38 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+@keyframes conquerorGlowPulse {
+  0% {
+    filter: drop-shadow(0 0 6px rgba(255, 200, 0, 0.35));
+  }
+  50% {
+    filter: drop-shadow(0 0 14px rgba(255, 200, 0, 0.95));
+  }
+  100% {
+    filter: drop-shadow(0 0 6px rgba(255, 200, 0, 0.35));
+  }
+}
+
+.league-glow-conqueror {
+  animation: conquerorGlowPulse 2s ease-in-out infinite;
+}
+
+.league-glow-diamond {
+  filter: drop-shadow(0 0 8px rgba(120, 200, 255, 0.75));
+}
+
+.league-glow-platinum {
+  filter: drop-shadow(0 0 8px rgba(103, 232, 249, 0.7));
+}
+
+.league-glow-gold {
+  filter: drop-shadow(0 0 8px rgba(255, 215, 0, 0.7));
+}
+
+.league-glow-silver {
+  filter: drop-shadow(0 0 6px rgba(203, 213, 225, 0.65));
+}
+
+.league-glow-bronze {
+  filter: drop-shadow(0 0 6px rgba(217, 119, 69, 0.65));
+}

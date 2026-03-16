@@ -6,7 +6,6 @@ export default function DiscordOverviewSection({
   return (
     <section className="mx-auto max-w-7xl px-6 py-20 lg:px-8">
       <div className="grid gap-6 lg:grid-cols-2">
-
         {/* Box stanza vocale */}
         <div className="rounded-[2rem] border border-slate-800 bg-slate-900 p-8 shadow-lg shadow-black/20">
 

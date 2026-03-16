@@ -1,4 +1,18 @@
+"use client";
+
+import { useEffect, useState } from "react";
 import { getItalianTop20WithModeElos } from "@/app/lib/aoe4world";
+import type { LeaderboardPlayer } from "@/app/lib/aoe4world";
+
+type SortKey =
+  | "rank"
+  | "name"
+  | "rating1v1"
+  | "rating2v2"
+  | "rating3v3"
+  | "rating4v4";
+
+type SortDirection = "asc" | "desc";
 
 function getLeagueLabel(rankLevel?: string | null) {
   if (!rankLevel) return "Unranked";
@@ -19,92 +33,228 @@ function formatRating(value?: number | null) {
   return value ?? "-";
 }
 
-function getLeaguePillClass(rankLevel?: string | null) {
-  const normalized = (rankLevel ?? "").toLowerCase();
+function getSoloLeagueIcon(rankLevel?: string | null) {
+  if (!rankLevel) return null;
 
-  if (normalized.startsWith("conqueror")) {
-    return "border-[#f0b90b]/40 bg-[#f0b90b]/15 text-[#ffd54a]";
-  }
+const map: Record<string, string> = {
+  conqueror_1: "/images/icon/solo_icon/solo_conq1.svg",
+  conqueror_2: "/images/icon/solo_icon/solo_conq2.svg",
+  conqueror_3: "/images/icon/solo_icon/solo_conq3.svg",
 
-  if (normalized.startsWith("diamond")) {
-    return "border-[#7dd3fc]/40 bg-[#7dd3fc]/15 text-[#bae6fd]";
-  }
+  diamond_1: "/images/icon/solo_icon/solo_diam1.svg",
+  diamond_2: "/images/icon/solo_icon/solo_diam2.svg",
+  diamond_3: "/images/icon/solo_icon/solo_diam3.svg",
 
-  if (normalized.startsWith("platinum")) {
-    return "border-[#67e8f9]/40 bg-[#67e8f9]/15 text-[#cffafe]";
-  }
+  platinum_1: "/images/icon/solo_icon/solo_plat1.svg",
+  platinum_2: "/images/icon/solo_icon/solo_plat2.svg",
+  platinum_3: "/images/icon/solo_icon/solo_plat3.svg",
 
-  if (normalized.startsWith("gold")) {
-    return "border-[#facc15]/40 bg-[#facc15]/15 text-[#fde68a]";
-  }
+  gold_1: "/images/icon/solo_icon/solo_gold1.svg",
+  gold_2: "/images/icon/solo_icon/solo_gold2.svg",
+  gold_3: "/images/icon/solo_icon/solo_gold3.svg",
 
-  if (normalized.startsWith("silver")) {
-    return "border-[#cbd5e1]/40 bg-[#cbd5e1]/15 text-[#e2e8f0]";
-  }
+  silver_1: "/images/icon/solo_icon/solo_silv1.svg",
+  silver_2: "/images/icon/solo_icon/solo_silv2.svg",
+  silver_3: "/images/icon/solo_icon/solo_silv3.svg",
 
-  if (normalized.startsWith("bronze")) {
-    return "border-[#d97745]/40 bg-[#d97745]/15 text-[#fdba74]";
-  }
+  bronze_1: "/images/icon/solo_icon/solo_bron1.svg",
+  bronze_2: "/images/icon/solo_icon/solo_bron2.svg",
+  bronze_3: "/images/icon/solo_icon/solo_bron3.svg",
+};
 
-  return "border-white/10 bg-white/5 text-[#c2cbe0]";
+  return map[rankLevel.toLowerCase()] ?? null;
 }
 
-export default async function LeaderboardPage() {
-  const players = await getItalianTop20WithModeElos();
+
+function getTeamLeagueIcon(rankLevel?: string | null) {
+  if (!rankLevel) return null;
+
+  const map: Record<string, string> = {
+    conqueror_1: "/images/icon/team_icon/team_conq1.svg",
+    conqueror_2: "/images/icon/team_icon/team_conq2.svg",
+    conqueror_3: "/images/icon/team_icon/team_conq3.svg",
+
+    diamond_1: "/images/icon/team_icon/team_diam1.svg",
+    diamond_2: "/images/icon/team_icon/team_diam2.svg",
+    diamond_3: "/images/icon/team_icon/team_diam3.svg",
+
+    platinum_1: "/images/icon/team_icon/team_plat1.svg",
+    platinum_2: "/images/icon/team_icon/team_plat2.svg",
+    platinum_3: "/images/icon/team_icon/team_plat3.svg",
+
+    gold_1: "/images/icon/team_icon/team_gold1.svg",
+    gold_2: "/images/icon/team_icon/team_gold2.svg",
+    gold_3: "/images/icon/team_icon/team_gold3.svg",
+
+    silver_1: "/image/icon/team_icon/team_silv1.svg",
+    silver_2: "/image/icon/team_icon/team_silv2.svg",
+    silver_3: "/image/icon/team_icon/team_silv3.svg",
+
+    bronze_1: "/image/icon/team_icon/team_bron1.svg",
+    bronze_2: "/image/icon/team_icon/team_bron2.svg",
+    bronze_3: "/image/icon/team_icon/team_bron3.svg",
+  };
+
+  return map[rankLevel.toLowerCase()] ?? null;
+}
+
+function getLeagueGlow(rankLevel?: string | null) {
+  if (!rankLevel) return "";
+
+  const level = rankLevel.toLowerCase();
+
+  if (level.startsWith("conqueror")) return "league-glow-conqueror";
+  if (level.startsWith("diamond")) return "league-glow-diamond";
+  if (level.startsWith("platinum")) return "league-glow-platinum";
+  if (level.startsWith("gold")) return "league-glow-gold";
+  if (level.startsWith("silver")) return "league-glow-silver";
+  if (level.startsWith("bronze")) return "league-glow-bronze";
+
+  return "";
+}
+
+
+
+export default function LeaderboardPage() {
+  const [players, setPlayers] = useState<LeaderboardPlayer[]>([]);
+  const [sortKey, setSortKey] = useState<SortKey>("rank");
+  const [sortDirection, setSortDirection] = useState<SortDirection>("desc");
+
+  useEffect(() => {
+    getItalianTop20WithModeElos().then(setPlayers);
+  }, []);
+
+  function sortPlayers(key: SortKey) {
+    if (key === sortKey) {
+      setSortDirection((prev) => (prev === "asc" ? "desc" : "asc"));
+    } else {
+      setSortKey(key);
+      setSortDirection(key === "name" ? "asc" : "desc");
+    }
+  }
+
+  function getSortArrow(key: SortKey) {
+    if (sortKey !== key) {
+      return <span className="ml-2 text-[#4c5875]">↕</span>;
+    }
+
+    return (
+      <span className="ml-2 text-[#f0b90b]">
+        {sortDirection === "asc" ? "↑" : "↓"}
+      </span>
+    );
+  }
+
+  const sortedPlayers = [...players].sort((a, b) => {
+    let aValue: any = a[sortKey as keyof LeaderboardPlayer];
+    let bValue: any = b[sortKey as keyof LeaderboardPlayer];
+
+    if (sortKey === "rank") {
+      aValue = a.rank;
+      bValue = b.rank;
+    }
+
+    if (typeof aValue === "string" || typeof bValue === "string") {
+      const aString = String(aValue ?? "");
+      const bString = String(bValue ?? "");
+
+      return sortDirection === "asc"
+        ? aString.localeCompare(bString)
+        : bString.localeCompare(aString);
+    }
+
+    aValue = aValue ?? -1;
+    bValue = bValue ?? -1;
+
+    return sortDirection === "asc" ? aValue - bValue : bValue - aValue;
+  });
 
   return (
     <main className="relative min-h-screen overflow-hidden bg-[#020b26] text-white">
-      <div className="pointer-events-none absolute inset-0">
-        <div className="absolute left-1/2 top-0 h-[500px] w-[500px] -translate-x-1/2 rounded-full bg-[#ff9b2f]/10 blur-[140px]" />
-        <div className="absolute right-0 top-20 h-[420px] w-[420px] rounded-full bg-[#0d2f6b]/20 blur-[140px]" />
-      </div>
-
       <section className="relative z-10 mx-auto max-w-[1800px] px-8 py-16">
         <div className="rounded-[28px] border border-white/8 bg-[#0f1a36]/95 p-6 shadow-[0_10px_40px_rgba(0,0,0,0.35)]">
-          <div className="mb-6 flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
-            <div>
-              <p className="text-sm uppercase tracking-[0.35em] text-[#f0b90b]">
-                Leaderboard
-              </p>
-              <h2 className="mt-3 text-3xl font-bold text-white">
-                Ranked Matchmaking Elo
-              </h2>
-              <p className="mt-2 text-[#9eabc4]">Fonte dati: AoE4World API</p>
-            </div>
-
-            <a
-              href="https://aoe4world.com/leaderboard/rm_solo?country=it"
-              target="_blank"
-              rel="noreferrer"
-              className="inline-flex w-fit items-center justify-center rounded-2xl bg-[#f0b90b] px-5 py-3 font-semibold text-[#07122d] transition hover:brightness-110"
-            >
-              Apri su AoE4World
-            </a>
-          </div>
 
           <div className="overflow-x-auto">
             <table className="w-full min-w-[1500px] border-separate border-spacing-y-3">
+
               <thead>
                 <tr className="text-left text-sm uppercase tracking-[0.22em] text-[#7f8aa3]">
-                  <th className="px-4 py-2">Rank</th>
-                  <th className="px-4 py-2">Player</th>
-                  <th className="px-4 py-2">1v1</th>
-                  <th className="px-4 py-2">2v2</th>
-                  <th className="px-4 py-2">3v3</th>
-                  <th className="px-4 py-2">4v4</th>
-                  <th className="px-4 py-2">Solo League</th>
-                  <th className="px-4 py-2">Team League</th>
-                  <th className="px-4 py-2 min-w-[120px]">Profile</th>
+
+                  <th className="px-4 py-2">
+                    <button
+                      type="button"
+                      onClick={() => sortPlayers("rank")}
+                      className="inline-flex items-center uppercase tracking-[0.22em] hover:text-white"
+                    >
+                      Rank {getSortArrow("rank")}
+                    </button>
+                  </th>
+
+                  <th className="px-4 py-2">
+                    <button
+                      type="button"
+                      onClick={() => sortPlayers("name")}
+                      className="inline-flex items-center uppercase tracking-[0.22em] hover:text-white"
+                    >
+                      Player {getSortArrow("name")}
+                    </button>
+                  </th>
+
+                  <th className="px-4 py-2">
+                    <button
+                      type="button"
+                      onClick={() => sortPlayers("rating1v1")}
+                      className="inline-flex items-center uppercase tracking-[0.22em] hover:text-white"
+                    >
+                      1v1 {getSortArrow("rating1v1")}
+                    </button>
+                  </th>
+
+                  <th className="px-4 py-2">
+                    <button
+                      type="button"
+                      onClick={() => sortPlayers("rating2v2")}
+                      className="inline-flex items-center uppercase tracking-[0.22em] hover:text-white"
+                    >
+                      2v2 {getSortArrow("rating2v2")}
+                    </button>
+                  </th>
+
+                  <th className="px-4 py-2">
+                    <button
+                      type="button"
+                      onClick={() => sortPlayers("rating3v3")}
+                      className="inline-flex items-center uppercase tracking-[0.22em] hover:text-white"
+                    >
+                      3v3 {getSortArrow("rating3v3")}
+                    </button>
+                  </th>
+
+                  <th className="px-4 py-2">
+                    <button
+                      type="button"
+                      onClick={() => sortPlayers("rating4v4")}
+                      className="inline-flex items-center uppercase tracking-[0.22em] hover:text-white"
+                    >
+                      4v4 {getSortArrow("rating4v4")}
+                    </button>
+                  </th>
+
+                  <th className="px-4 py-2">Solo </th>
+                  <th className="px-4 py-2">Team </th>
+                  <th className="px-4 py-2">Profile</th>
+
                 </tr>
               </thead>
 
               <tbody>
-                {players.map((player, index) => {
+                {sortedPlayers.map((player, index) => {
                   const isTop3 = index < 3;
 
                   return (
                     <tr key={player.profile_id} className="bg-[#07122d]">
-                      <td className="rounded-l-2xl border-y border-l border-white/8 px-4 py-4">
+
+                      <td className="px-4 py-4">
                         <div
                           className={`inline-flex h-10 w-10 items-center justify-center rounded-xl font-bold ${getRankBadgeClass(
                             index
@@ -114,10 +264,14 @@ export default async function LeaderboardPage() {
                         </div>
                       </td>
 
-                      <td className="border-y border-white/8 px-4 py-4 min-w-[320px]">
+                      <td className="px-4 py-4 min-w-[320px]">
                         <div className="flex items-center gap-4">
+
                           <img
-                            src={player.avatarSmall ?? "https://placehold.co/48x48/png"}
+                            src={
+                              player.avatarSmall ??
+                              "/images/placeholder_pic.avif"
+                            }
                             alt={player.name}
                             className="h-12 w-12 rounded-xl border border-white/10 object-cover"
                           />
@@ -130,10 +284,11 @@ export default async function LeaderboardPage() {
                               Profile ID: {player.profile_id}
                             </div>
                           </div>
+
                         </div>
                       </td>
 
-                      <td className="border-y border-white/8 px-4 py-4">
+                      <td className="px-4 py-4">
                         <span
                           className={`text-xl font-bold ${
                             isTop3 ? "text-[#ffd54a]" : "text-white"
@@ -143,54 +298,69 @@ export default async function LeaderboardPage() {
                         </span>
                       </td>
 
-                      <td className="border-y border-white/8 px-4 py-4 text-white">
+                      <td className="px-4 py-4">
                         {formatRating(player.rating2v2)}
                       </td>
 
-                      <td className="border-y border-white/8 px-4 py-4 text-white">
+                      <td className="px-4 py-4">
                         {formatRating(player.rating3v3)}
                       </td>
 
-                      <td className="border-y border-white/8 px-4 py-4 text-white">
+                      <td className="px-4 py-4">
                         {formatRating(player.rating4v4)}
                       </td>
 
-                      <td className="border-y border-white/8 px-4 py-4">
-                        <span
-                          className={`inline-flex rounded-full border px-3 py-1 text-sm font-medium ${getLeaguePillClass(
-                            player.soloRankLevel
-                          )}`}
-                        >
-                          {getLeagueLabel(player.soloRankLevel)}
-                        </span>
+                      <td className="px-4 py-4 text-center">
+                        {getSoloLeagueIcon(player.soloRankLevel) ? (
+                          <div className={`inline-flex items-center justify-center ${getLeagueGlow(player.soloRankLevel)}`}>
+                            <img
+                              src={getSoloLeagueIcon(player.soloRankLevel)!}
+                              alt={player.soloRankLevel ?? "rank"}
+                              className="h-10 w-10"
+                            />
+                          </div>
+                        ) : (
+                          "-"
+                        )}
                       </td>
 
-                      <td className="border-y border-white/8 px-4 py-4">
-                        <span
-                          className={`inline-flex rounded-full border px-3 py-1 text-sm font-medium ${getLeaguePillClass(
-                            player.teamRankLevel
-                          )}`}
-                        >
-                          {getLeagueLabel(player.teamRankLevel)}
-                        </span>
-                      </td>
+                     <td className="px-4 py-4 text-center">
+                            {getTeamLeagueIcon(player.teamRankLevel) ? (
+                              <div
+                                className={`inline-flex items-center justify-center ${getLeagueGlow(
+                                  player.teamRankLevel
+                                )}`}
+                              >
+                                <img
+                                  src={getTeamLeagueIcon(player.teamRankLevel)!}
+                                  alt={player.teamRankLevel ?? "rank"}
+                                  className="h-10 w-10"
+                                />
+                              </div>
+                            ) : (
+                              "-"
+                            )}
+                          </td>
 
-                      <td className="rounded-r-2xl border-y border-r border-white/8 px-4 py-4 min-w-[120px]">
+                      <td className="px-4 py-4">
                         <a
                           href={`https://aoe4world.com/players/${player.profile_id}`}
                           target="_blank"
                           rel="noreferrer"
-                          className="inline-flex items-center justify-center rounded-xl border border-[#f0b90b]/30 bg-[#141c34] px-4 py-2 font-medium text-[#f0b90b] transition hover:bg-[#1a2544]"
+                          className="text-[#f0b90b] hover:underline"
                         >
                           View
                         </a>
                       </td>
+
                     </tr>
                   );
                 })}
               </tbody>
+
             </table>
           </div>
+
         </div>
       </section>
     </main>

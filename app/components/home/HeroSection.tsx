@@ -1,16 +1,25 @@
 import { SERVER_CONFIG, HERO_STATS } from "@/app/config/site";
-import Link from "next/link"
+import Link from "next/link";
 
 export default function HeroSection() {
   return (
     <section className="relative overflow-hidden border-b border-amber-500/20">
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(245,158,11,0.18),transparent_35%),radial-gradient(circle_at_bottom_right,rgba(59,130,246,0.14),transparent_30%)]" />
+      <div className="absolute inset-0">
+        <img
+          src="/images/aoe_hero.png"
+          alt="Castello medievale al tramonto"
+          className="h-full w-full object-cover opacity-100"
+        />
+
+        <div className="absolute inset-0 bg-slate-950/80" />
+
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(245,158,11,0.22),transparent_35%),radial-gradient(circle_at_bottom_right,rgba(59,130,246,0.12),transparent_30%)]" />
+      </div>
 
       <div className="relative mx-auto max-w-7xl px-6 py-24 lg:px-8">
         <div className="grid items-center gap-12 lg:grid-cols-2">
-
           <div>
-            <div className="mb-4 inline-flex items-center rounded-full border border-amber-400/30 bg-amber-400/10 px-4 py-1 text-sm text-amber-300">
+            <div className="mb-4 inline-flex items-center rounded-full border border-amber-400/30 bg-amber-400/10 px-4 py-1 text-sm text-amber-300 backdrop-blur">
               Age of Empires Community Discord
             </div>
 
@@ -25,7 +34,6 @@ export default function HeroSection() {
             </p>
 
             <div className="mt-8 flex flex-wrap gap-4">
-
               <Link
                 target="_blank"
                 rel="noopener noreferrer"
@@ -47,16 +55,15 @@ export default function HeroSection() {
               <Link
                 target="_blank"
                 rel="noopener noreferrer"
-                href="https://wheelofnames.com/it/52k-e26"
+                href="https://aoeitalia.com/ruota"
                 className="rounded-2xl bg-red-600 px-6 py-3 text-base font-semibold text-white shadow-lg transition hover:-translate-y-0.5"
               >
                 Ruota delle civ
               </Link>
-
             </div>
           </div>
 
-          <div className="rounded-[2rem] border border-slate-800 bg-slate-900/80 p-6 shadow-2xl shadow-black/30 backdrop-blur">
+          <div className="rounded-[2rem] border border-slate-700/80 bg-slate-900/70 p-6 shadow-2xl shadow-black/40 backdrop-blur-md">
             <p className="text-sm uppercase tracking-[0.3em] text-amber-300">
               EpicoJackal&apos;s Aoe4 Community
             </p>
@@ -65,19 +72,18 @@ export default function HeroSection() {
               {HERO_STATS.map((stat) => (
                 <div
                   key={stat.label}
-                  className="rounded-2xl border border-slate-800 bg-slate-950/80 p-4 text-center"
+                  className="rounded-2xl border border-slate-700/80 bg-slate-950/70 p-4 text-center backdrop-blur"
                 >
                   <div className="text-2xl font-bold text-amber-300">
                     {stat.value}
                   </div>
 
-                  <div className="mt-1 text-sm text-slate-400">
+                  <div className="mt-1 text-sm text-slate-300">
                     {stat.label}
                   </div>
                 </div>
               ))}
             </div>
-
           </div>
         </div>
       </div>

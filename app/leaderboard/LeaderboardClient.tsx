@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
 import type { LeaderboardPlayer } from "@/app/lib/aoe4world";
 
 type SortKey =
@@ -15,9 +16,9 @@ type SortDirection = "asc" | "desc";
 
 type LeaderboardClientProps = {
   initialPlayers: LeaderboardPlayer[];
+  currentPage: number;
+  hasNextPage: boolean;
 };
-
-const PAGE_SIZE = 20;
 
 function getRankBadgeClass(position: number) {
   if (position === 1) return "bg-[#f0b90b] text-[#07122d]";
@@ -132,14 +133,14 @@ function getLeagueGlow(rankLevel?: string | null) {
 
 export default function LeaderboardClient({
   initialPlayers,
+  currentPage,
+  hasNextPage,
 }: LeaderboardClientProps) {
+  const router = useRouter();
   const [sortKey, setSortKey] = useState<SortKey>("rating1v1");
   const [sortDirection, setSortDirection] = useState<SortDirection>("desc");
-  const [currentPage, setCurrentPage] = useState(1);
 
   function sortPlayers(key: SortKey) {
-    setCurrentPage(1);
-
     if (key === sortKey) {
       setSortDirection((prev) => (prev === "asc" ? "desc" : "asc"));
     } else {
@@ -198,14 +199,6 @@ export default function LeaderboardClient({
     });
   }, [initialPlayers, sortKey, sortDirection]);
 
-  const totalPages = Math.ceil(sortedPlayers.length / PAGE_SIZE);
-  const hasNextPage = currentPage < totalPages;
-
-  const pagedPlayers = sortedPlayers.slice(
-    (currentPage - 1) * PAGE_SIZE,
-    currentPage * PAGE_SIZE
-  );
-
   const top1v1Ids = useMemo(
     () =>
       [...initialPlayers]
@@ -244,12 +237,13 @@ export default function LeaderboardClient({
   }
 
   function goToPreviousPage() {
-    setCurrentPage((prev) => Math.max(1, prev - 1));
+    if (currentPage <= 1) return;
+    router.push(`/leaderboard?page=${currentPage - 1}`);
   }
 
   function goToNextPage() {
     if (!hasNextPage) return;
-    setCurrentPage((prev) => prev + 1);
+    router.push(`/leaderboard?page=${currentPage + 1}`);
   }
 
   return (
@@ -329,9 +323,8 @@ export default function LeaderboardClient({
               </thead>
 
               <tbody>
-                {pagedPlayers.map((player, index) => {
-                  const absoluteIndex =
-                    (currentPage - 1) * PAGE_SIZE + index + 1;
+                {sortedPlayers.map((player, index) => {
+                  const absoluteIndex = (currentPage - 1) * 50 + index + 1;
 
                   const pos1v1 = getPositionByMode(
                     player.profile_id,
@@ -460,9 +453,7 @@ export default function LeaderboardClient({
           </div>
 
           <div className="mt-6 flex items-center justify-between gap-4">
-            <div className="text-sm text-[#8d99b3]">
-              Pagina {currentPage} di {totalPages}
-            </div>
+            <div className="text-sm text-[#8d99b3]">Pagina {currentPage}</div>
 
             <div className="flex items-center gap-3">
               <button

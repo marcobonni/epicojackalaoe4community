@@ -51,9 +51,13 @@ type PlayerProfileResponse = {
   };
 };
 
-const TARGET_PLAYERS = 100;
-const AOE4WORLD_PAGE_SIZE = 100;
-const MAX_AOE4WORLD_PAGES = 50;
+export type ItalianLeaderboardPageResult = {
+  players: LeaderboardPlayer[];
+  currentPage: number;
+  hasNextPage: boolean;
+};
+
+const PAGE_SIZE = 50;
 
 function normalizeLeaderboardResponse(
   data: LeaderboardResponse
@@ -80,13 +84,6 @@ function toNullableString(value: unknown): string | null {
 
 function isWesternName(name: string): boolean {
   return /^[\x00-\x7F]+$/.test(name);
-}
-
-function isItalianPlayer(player: LeaderboardPlayer): boolean {
-  return (
-    typeof player.country === "string" &&
-    player.country.toLowerCase() === "it"
-  );
 }
 
 async function getPlayerProfileData(profileId: number): Promise<{
@@ -127,49 +124,45 @@ async function getPlayerProfileData(profileId: number): Promise<{
   };
 }
 
-export async function getItalianTop100WithModeElos(): Promise<LeaderboardPlayer[]> {
-  const collectedPlayers: LeaderboardPlayer[] = [];
-  const seenProfileIds = new Set<number>();
+export async function getItalianLeaderboardPageWithModeElos(
+  page: number = 1
+): Promise<ItalianLeaderboardPageResult> {
+  const safePage = Math.max(1, page);
 
-  for (let aoePage = 1; aoePage <= MAX_AOE4WORLD_PAGES; aoePage++) {
-    const res = await fetch(
-      `https://aoe4world.com/api/v0/leaderboards/rm_solo?page=${aoePage}&count=${AOE4WORLD_PAGE_SIZE}`,
-      {
-        next: { revalidate: 300 },
-      }
-    );
-
-    if (!res.ok) {
-      throw new Error("Errore nel recupero leaderboard AoE4World");
+  const res = await fetch(
+    `https://aoe4world.com/api/v0/leaderboards/rm_solo?country=it&page=${safePage}`,
+    {
+      next: { revalidate: 300 },
     }
+  );
 
-    const data: LeaderboardResponse = await res.json();
-    const players = normalizeLeaderboardResponse(data);
-
-    if (players.length === 0) {
-      break;
-    }
-
-    for (const player of players) {
-      if (!isItalianPlayer(player)) continue;
-      if (!isWesternName(player.name)) continue;
-      if (seenProfileIds.has(player.profile_id)) continue;
-
-      seenProfileIds.add(player.profile_id);
-      collectedPlayers.push(player);
-    }
-
-    if (collectedPlayers.length >= TARGET_PLAYERS) {
-      break;
-    }
+  if (!res.ok) {
+    throw new Error("Errore nel recupero leaderboard italiana AoE4World");
   }
 
-  const topPlayers = collectedPlayers
-    .sort((a, b) => a.rank - b.rank)
-    .slice(0, TARGET_PLAYERS);
+  const data: LeaderboardResponse = await res.json();
+  const rawPlayers = normalizeLeaderboardResponse(data);
+  const players = rawPlayers.filter((player) => isWesternName(player.name));
+
+  const nextRes = await fetch(
+    `https://aoe4world.com/api/v0/leaderboards/rm_solo?country=it&page=${safePage + 1}`,
+    {
+      next: { revalidate: 300 },
+    }
+  );
+
+  let hasNextPage = false;
+
+  if (nextRes.ok) {
+    const nextData: LeaderboardResponse = await nextRes.json();
+    const nextPlayers = normalizeLeaderboardResponse(nextData).filter((player) =>
+      isWesternName(player.name)
+    );
+    hasNextPage = nextPlayers.length > 0;
+  }
 
   const playersWithProfiles = await Promise.all(
-    topPlayers.map(async (player) => {
+    players.map(async (player) => {
       const profileData = await getPlayerProfileData(player.profile_id);
 
       return {
@@ -185,5 +178,9 @@ export async function getItalianTop100WithModeElos(): Promise<LeaderboardPlayer[
     })
   );
 
-  return playersWithProfiles;
+  return {
+    players: playersWithProfiles.slice(0, PAGE_SIZE),
+    currentPage: safePage,
+    hasNextPage,
+  };
 }

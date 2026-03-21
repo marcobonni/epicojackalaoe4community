@@ -80,10 +80,10 @@ function getSoloLeagueIcon(rankLevel?: string | null) {
     bronze_2: "/images/icon/solo_icon/solo_bron2.svg",
     bronze_3: "/images/icon/solo_icon/solo_bron3.svg",
 
-    unranked: "/images/icon/solo_icon/solo_unranked.svg"
+    unranked: "/images/icon/solo_icon/solo_unranked.svg",
   };
 
-  return map[rankLevel.toLowerCase()] ?? null;
+  return map[rankLevel.toLowerCase()] ?? map["unranked"];
 }
 
 function getTeamLeagueIcon(rankLevel?: string | null) {
@@ -114,7 +114,7 @@ function getTeamLeagueIcon(rankLevel?: string | null) {
     bronze_2: "/images/icon/team_icon/team_bron2.svg",
     bronze_3: "/images/icon/team_icon/team_bron3.svg",
 
-    unranked: "/images/icon/team_icon/team_unranked.svg"
+    unranked: "/images/icon/team_icon/team_unranked.svg",
   };
 
   return map[rankLevel.toLowerCase()] ?? map["unranked"];
@@ -133,6 +133,42 @@ function getLeagueGlow(rankLevel?: string | null) {
   if (level.startsWith("bronze")) return "league-glow-bronze";
 
   return "";
+}
+
+function getCivilizationIcon(civ: string) {
+  const map: Record<string, string> = {
+    abbasid_dynasty: "/images/civs/ab.png",
+    ayyubids: "/images/civs/ay.png",
+    byzantines: "/images/civs/by.png",
+    chinese: "/images/civs/ch.png",
+    delhi_sultanate: "/images/civs/de.png",
+    english: "/images/civs/en.png",
+    french: "/images/civs/fr.png",
+    golden_horde: "/images/civs/gh.png",
+    holy_roman_empire: "/images/civs/hre.png",
+    house_of_lancaster: "/images/civs/hl.png",
+    japanese: "/images/civs/jap.png",
+    jeanne_darc: "/images/civs/jd.png",
+    knights_templar: "images/civs/kt.png",
+    macedonian_dynasty: "images/civs/mac.png",
+    malians: "/images/civs/ma.png",
+    mongols: "/images/civs/mo.png",
+    order_of_the_dragon: "/images/civs/ootd.png",
+    ottomans: "/images/civs/ot.png",
+    rus: "/images/civs/ru.png",
+    sengoku_daimyo: "/images/civs/sen.png",
+    tughlaq_dynasty: "/images/civs/tugh.png",
+    zhu_xis_legacy: "/images/civs/zhu.png",
+    
+  };
+
+  return map[civ] ?? "/images/civs/generic_flag.png";
+}
+
+function formatCivilizationName(civ: string) {
+  return civ
+    .replaceAll("_", " ")
+    .replace(/\b\w/g, (char) => char.toUpperCase());
 }
 
 export default function LeaderboardClient({
@@ -255,7 +291,7 @@ export default function LeaderboardClient({
       <section className="relative z-10 mx-auto max-w-[1800px] px-8 py-16">
         <div className="rounded-[28px] border border-white/8 bg-[#0f1a36]/95 p-6 shadow-[0_10px_40px_rgba(0,0,0,0.35)]">
           <div className="overflow-x-auto">
-            <table className="w-full min-w-[1500px] border-separate border-spacing-y-3">
+            <table className="w-full min-w-[1650px] border-separate border-spacing-y-3">
               <thead>
                 <tr className="text-left text-sm uppercase tracking-[0.22em] text-[#7f8aa3]">
                   <th className="px-4 py-2">Pos IT</th>
@@ -322,6 +358,7 @@ export default function LeaderboardClient({
 
                   <th className="px-4 py-2">Solo</th>
                   <th className="px-4 py-2">Team</th>
+                  <th className="px-4 py-2">Top 3 Civ</th>
                   <th className="px-4 py-2">Profile</th>
                 </tr>
               </thead>
@@ -404,40 +441,58 @@ export default function LeaderboardClient({
                       </td>
 
                       <td className="px-4 py-4 text-center">
-                        {getSoloLeagueIcon(player.soloRankLevel) ? (
-                          <div
-                            className={`inline-flex items-center justify-center ${getLeagueGlow(
-                              player.soloRankLevel
-                            )}`}
-                          >
-                            <img
-                              src={getSoloLeagueIcon(player.soloRankLevel)!}
-                              alt={player.soloRankLevel ?? "rank"}
-                              className="h-10 w-10"
-                            />
-                          </div>
-                        ) : (
-                          "-"
-                        )}
+                        <div
+                          className={`inline-flex items-center justify-center ${getLeagueGlow(
+                            player.soloRankLevel
+                          )}`}
+                        >
+                          <img
+                            src={getSoloLeagueIcon(player.soloRankLevel)}
+                            alt={player.soloRankLevel ?? "unranked"}
+                            className="h-10 w-10"
+                          />
+                        </div>
                       </td>
 
-                      <td className="px-4 py-4 text-center">
-                        {getTeamLeagueIcon(player.teamRankLevel) ? (
+                        <td className="px-4 py-4 text-center">
                           <div
                             className={`inline-flex items-center justify-center ${getLeagueGlow(
                               player.teamRankLevel
                             )}`}
                           >
                             <img
-                              src={getTeamLeagueIcon(player.teamRankLevel)!}
-                              alt={player.teamRankLevel ?? "rank"}
+                              src={getTeamLeagueIcon(player.teamRankLevel)}
+                              alt={player.teamRankLevel ?? "unranked"}
                               className="h-10 w-10"
                             />
                           </div>
-                        ) : (
-                          "-"
-                        )}
-                      </td>
+                        </td>
+
+                      <td className="px-4 py-4 min-w-[220px]">
+    <div className="flex gap-2">
+      {player.topCivilizations && player.topCivilizations.length > 0 ? (
+        player.topCivilizations.map((civ) => {
+          const icon = getCivilizationIcon(civ);
+
+          return (
+            <img
+              key={civ}
+              src={icon}
+              alt={civ}
+              className="h-10 w-10 object-contain"
+              title={civ}
+            />
+          );
+        })
+      ) : (
+        <img
+          src="/images/civs/generic_flag.png"
+          alt="unknown"
+          className="h-10 w-10 object-contain opacity-70"
+        />
+      )}
+    </div>
+  </td>
 
                       <td className="px-4 py-4">
                         <a

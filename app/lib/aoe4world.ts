@@ -15,6 +15,7 @@ export type LeaderboardPlayer = {
 
   soloRankLevel?: string | null;
   teamRankLevel?: string | null;
+  topCivilizations?: string[];
 };
 
 type LeaderboardResponse =
@@ -29,8 +30,16 @@ type EloMode = {
   rank_level?: string | null;
 };
 
+type CivilizationStat = {
+  civilization?: string | null;
+  games_count?: number | null;
+  pick_rate?: number | null;
+  win_rate?: number | null;
+};
+
 type RankedMode = {
   rank_level?: string | null;
+  civilizations?: CivilizationStat[] | null;
 };
 
 type PlayerProfileResponse = {
@@ -42,12 +51,12 @@ type PlayerProfileResponse = {
     full?: string | null;
   } | null;
   modes?: {
+    rm_solo?: RankedMode | null;
+    rm_team?: RankedMode | null;
     rm_1v1_elo?: EloMode | null;
     rm_2v2_elo?: EloMode | null;
     rm_3v3_elo?: EloMode | null;
     rm_4v4_elo?: EloMode | null;
-    rm_solo?: RankedMode | null;
-    rm_team?: RankedMode | null;
   };
 };
 
@@ -86,6 +95,23 @@ function isWesternName(name: string): boolean {
   return /^[\x00-\x7F]+$/.test(name);
 }
 
+function getTopCivilizations(
+  civilizations?: CivilizationStat[] | null
+): string[] {
+  if (!Array.isArray(civilizations)) return [];
+
+  return [...civilizations]
+    .filter(
+      (civ) =>
+        typeof civ.civilization === "string" &&
+        civ.civilization.trim() !== "" &&
+        typeof civ.games_count === "number"
+    )
+    .sort((a, b) => (b.games_count ?? 0) - (a.games_count ?? 0))
+    .slice(0, 3)
+    .map((civ) => civ.civilization as string);
+}
+
 async function getPlayerProfileData(profileId: number): Promise<{
   avatarSmall: string | null;
   rating1v1: number | null;
@@ -94,6 +120,7 @@ async function getPlayerProfileData(profileId: number): Promise<{
   rating4v4: number | null;
   soloRankLevel: string | null;
   teamRankLevel: string | null;
+  topCivilizations: string[];
 }> {
   const res = await fetch(`https://aoe4world.com/api/v0/players/${profileId}`, {
     next: { revalidate: 300 },
@@ -108,6 +135,7 @@ async function getPlayerProfileData(profileId: number): Promise<{
       rating4v4: null,
       soloRankLevel: null,
       teamRankLevel: null,
+      topCivilizations: [],
     };
   }
 
@@ -121,6 +149,7 @@ async function getPlayerProfileData(profileId: number): Promise<{
     rating4v4: toNullableNumber(data.modes?.rm_4v4_elo?.rating),
     soloRankLevel: toNullableString(data.modes?.rm_solo?.rank_level),
     teamRankLevel: toNullableString(data.modes?.rm_team?.rank_level),
+    topCivilizations: getTopCivilizations(data.modes?.rm_solo?.civilizations),
   };
 }
 
@@ -174,6 +203,7 @@ export async function getItalianLeaderboardPageWithModeElos(
         rating4v4: profileData.rating4v4,
         soloRankLevel: profileData.soloRankLevel,
         teamRankLevel: profileData.teamRankLevel,
+        topCivilizations: profileData.topCivilizations,
       };
     })
   );

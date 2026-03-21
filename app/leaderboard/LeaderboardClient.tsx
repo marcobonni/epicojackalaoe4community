@@ -53,7 +53,7 @@ function formatRating(
 }
 
 function getSoloLeagueIcon(rankLevel?: string | null) {
-  if (!rankLevel) return null;
+  if (!rankLevel) return "/images/icon/solo_icon/solo_unranked.svg";
 
   const map: Record<string, string> = {
     conqueror_1: "/images/icon/solo_icon/solo_conq1.svg",
@@ -79,13 +79,15 @@ function getSoloLeagueIcon(rankLevel?: string | null) {
     bronze_1: "/images/icon/solo_icon/solo_bron1.svg",
     bronze_2: "/images/icon/solo_icon/solo_bron2.svg",
     bronze_3: "/images/icon/solo_icon/solo_bron3.svg",
+
+    unranked: "/images/icon/solo_icon/solo_unranked.svg"
   };
 
   return map[rankLevel.toLowerCase()] ?? null;
 }
 
 function getTeamLeagueIcon(rankLevel?: string | null) {
-  if (!rankLevel) return null;
+  if (!rankLevel) return "/images/icon/team_icon/team_unranked.svg";
 
   const map: Record<string, string> = {
     conqueror_1: "/images/icon/team_icon/team_conq1.svg",
@@ -111,9 +113,11 @@ function getTeamLeagueIcon(rankLevel?: string | null) {
     bronze_1: "/images/icon/team_icon/team_bron1.svg",
     bronze_2: "/images/icon/team_icon/team_bron2.svg",
     bronze_3: "/images/icon/team_icon/team_bron3.svg",
+
+    unranked: "/images/icon/team_icon/team_unranked.svg"
   };
 
-  return map[rankLevel.toLowerCase()] ?? null;
+  return map[rankLevel.toLowerCase()] ?? map["unranked"];
 }
 
 function getLeagueGlow(rankLevel?: string | null) {

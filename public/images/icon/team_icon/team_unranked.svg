@@ -1,0 +1,13 @@
+<svg width="256" height="256" viewBox="0 0 256 256" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="teamBgGrad" x1="128" y1="30" x2="128" y2="226">
+      <stop offset="0%" stop-color="#465167"/>
+      <stop offset="45%" stop-color="#293345"/>
+      <stop offset="100%" stop-color="#131A28"/>
+    </linearGradient>
+  </defs>
+  <path d="M128 30 L185 55 C192 58 197 65 197 73 V127 C197 164 171 196 128 226 C85 196 59 164 59 127 V73 C59 65 64 58 71 55 L128 30Z"
+        fill="url(#teamBgGrad)" stroke="#C0C8D5" stroke-width="6"/>
+  <circle cx="110" cy="125" r="14" fill="#E5E7EB"/>
+  <circle cx="146" cy="125" r="14" fill="#E5E7EB"/>
+</svg>

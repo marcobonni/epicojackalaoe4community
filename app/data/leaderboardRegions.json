@@ -1,0 +1,26 @@
+[
+    {"name": "Chrysaor","profile_id": 4309542, "macroRegion": "switzerland" }, 
+    {"name":"ScapoloCaldo","profile_id": 16507261, "macroRegion": "north" }, 
+    {"name":"Paranoia", "profile_id": 8176977, "macroRegion": "north" },
+    {"name":"ZeneizeTV", "profile_id": 20598757, "macroRegion": "north" },
+    {"name":"Tia", "profile_id": 11317689, "macroRegion": "north" },
+    {"name":"GattoRatto", "profile_id": 6536602, "macroRegion": "north" },
+    {"name":"Taffuz", "profile_id": 10205181, "macroRegion": "north" },
+    {"name":"Dr Foresta", "profile_id": 15611437, "macroRegion": "north" },
+    {"name":"Spolamud", "profile_id": 20425843, "macroRegion": "north" },
+    {"name":"Vagiano", "profile_id": 8985461, "macroRegion": "north" },
+    {"name":"Joyx", "profile_id":22678203, "macroRegion": "center"},
+    {"name":"Papoz", "profile_id":11439935, "macroRegion": "center"},
+    {"name":"AxelNapoli", "profile_id":18503517, "macroRegion": "center"},
+    {"name":"JackFioru", "profile_id":9164943, "macroRegion": "center"},
+    {"name":"fil1900", "profile_id":11598361, "macroRegion": "center"},
+    {"name":"Il cataro", "profile_id":19944696, "macroRegion": "center"},
+    {"name":"Daddu", "profile_id":12254119, "macroRegion": "center"},
+    {"name":"Ale Stardust", "profile_id":8050403, "macroRegion": "center"},
+    {"name":"EpicoJackal", "profile_id":17205553, "macroRegion": "south"},
+    {"name":"Fraak92", "profile_id":4696088, "macroRegion": "south"},
+    {"name":"DucaNero", "profile_id":8173756, "macroRegion": "south"},
+    {"name":"paky_B", "profile_id":7992196, "macroRegion": "south"},
+    {"name":"Flipx Jason", "profile_id":21456066, "macroRegion": "south"}
+
+]

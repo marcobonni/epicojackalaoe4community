@@ -1,6 +1,7 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import type { LeaderboardPlayer } from "@/app/lib/aoe4world";
 
@@ -18,6 +19,12 @@ type LeaderboardClientProps = {
   initialPlayers: LeaderboardPlayer[];
   currentPage: number;
   hasNextPage: boolean;
+  eyebrow?: string;
+  title?: string;
+  basePath?: string;
+  icon?: string;
+  background?: string;
+  anthem?: string;
 };
 
 function getRankBadgeClass(position: number) {
@@ -149,8 +156,8 @@ function getCivilizationIcon(civ: string) {
     house_of_lancaster: "/images/civs/hl.png",
     japanese: "/images/civs/jap.png",
     jeanne_darc: "/images/civs/jd.png",
-    knights_templar: "images/civs/kt.png",
-    macedonian_dynasty: "images/civs/mac.png",
+    knights_templar: "/images/civs/kt.png",
+    macedonian_dynasty: "/images/civs/mac.png",
     malians: "/images/civs/ma.png",
     mongols: "/images/civs/mo.png",
     order_of_the_dragon: "/images/civs/ootd.png",
@@ -159,7 +166,6 @@ function getCivilizationIcon(civ: string) {
     sengoku_daimyo: "/images/civs/sen.png",
     tughlaq_dynasty: "/images/civs/tugh.png",
     zhu_xis_legacy: "/images/civs/zhu.png",
-    
   };
 
   return map[civ] ?? "/images/civs/generic_flag.png";
@@ -175,10 +181,64 @@ export default function LeaderboardClient({
   initialPlayers,
   currentPage,
   hasNextPage,
+  eyebrow = "Leaderboard italiana",
+  title = "Classifica AoE4 Italia",
+  basePath = "/leaderboard",
+  icon,
+  background,
+  anthem,
 }: LeaderboardClientProps) {
   const router = useRouter();
   const [sortKey, setSortKey] = useState<SortKey>("rating1v1");
   const [sortDirection, setSortDirection] = useState<SortDirection>("desc");
+  const [pageInput, setPageInput] = useState(String(currentPage));
+  const [activeBackground, setActiveBackground] = useState(background);
+  const dollarPressesRef = useRef<number[]>([]);
+  const anthemAudioRef = useRef<HTMLAudioElement | null>(null);
+
+  useEffect(() => {
+  if (!anthem || !anthemAudioRef.current) return;
+
+  const audio = anthemAudioRef.current;
+  audio.volume = 0.35;
+
+  audio.play().catch(() => {
+    // alcuni browser bloccano autoplay con audio
+  });
+}, [anthem]);
+
+  useEffect(() => {
+    setPageInput(String(currentPage));
+  }, [currentPage]);
+
+  useEffect(() => {
+    setActiveBackground(background);
+  }, [background]);
+
+  useEffect(() => {
+    if (!background) return;
+
+    function handleKeyDown(event: KeyboardEvent) {
+      if (event.key !== "$") return;
+
+      const now = Date.now();
+
+      dollarPressesRef.current = [...dollarPressesRef.current, now].filter(
+        (timestamp) => now - timestamp <= 30_000
+      );
+
+      if (dollarPressesRef.current.length >= 3) {
+        setActiveBackground("/images/icon/flags/israel.gif");
+        dollarPressesRef.current = [];
+      }
+    }
+
+    window.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [background]);
 
   function sortPlayers(key: SortKey) {
     if (key === sortKey) {
@@ -278,18 +338,65 @@ export default function LeaderboardClient({
 
   function goToPreviousPage() {
     if (currentPage <= 1) return;
-    router.push(`/leaderboard?page=${currentPage - 1}`);
+    router.push(`${basePath}?page=${currentPage - 1}`);
   }
 
   function goToNextPage() {
     if (!hasNextPage) return;
-    router.push(`/leaderboard?page=${currentPage + 1}`);
+    router.push(`${basePath}?page=${currentPage + 1}`);
+  }
+
+  function goToPage(page: number) {
+    if (page < 1) return;
+    router.push(`${basePath}?page=${page}`);
   }
 
   return (
-    <main className="relative min-h-screen overflow-hidden bg-[#020b26] text-white">
+    <main className="relative min-h-screen overflow-hidden text-white">
+      {anthem && <audio ref={anthemAudioRef} src={anthem} preload="auto" hidden />}
+      {activeBackground && (
+        <div className="absolute inset-0 z-0">
+          <img
+            src={activeBackground}
+            alt="background"
+            className="h-full w-full object-cover brightness-200 saturate-200"
+          />
+          <div className="absolute inset-0 bg-[#020b26]/80" />
+        </div>
+      )}
+
+      {!activeBackground && <div className="absolute inset-0 bg-[#020b26]" />}
+
       <section className="relative z-10 mx-auto max-w-[1800px] px-8 py-16">
-        <div className="rounded-[28px] border border-white/8 bg-[#0f1a36]/95 p-6 shadow-[0_10px_40px_rgba(0,0,0,0.35)]">
+        <div className="mb-6 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+          <div className="flex items-center gap-4">
+            {icon && (
+              <img
+                src={icon}
+                alt="flag"
+                className="h-12 w-12 rounded-lg object-cover shadow-[0_0_12px_rgba(255,255,255,0.15)]"
+              />
+            )}
+
+            <div>
+              <div className="text-sm font-semibold uppercase tracking-[0.24em] text-[#8d99b3]">
+                {eyebrow}
+              </div>
+              <h1 className="mt-1 text-3xl font-bold text-white md:text-4xl">
+                {title}
+              </h1>
+            </div>
+          </div>
+
+          <Link
+            href="/"
+            className="inline-flex items-center justify-center rounded-2xl border border-white/10 bg-[#111d3a] px-5 py-3 text-sm font-semibold text-white transition hover:border-white/20 hover:bg-[#16264a]"
+          >
+            ← Torna alla home
+          </Link>
+        </div>
+
+        <div className="rounded-[28px] border border-white/8 bg-[#0f1a36]/95 p-6 md:p-8 shadow-[0_10px_40px_rgba(0,0,0,0.35)]">
           <div className="overflow-x-auto">
             <table className="w-full min-w-[1650px] border-separate border-spacing-y-3">
               <thead>
@@ -402,7 +509,7 @@ export default function LeaderboardClient({
                         </div>
                       </td>
 
-                      <td className="px-4 py-4 min-w-[320px]">
+                      <td className="min-w-[320px] px-4 py-4">
                         <div className="flex items-center gap-4">
                           <img
                             src={
@@ -454,52 +561,53 @@ export default function LeaderboardClient({
                         </div>
                       </td>
 
-                        <td className="px-4 py-4 text-center">
-                          <div
-                            className={`inline-flex items-center justify-center ${getLeagueGlow(
-                              player.teamRankLevel
-                            )}`}
-                          >
+                      <td className="px-4 py-4 text-center">
+                        <div
+                          className={`inline-flex items-center justify-center ${getLeagueGlow(
+                            player.teamRankLevel
+                          )}`}
+                        >
+                          <img
+                            src={getTeamLeagueIcon(player.teamRankLevel)}
+                            alt={player.teamRankLevel ?? "unranked"}
+                            className="h-10 w-10"
+                          />
+                        </div>
+                      </td>
+
+                      <td className="min-w-[220px] px-4 py-4">
+                        <div className="flex gap-2">
+                          {player.topCivilizations &&
+                          player.topCivilizations.length > 0 ? (
+                            player.topCivilizations.map((civ) => {
+                              const icon = getCivilizationIcon(civ);
+
+                              return (
+                                <img
+                                  key={civ}
+                                  src={icon}
+                                  alt={formatCivilizationName(civ)}
+                                  className="h-10 w-10 object-contain"
+                                  title={formatCivilizationName(civ)}
+                                />
+                              );
+                            })
+                          ) : (
                             <img
-                              src={getTeamLeagueIcon(player.teamRankLevel)}
-                              alt={player.teamRankLevel ?? "unranked"}
-                              className="h-10 w-10"
+                              src="/images/civs/generic_flag.png"
+                              alt="unknown"
+                              className="h-10 w-10 object-contain opacity-70"
                             />
-                          </div>
-                        </td>
-
-                      <td className="px-4 py-4 min-w-[220px]">
-    <div className="flex gap-2">
-      {player.topCivilizations && player.topCivilizations.length > 0 ? (
-        player.topCivilizations.map((civ) => {
-          const icon = getCivilizationIcon(civ);
-
-          return (
-            <img
-              key={civ}
-              src={icon}
-              alt={civ}
-              className="h-10 w-10 object-contain"
-              title={civ}
-            />
-          );
-        })
-      ) : (
-        <img
-          src="/images/civs/generic_flag.png"
-          alt="unknown"
-          className="h-10 w-10 object-contain opacity-70"
-        />
-      )}
-    </div>
-  </td>
+                          )}
+                        </div>
+                      </td>
 
                       <td className="px-4 py-4">
                         <a
                           href={`https://aoe4world.com/players/${player.profile_id}`}
                           target="_blank"
                           rel="noreferrer"
-                          className="text-[#f0b90b] hover:underline"
+                          className="inline-flex min-w-[88px] items-center justify-center rounded-xl border border-[#f0b90b]/25 bg-[#f0b90b]/10 px-4 py-2 text-sm font-semibold text-[#f7cf59] transition hover:-translate-y-0.5 hover:border-[#f0b90b]/40 hover:bg-[#f0b90b]/20 hover:text-[#ffe082]"
                         >
                           View
                         </a>
@@ -511,27 +619,72 @@ export default function LeaderboardClient({
             </table>
           </div>
 
-          <div className="mt-6 flex items-center justify-between gap-4">
-            <div className="text-sm text-[#8d99b3]">Pagina {currentPage}</div>
+          <div className="mt-8 rounded-[24px] border border-white/8 bg-[#0b1430] px-5 py-4 shadow-[0_8px_30px_rgba(0,0,0,0.25)]">
+            <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-3">
+                <Link
+                  href="/"
+                  className="inline-flex h-11 items-center justify-center rounded-xl border border-white/10 bg-[#111d3a] px-4 text-sm font-semibold text-white transition hover:bg-[#16264a]"
+                >
+                  ← Home
+                </Link>
 
-            <div className="flex items-center gap-3">
-              <button
-                type="button"
-                onClick={goToPreviousPage}
-                disabled={currentPage === 1}
-                className="rounded-xl border border-white/10 bg-[#111d3a] px-4 py-2 text-sm font-semibold text-white transition hover:bg-[#16264a] disabled:cursor-not-allowed disabled:opacity-40"
-              >
-                Precedente
-              </button>
+                <div className="inline-flex h-11 items-center gap-2 rounded-xl border border-white/10 bg-[#0f1f45] px-3">
+                  <span className="text-sm font-semibold text-[#b8c7e6]">
+                    Pagina
+                  </span>
 
-              <button
-                type="button"
-                onClick={goToNextPage}
-                disabled={!hasNextPage}
-                className="rounded-xl border border-white/10 bg-[#111d3a] px-4 py-2 text-sm font-semibold text-white transition hover:bg-[#16264a] disabled:cursor-not-allowed disabled:opacity-40"
-              >
-                Successiva
-              </button>
+                  <input
+                    type="text"
+                    inputMode="numeric"
+                    pattern="[0-9]*"
+                    value={pageInput}
+                    onChange={(e) => {
+                      const value = e.target.value.replace(/\D/g, "");
+                      setPageInput(value);
+                    }}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        const page = Number(pageInput);
+                        if (!Number.isNaN(page) && page > 0) goToPage(page);
+                      }
+                    }}
+                    className="h-8 w-14 rounded-lg border border-white/10 bg-[#07122d] px-2 text-center text-sm font-bold text-white outline-none transition focus:border-[#4f7edc] focus:bg-[#0a1733]"
+                    placeholder="1"
+                  />
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const page = Number(pageInput);
+                      if (!Number.isNaN(page) && page > 0) goToPage(page);
+                    }}
+                    className="h-8 rounded-lg bg-[#16305f] px-3 text-sm font-semibold text-white transition hover:bg-[#1b3d79]"
+                  >
+                    Vai
+                  </button>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-3 self-end md:self-auto">
+                <button
+                  type="button"
+                  onClick={goToPreviousPage}
+                  disabled={currentPage === 1}
+                  className="h-11 rounded-xl border border-white/10 bg-[#111d3a] px-5 text-sm font-semibold text-white transition hover:bg-[#16264a] disabled:cursor-not-allowed disabled:opacity-40"
+                >
+                  Precedente
+                </button>
+
+                <button
+                  type="button"
+                  onClick={goToNextPage}
+                  disabled={!hasNextPage}
+                  className="h-11 rounded-xl border border-[#1f3b72] bg-[#16305f] px-5 text-sm font-semibold text-white transition hover:bg-[#1b3d79] disabled:cursor-not-allowed disabled:opacity-40"
+                >
+                  Successiva
+                </button>
+              </div>
             </div>
           </div>
         </div>

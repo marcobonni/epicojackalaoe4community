@@ -130,7 +130,9 @@ function getTopCivilizations(
 
 const profileCache = new Map<number, Promise<PlayerProfileData>>();
 
-async function fetchPlayerProfileData(profileId: number): Promise<PlayerProfileData> {
+async function fetchPlayerProfileData(
+  profileId: number
+): Promise<PlayerProfileData> {
   const res = await fetch(`https://aoe4world.com/api/v0/players/${profileId}`, {
     next: { revalidate: 300 },
   });
@@ -162,7 +164,9 @@ async function fetchPlayerProfileData(profileId: number): Promise<PlayerProfileD
   };
 }
 
-async function getPlayerProfileData(profileId: number): Promise<PlayerProfileData> {
+async function getPlayerProfileData(
+  profileId: number
+): Promise<PlayerProfileData> {
   const cached = profileCache.get(profileId);
   if (cached) {
     return cached;
@@ -201,7 +205,9 @@ async function getItalianLeaderboardBase(): Promise<LeaderboardPlayer[]> {
   const mergedPlayers = leaderboardResponses.flat();
 
   const dedupedPlayers = Array.from(
-    new Map(mergedPlayers.map((player) => [player.profile_id, player])).values()
+    new Map(
+      mergedPlayers.map((player) => [player.profile_id, player])
+    ).values()
   );
 
   return dedupedPlayers.filter((player) => isWesternName(player.name));
@@ -246,4 +252,60 @@ export async function getItalianLeaderboardPageWithModeElos(
     currentPage: safePage,
     hasNextPage: endIndex < sortedPlayers.length,
   };
+}
+
+export async function getPlayersByProfileIdsWithModeElos(
+  profileIds: number[]
+): Promise<LeaderboardPlayer[]> {
+  const uniqueProfileIds = Array.from(
+    new Set(
+      profileIds.filter(
+        (id): id is number => typeof id === "number" && Number.isFinite(id)
+      )
+    )
+  );
+
+  if (uniqueProfileIds.length === 0) {
+    return [];
+  }
+
+  const players = await Promise.all(
+    uniqueProfileIds.map(async (profileId) => {
+      const res = await fetch(
+        `https://aoe4world.com/api/v0/players/${profileId}`,
+        {
+          next: { revalidate: 300 },
+        }
+      );
+
+      if (!res.ok) {
+        return null;
+      }
+
+      const data: PlayerProfileResponse = await res.json();
+      const profileData = await getPlayerProfileData(profileId);
+
+      const rating1v1 =
+        profileData.rating1v1 ?? toNullableNumber(data.modes?.rm_1v1_elo?.rating);
+
+      return {
+        profile_id: profileId,
+        name: toNullableString(data.name) ?? `Player ${profileId}`,
+        rating: rating1v1 ?? 0,
+        rank: 0,
+        avatarSmall: profileData.avatarSmall,
+        rating1v1,
+        rating2v2: profileData.rating2v2,
+        rating3v3: profileData.rating3v3,
+        rating4v4: profileData.rating4v4,
+        soloRankLevel: profileData.soloRankLevel,
+        teamRankLevel: profileData.teamRankLevel,
+        topCivilizations: profileData.topCivilizations,
+      } satisfies LeaderboardPlayer;
+    })
+  );
+
+  return players.filter(
+    (player): player is LeaderboardPlayer => player !== null
+  );
 }

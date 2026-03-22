@@ -15,7 +15,6 @@ import {
 
 import { getDiscordWidgetData } from "./lib/discord";
 import { getTwitchLiveMap } from "./lib/twitch";
-import TestLoader from "./components/testbutton";
 
 export default async function Page() {
   const widgetData = await getDiscordWidgetData(SERVER_CONFIG.widgetServerId);

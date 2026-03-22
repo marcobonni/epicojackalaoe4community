@@ -1,11 +1,49 @@
+"use client";
+
+import { useEffect, useRef } from "react";
 import { SERVER_CONFIG, HERO_STATS } from "@/app/config/site";
 import Link from "next/link";
 
 export default function HeroSection() {
+  const sectionRef = useRef<HTMLElement | null>(null);
+  const backgroundRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const section = sectionRef.current;
+      const background = backgroundRef.current;
+
+      if (!section || !background) return;
+
+      const rect = section.getBoundingClientRect();
+      const windowHeight = window.innerHeight;
+
+      if (rect.bottom < 0 || rect.top > windowHeight) return;
+
+      const offset = rect.top * -0.5;
+      background.style.transform = `translateY(${offset}px) scale(1.08)`;
+    };
+
+    handleScroll();
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    window.addEventListener("resize", handleScroll);
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      window.removeEventListener("resize", handleScroll);
+    };
+  }, []);
+
   return (
-    <section className="relative overflow-hidden  bg-[#020617]">
-      {/* background image */}
-      <div className="absolute inset-0">
+    <section
+      ref={sectionRef}
+      className="relative overflow-hidden bg-[#020617]"
+    >
+      {/* background image with parallax */}
+      <div
+        ref={backgroundRef}
+        className="absolute inset-0 will-change-transform"
+      >
         <img
           src="/images/hero_top.png"
           alt="Age of Empires background"

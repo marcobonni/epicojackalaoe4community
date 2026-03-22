@@ -60,6 +60,17 @@ type PlayerProfileResponse = {
   };
 };
 
+type PlayerProfileData = {
+  avatarSmall: string | null;
+  rating1v1: number | null;
+  rating2v2: number | null;
+  rating3v3: number | null;
+  rating4v4: number | null;
+  soloRankLevel: string | null;
+  teamRankLevel: string | null;
+  topCivilizations: string[];
+};
+
 export type ItalianLeaderboardPageResult = {
   players: LeaderboardPlayer[];
   currentPage: number;
@@ -67,6 +78,11 @@ export type ItalianLeaderboardPageResult = {
 };
 
 const PAGE_SIZE = 50;
+const SOURCE_PAGE_COUNT = 10;
+
+function getSourcePages(count: number): number[] {
+  return Array.from({ length: count }, (_, index) => index + 1);
+}
 
 function normalizeLeaderboardResponse(
   data: LeaderboardResponse
@@ -112,16 +128,9 @@ function getTopCivilizations(
     .map((civ) => civ.civilization as string);
 }
 
-async function getPlayerProfileData(profileId: number): Promise<{
-  avatarSmall: string | null;
-  rating1v1: number | null;
-  rating2v2: number | null;
-  rating3v3: number | null;
-  rating4v4: number | null;
-  soloRankLevel: string | null;
-  teamRankLevel: string | null;
-  topCivilizations: string[];
-}> {
+const profileCache = new Map<number, Promise<PlayerProfileData>>();
+
+async function fetchPlayerProfileData(profileId: number): Promise<PlayerProfileData> {
   const res = await fetch(`https://aoe4world.com/api/v0/players/${profileId}`, {
     next: { revalidate: 300 },
   });
@@ -153,45 +162,60 @@ async function getPlayerProfileData(profileId: number): Promise<{
   };
 }
 
+async function getPlayerProfileData(profileId: number): Promise<PlayerProfileData> {
+  const cached = profileCache.get(profileId);
+  if (cached) {
+    return cached;
+  }
+
+  const promise = fetchPlayerProfileData(profileId).catch((error) => {
+    profileCache.delete(profileId);
+    throw error;
+  });
+
+  profileCache.set(profileId, promise);
+  return promise;
+}
+
+async function getItalianLeaderboardBase(): Promise<LeaderboardPlayer[]> {
+  const sourcePages = getSourcePages(SOURCE_PAGE_COUNT);
+
+  const leaderboardResponses = await Promise.all(
+    sourcePages.map(async (page) => {
+      const res = await fetch(
+        `https://aoe4world.com/api/v0/leaderboards/rm_solo?country=it&page=${page}`,
+        {
+          next: { revalidate: 300 },
+        }
+      );
+
+      if (!res.ok) {
+        throw new Error("Errore nel recupero leaderboard italiana AoE4World");
+      }
+
+      const data: LeaderboardResponse = await res.json();
+      return normalizeLeaderboardResponse(data);
+    })
+  );
+
+  const mergedPlayers = leaderboardResponses.flat();
+
+  const dedupedPlayers = Array.from(
+    new Map(mergedPlayers.map((player) => [player.profile_id, player])).values()
+  );
+
+  return dedupedPlayers.filter((player) => isWesternName(player.name));
+}
+
 export async function getItalianLeaderboardPageWithModeElos(
   page: number = 1
 ): Promise<ItalianLeaderboardPageResult> {
   const safePage = Math.max(1, page);
 
-  const res = await fetch(
-    `https://aoe4world.com/api/v0/leaderboards/rm_solo?country=it&page=${safePage}`,
-    {
-      next: { revalidate: 300 },
-    }
-  );
-
-  if (!res.ok) {
-    throw new Error("Errore nel recupero leaderboard italiana AoE4World");
-  }
-
-  const data: LeaderboardResponse = await res.json();
-  const rawPlayers = normalizeLeaderboardResponse(data);
-  const players = rawPlayers.filter((player) => isWesternName(player.name));
-
-  const nextRes = await fetch(
-    `https://aoe4world.com/api/v0/leaderboards/rm_solo?country=it&page=${safePage + 1}`,
-    {
-      next: { revalidate: 300 },
-    }
-  );
-
-  let hasNextPage = false;
-
-  if (nextRes.ok) {
-    const nextData: LeaderboardResponse = await nextRes.json();
-    const nextPlayers = normalizeLeaderboardResponse(nextData).filter((player) =>
-      isWesternName(player.name)
-    );
-    hasNextPage = nextPlayers.length > 0;
-  }
+  const basePlayers = await getItalianLeaderboardBase();
 
   const playersWithProfiles = await Promise.all(
-    players.map(async (player) => {
+    basePlayers.map(async (player) => {
       const profileData = await getPlayerProfileData(player.profile_id);
 
       return {
@@ -208,9 +232,18 @@ export async function getItalianLeaderboardPageWithModeElos(
     })
   );
 
+  const sortedPlayers = [...playersWithProfiles].sort((a, b) => {
+    const aElo = a.rating1v1 ?? -Infinity;
+    const bElo = b.rating1v1 ?? -Infinity;
+    return bElo - aElo;
+  });
+
+  const startIndex = (safePage - 1) * PAGE_SIZE;
+  const endIndex = startIndex + PAGE_SIZE;
+
   return {
-    players: playersWithProfiles.slice(0, PAGE_SIZE),
+    players: sortedPlayers.slice(startIndex, endIndex),
     currentPage: safePage,
-    hasNextPage,
+    hasNextPage: endIndex < sortedPlayers.length,
   };
 }

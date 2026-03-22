@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import { SERVER_CONFIG, HERO_STATS } from "@/app/config/site";
-import Link from "next/link";
+import LoadingLink from "@/app/components/LoadingLink";
 
 export default function HeroSection() {
   const sectionRef = useRef<HTMLElement | null>(null);
@@ -78,30 +78,30 @@ export default function HeroSection() {
             </p>
 
             <div className="mt-8 flex flex-wrap gap-4">
-              <Link
+              <LoadingLink
                 target="_blank"
                 rel="noopener noreferrer"
                 href={SERVER_CONFIG.inviteUrl}
                 className="rounded-2xl bg-amber-400 px-6 py-3 text-base font-semibold text-slate-950 shadow-lg shadow-amber-500/20 transition hover:-translate-y-0.5"
               >
                 Entra nel server
-              </Link>
+              </LoadingLink>
 
-              <Link
+              <LoadingLink
                 href="/leaderboard"
                 className="rounded-2xl bg-blue-600 px-6 py-3 text-base font-semibold text-white shadow-lg transition hover:-translate-y-0.5"
               >
                 Classifica italiana 🇮🇹
-              </Link>
+              </LoadingLink>
 
-              <Link
+              <LoadingLink
                 target="_blank"
                 rel="noopener noreferrer"
                 href="https://wheelofnames.com/52k-e26"
                 className="rounded-2xl bg-red-600 px-6 py-3 text-base font-semibold text-white shadow-lg transition hover:-translate-y-0.5"
               >
                 Ruota delle civ
-              </Link>
+              </LoadingLink>
             </div>
           </div>
 

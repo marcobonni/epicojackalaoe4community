@@ -5,14 +5,11 @@ export type LeaderboardPlayer = {
   rank: number;
   rank_level?: string;
   country?: string;
-
   avatarSmall?: string | null;
-
   rating1v1?: number | null;
   rating2v2?: number | null;
   rating3v3?: number | null;
   rating4v4?: number | null;
-
   soloRankLevel?: string | null;
   teamRankLevel?: string | null;
   topCivilizations?: string[];
@@ -128,6 +125,10 @@ function getTopCivilizations(
     .map((civ) => civ.civilization as string);
 }
 
+function isNotNull<T>(value: T | null): value is T {
+  return value !== null;
+}
+
 const profileCache = new Map<number, Promise<PlayerProfileData>>();
 
 async function fetchPlayerProfileData(
@@ -205,9 +206,7 @@ async function getItalianLeaderboardBase(): Promise<LeaderboardPlayer[]> {
   const mergedPlayers = leaderboardResponses.flat();
 
   const dedupedPlayers = Array.from(
-    new Map(
-      mergedPlayers.map((player) => [player.profile_id, player])
-    ).values()
+    new Map(mergedPlayers.map((player) => [player.profile_id, player])).values()
   );
 
   return dedupedPlayers.filter((player) => isWesternName(player.name));
@@ -220,8 +219,8 @@ export async function getItalianLeaderboardPageWithModeElos(
 
   const basePlayers = await getItalianLeaderboardBase();
 
-  const playersWithProfiles = await Promise.all(
-    basePlayers.map(async (player) => {
+  const playersWithProfiles: LeaderboardPlayer[] = await Promise.all(
+    basePlayers.map(async (player): Promise<LeaderboardPlayer> => {
       const profileData = await getPlayerProfileData(player.profile_id);
 
       return {
@@ -269,43 +268,44 @@ export async function getPlayersByProfileIdsWithModeElos(
     return [];
   }
 
-  const players = await Promise.all(
-    uniqueProfileIds.map(async (profileId) => {
-      const res = await fetch(
-        `https://aoe4world.com/api/v0/players/${profileId}`,
-        {
-          next: { revalidate: 300 },
+  const players: Array<LeaderboardPlayer | null> = await Promise.all(
+    uniqueProfileIds.map(
+      async (profileId): Promise<LeaderboardPlayer | null> => {
+        const res = await fetch(
+          `https://aoe4world.com/api/v0/players/${profileId}`,
+          {
+            next: { revalidate: 300 },
+          }
+        );
+
+        if (!res.ok) {
+          return null;
         }
-      );
 
-      if (!res.ok) {
-        return null;
+        const data: PlayerProfileResponse = await res.json();
+        const profileData = await getPlayerProfileData(profileId);
+
+        const rating1v1 =
+          profileData.rating1v1 ??
+          toNullableNumber(data.modes?.rm_1v1_elo?.rating);
+
+        return {
+          profile_id: profileId,
+          name: toNullableString(data.name) ?? `Player ${profileId}`,
+          rating: rating1v1 ?? 0,
+          rank: 0,
+          avatarSmall: profileData.avatarSmall,
+          rating1v1,
+          rating2v2: profileData.rating2v2,
+          rating3v3: profileData.rating3v3,
+          rating4v4: profileData.rating4v4,
+          soloRankLevel: profileData.soloRankLevel,
+          teamRankLevel: profileData.teamRankLevel,
+          topCivilizations: profileData.topCivilizations,
+        };
       }
-
-      const data: PlayerProfileResponse = await res.json();
-      const profileData = await getPlayerProfileData(profileId);
-
-      const rating1v1 =
-        profileData.rating1v1 ?? toNullableNumber(data.modes?.rm_1v1_elo?.rating);
-
-      return {
-        profile_id: profileId,
-        name: toNullableString(data.name) ?? `Player ${profileId}`,
-        rating: rating1v1 ?? 0,
-        rank: 0,
-        avatarSmall: profileData.avatarSmall,
-        rating1v1,
-        rating2v2: profileData.rating2v2,
-        rating3v3: profileData.rating3v3,
-        rating4v4: profileData.rating4v4,
-        soloRankLevel: profileData.soloRankLevel,
-        teamRankLevel: profileData.teamRankLevel,
-        topCivilizations: profileData.topCivilizations,
-      } satisfies LeaderboardPlayer;
-    })
+    )
   );
 
-  return players.filter(
-    (player): player is LeaderboardPlayer => player !== null
-  );
+  return players.filter(isNotNull);
 }

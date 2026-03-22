@@ -93,15 +93,32 @@ export default function HeroSection() {
               >
                 Classifica italiana 🇮🇹
               </LoadingLink>
+<div className="flex gap-4">
 
-              <LoadingLink
-                target="_blank"
-                rel="noopener noreferrer"
-                href="https://wheelofnames.com/52k-e26"
-                className="rounded-2xl bg-red-600 px-6 py-3 text-base font-semibold text-white shadow-lg transition hover:-translate-y-0.5"
-              >
-                Ruota delle civ
-              </LoadingLink>
+  <LoadingLink
+    href="/leaderboard/nord"
+    className="rounded-2xl bg-green-600 px-6 py-3 text-base font-semibold text-white shadow-lg transition hover:-translate-y-0.5"
+  >
+    Classifica Nord
+  </LoadingLink>
+
+  <LoadingLink
+    href="/leaderboard/centro"
+    className="rounded-2xl bg-white px-6 py-3 text-base font-semibold text-slate-900 shadow-lg transition hover:-translate-y-0.5"
+  >
+    Classifica Centro
+  </LoadingLink>
+
+  <LoadingLink
+    href="/leaderboard/sud"
+    className="rounded-2xl bg-red-600 px-6 py-3 text-base font-semibold text-white shadow-lg transition hover:-translate-y-0.5"
+  >
+    Classifica Sud
+  </LoadingLink>
+
+</div>
+
+
             </div>
           </div>
 

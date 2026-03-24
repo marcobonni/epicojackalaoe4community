@@ -13,6 +13,8 @@
     {"name":"Reina", "profile_id": 11689272, "macroRegion": "north" },
     {"name":"Nemesi", "profile_id": 21218914, "macroRegion": "north" },
     {"name":"Nightwish", "profile_id": 22219929, "macroRegion": "north" },
+    {"name":"Albero", "profile_id": 4404302, "macroRegion": "north" },
+
     
 
     {"name":"GenMimetico", "profile_id":11194141, "macroRegion": "center"},
@@ -28,6 +30,7 @@
     {"name":"Daddu", "profile_id":12254119, "macroRegion": "center"},
     {"name":"Ale Stardust", "profile_id":8050403, "macroRegion": "center"},
     {"name":"Gorat", "profile_id":7054390, "macroRegion": "center"},
+    {"name":"Gorat", "profile_id":16603160, "macroRegion": "center"},
     
 
     {"name":"EpicoJackal", "profile_id":17205553, "macroRegion": "south"},
@@ -35,6 +38,7 @@
     {"name":"DucaNero", "profile_id":8173756, "macroRegion": "south"},
     {"name":"paky_B", "profile_id":7992196, "macroRegion": "south"},
     {"name":"Flipx Jason", "profile_id":21456066, "macroRegion": "south"},
-    {"name":"Raion", "profile_id":21992607, "macroRegion": "south"}
+    {"name":"Raion", "profile_id":21992607, "macroRegion": "south"},
+    {"name":"Jeiden97", "profile_id":21509513, "macroRegion": "south"}
 
 ]

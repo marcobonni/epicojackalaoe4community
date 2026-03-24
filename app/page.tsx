@@ -71,18 +71,17 @@ const secondaryStreamers = enrichedStreamers
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100">
       <HeroSection />
+      <TwitchSection
+        primaryStreamer={primaryStreamer}
+        secondaryStreamers={secondaryStreamers}
+      />
+
+      <FeaturesSection />
 
       <DiscordOverviewSection
         inviteUrl={inviteUrl}
         onlineMembers={onlineMembers}
         liveStats={liveStats}
-      />
-
-      <FeaturesSection />
-
-      <TwitchSection
-        primaryStreamer={primaryStreamer}
-        secondaryStreamers={secondaryStreamers}
       />
 
       <CoachingSection coaches={COACHES} />

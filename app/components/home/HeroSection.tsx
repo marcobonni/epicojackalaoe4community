@@ -117,6 +117,12 @@ export default function HeroSection() {
   </LoadingLink>
 
 </div>
+  <LoadingLink
+    href="/beasty"
+    className="rounded-2xl bg-red-600 px-6 py-3 text-base font-semibold text-white shadow-lg transition hover:-translate-y-0.5"
+  >
+    Quiz
+  </LoadingLink>
 
 
             </div>

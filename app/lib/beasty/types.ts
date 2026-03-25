@@ -3,9 +3,15 @@ export type Player = {
   name: string;
   score: number;
   connected: boolean;
+  sessionId?: string;
 };
 
 export type RoomState = "lobby" | "question" | "reveal" | "finished";
+
+export type RoomSettings = {
+  categories: string[];
+  totalQuestions: number;
+};
 
 export type Room = {
   code: string;
@@ -13,11 +19,19 @@ export type Room = {
   state: RoomState;
   players: Player[];
   currentQuestionIndex: number;
+  settings: RoomSettings;
 };
 
 export type Question = {
   id: string;
+  category: string;
+  difficulty: string;
   text: string;
   options: string[];
   durationMs: number;
+};
+
+export type QuestionCategory = {
+  id: string;
+  label: string;
 };

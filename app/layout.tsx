@@ -4,6 +4,7 @@ import "./globals.css";
 import { NavigationLoaderProvider } from "@/app/components/NavigationLoaderProvider";
 import NavigationLoaderReset from "@/app/components/NavigationLoaderReset";
 import { SpeedInsights } from "@vercel/speed-insights/next"
+import { Analytics } from "@vercel/analytics/next"
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -37,6 +38,7 @@ export default function RootLayout({
           {children}
         </NavigationLoaderProvider>
         <SpeedInsights />
+        <Analytics/>
       </body>
     </html>
   );

@@ -41,6 +41,7 @@ export default function BeastyPage() {
     roundResults,
     revealStartedAt,
     revealDurationMs,
+    finalResults,
   } = useBeasty();
 
   const [name, setName] = useState("");
@@ -336,7 +337,6 @@ export default function BeastyPage() {
     });
   };
 
-  const totalSeconds = question ? Math.ceil(question.durationMs / 1000) : 0;
   const remainingMs =
     question && startedAt
       ? Math.max(0, question.durationMs - (timerTick - startedAt))
@@ -382,16 +382,16 @@ export default function BeastyPage() {
     return (
       <div className="min-h-screen bg-[#020617] text-slate-100">
         <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(circle_at_top,rgba(245,158,11,0.10),transparent_30%)]" />
-        <div className="relative mx-auto max-w-6xl px-6 py-12">
+        <div className="relative mx-auto max-w-7xl px-6 py-12">
           <div className="mb-10">
             <div className="inline-flex items-center rounded-full border border-amber-400/30 bg-amber-400/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-amber-300">
               Partita conclusa
             </div>
             <h1 className="mt-4 text-4xl font-black tracking-tight text-white md:text-5xl">
-              Fine partita
+              Riepilogo finale
             </h1>
             <p className="mt-3 max-w-2xl text-sm text-slate-300 md:text-base">
-              Ecco la classifica finale della sfida.
+              Tutti i giocatori, tutti i risultati e il dettaglio completo della partita.
             </p>
           </div>
 
@@ -402,20 +402,125 @@ export default function BeastyPage() {
           ) : null}
 
           <div className="rounded-3xl border border-amber-400/20 bg-slate-900/70 p-6 shadow-[0_0_40px_rgba(0,0,0,0.35)] backdrop-blur-sm md:p-8">
-            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-              {sortedPlayers.map((player, index) => (
+            <div className="grid gap-4 lg:grid-cols-3">
+              {finalResults.map((result, index) => (
                 <div
-                  key={player.id}
-                  className="rounded-2xl border border-slate-800 bg-slate-950/50 p-4"
+                  key={result.playerId}
+                  className="rounded-2xl border border-slate-800 bg-slate-950/50 p-5"
                 >
-                  <div className="flex items-center justify-between">
-                    <span className="font-semibold text-white">
-                      #{index + 1} {player.name}
-                    </span>
-                    <span className="text-amber-300">{player.score} pt</span>
+                  <div className="flex items-center justify-between gap-3">
+                    <div>
+                      <div className="text-sm uppercase tracking-[0.2em] text-amber-300/80">
+                        #{index + 1}
+                      </div>
+                      <div className="mt-1 text-xl font-black text-white">
+                        {result.playerName}
+                      </div>
+                    </div>
+
+                    <div className="rounded-2xl border border-amber-400/20 bg-amber-400/10 px-4 py-3 text-right">
+                      <div className="text-xs uppercase tracking-[0.2em] text-amber-300/80">
+                        Punteggio finale
+                      </div>
+                      <div className="text-2xl font-black text-amber-300">
+                        {result.finalScore}
+                      </div>
+                    </div>
                   </div>
-                  <div className="mt-2 text-sm text-slate-400">
-                    {index === 0 ? "Vincitore della lobby" : "Sfida completata"}
+
+                  <div className="mt-5 grid grid-cols-2 gap-3 text-sm">
+                    <div className="rounded-2xl border border-slate-800 bg-slate-900/70 p-3">
+                      <div className="text-slate-400">Corrette</div>
+                      <div className="mt-1 font-semibold text-emerald-300">
+                        {result.correctAnswers}
+                      </div>
+                    </div>
+                    <div className="rounded-2xl border border-slate-800 bg-slate-900/70 p-3">
+                      <div className="text-slate-400">Sbagliate</div>
+                      <div className="mt-1 font-semibold text-red-300">
+                        {result.wrongAnswers}
+                      </div>
+                    </div>
+                    <div className="rounded-2xl border border-slate-800 bg-slate-900/70 p-3">
+                      <div className="text-slate-400">Accuratezza</div>
+                      <div className="mt-1 font-semibold text-white">
+                        {result.accuracy}%
+                      </div>
+                    </div>
+                    <div className="rounded-2xl border border-slate-800 bg-slate-900/70 p-3">
+                      <div className="text-slate-400">Punti ottenuti</div>
+                      <div className="mt-1 font-semibold text-amber-300">
+                        {result.totalPointsEarned}
+                      </div>
+                    </div>
+                    <div className="col-span-2 rounded-2xl border border-slate-800 bg-slate-900/70 p-3">
+                      <div className="text-slate-400">Tempo medio risposta</div>
+                      <div className="mt-1 font-semibold text-cyan-300">
+                        {(result.avgResponseTimeMs / 1000).toFixed(2)}s
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="mt-6">
+                    <div className="text-sm font-semibold uppercase tracking-[0.2em] text-slate-300">
+                      Dettaglio round
+                    </div>
+
+                    <div className="mt-3 max-h-80 space-y-3 overflow-auto pr-1">
+                      {result.rounds.map((round, roundIndex) => (
+                        <div
+                          key={`${result.playerId}-${roundIndex}`}
+                          className="rounded-2xl border border-slate-800 bg-slate-900/70 p-4"
+                        >
+                          <div className="flex items-start justify-between gap-3">
+                            <div className="text-sm font-semibold text-white">
+                              {round.questionText}
+                            </div>
+                            <span
+                              className={`rounded-full px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.2em] ${
+                                round.isCorrect
+                                  ? "border border-emerald-400/30 bg-emerald-500/10 text-emerald-300"
+                                  : "border border-red-400/30 bg-red-500/10 text-red-300"
+                              }`}
+                            >
+                              {round.isCorrect ? "Corretta" : "Sbagliata"}
+                            </span>
+                          </div>
+
+                          <div className="mt-2 flex flex-wrap gap-2">
+                            <span className="rounded-full border border-slate-700 bg-slate-800 px-2 py-1 text-[11px] uppercase tracking-[0.2em] text-slate-300">
+                              {round.category}
+                            </span>
+                            <span className="rounded-full border border-slate-700 bg-slate-800 px-2 py-1 text-[11px] uppercase tracking-[0.2em] text-slate-300">
+                              {round.difficulty}
+                            </span>
+                          </div>
+
+                          <div className="mt-3 text-sm text-slate-300">
+                            Risposta scelta:{" "}
+                            <span className="font-semibold text-white">
+                              {round.selectedAnswer}
+                            </span>
+                          </div>
+
+                          {!round.isCorrect ? (
+                            <div className="mt-1 text-sm text-slate-400">
+                              Corretta:{" "}
+                              <span className="font-semibold text-emerald-300">
+                                {round.correctAnswer}
+                              </span>
+                            </div>
+                          ) : null}
+
+                          <div className="mt-2 text-sm text-slate-400">
+                            Punti round:{" "}
+                            <span className="font-semibold text-amber-300">
+                              +{round.pointsEarned}
+                            </span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
                   </div>
                 </div>
               ))}
@@ -1002,10 +1107,10 @@ export default function BeastyPage() {
 
               <div className="rounded-2xl border border-slate-800 bg-slate-950/40 p-5">
                 <div className="text-sm uppercase tracking-[0.2em] text-amber-300/80">
-                  Recap round
+                  Riepilogo finale
                 </div>
                 <p className="mt-3 text-sm text-slate-300">
-                  Ogni round mostra risposta corretta, scelte e punti ottenuti.
+                  A fine partita vedi statistiche complete e dettagli per ogni giocatore.
                 </p>
               </div>
             </div>

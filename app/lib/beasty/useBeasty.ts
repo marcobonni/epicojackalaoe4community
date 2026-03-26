@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { socket } from "./socket";
 import type {
   AnswerMarker,
+  FinalResult,
   Player,
   Question,
   QuestionCategory,
@@ -57,6 +58,7 @@ export function useBeasty() {
   const [roundResults, setRoundResults] = useState<RoundResult[]>([]);
   const [revealStartedAt, setRevealStartedAt] = useState<number | null>(null);
   const [revealDurationMs, setRevealDurationMs] = useState(0);
+  const [finalResults, setFinalResults] = useState<FinalResult[]>([]);
 
   useEffect(() => {
     socket.connect();
@@ -101,6 +103,7 @@ export function useBeasty() {
       setRoundResults([]);
       setRevealStartedAt(null);
       setRevealDurationMs(0);
+      setFinalResults([]);
     };
 
     const onAnswersUpdated = ({
@@ -157,9 +160,11 @@ export function useBeasty() {
     const onGameFinished = ({
       room: updatedRoom,
       players: updatedPlayers,
+      finalResults: nextFinalResults,
     }: {
       room: Room;
       players: Player[];
+      finalResults?: FinalResult[];
     }) => {
       setRoom(updatedRoom);
       setPlayers(updatedPlayers);
@@ -172,6 +177,7 @@ export function useBeasty() {
       setAnswerMarkers([]);
       setRevealStartedAt(null);
       setRevealDurationMs(0);
+      setFinalResults(nextFinalResults ?? []);
     };
 
     socket.on("connect", onConnect);
@@ -257,6 +263,7 @@ export function useBeasty() {
     roundResults,
     revealStartedAt,
     revealDurationMs,
+    finalResults,
     createRoom,
     joinRoom,
     updateRoomSettings,

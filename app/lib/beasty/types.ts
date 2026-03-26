@@ -51,3 +51,26 @@ export type RoundResult = {
   pointsEarned: number;
   totalScore: number;
 };
+
+export type FinalRoundDetail = {
+  questionText: string;
+  category: string;
+  difficulty: string;
+  selectedAnswer: string;
+  correctAnswer: string;
+  isCorrect: boolean;
+  pointsEarned: number;
+};
+
+export type FinalResult = {
+  playerId: string;
+  playerName: string;
+  finalScore: number;
+  correctAnswers: number;
+  wrongAnswers: number;
+  answeredQuestions: number;
+  accuracy: number;
+  totalPointsEarned: number;
+  avgResponseTimeMs: number;
+  rounds: FinalRoundDetail[];
+};

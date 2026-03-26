@@ -35,3 +35,19 @@ export type QuestionCategory = {
   id: string;
   label: string;
 };
+
+export type AnswerMarker = {
+  playerId: string;
+  playerName: string;
+  answerIndex: number;
+};
+
+export type RoundResult = {
+  playerId: string;
+  playerName: string;
+  answerIndex: number;
+  selectedAnswer: string;
+  isCorrect: boolean;
+  pointsEarned: number;
+  totalScore: number;
+};

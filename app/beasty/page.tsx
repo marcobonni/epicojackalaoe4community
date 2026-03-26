@@ -11,6 +11,14 @@ const DEFAULT_CATEGORY_IDS = [
   "ages",
 ];
 
+function getPlayerBadge(name: string) {
+  const cleaned = name.trim();
+  if (!cleaned) return "?";
+
+  const parts = cleaned.split(/\s+/).slice(0, 2);
+  return parts.map((part) => part[0]?.toUpperCase() ?? "").join("");
+}
+
 export default function BeastyPage() {
   const {
     connected,
@@ -29,6 +37,10 @@ export default function BeastyPage() {
     difficultyMultiplier,
     requestRematch,
     categories,
+    answerMarkers,
+    roundResults,
+    revealStartedAt,
+    revealDurationMs,
   } = useBeasty();
 
   const [name, setName] = useState("");
@@ -128,6 +140,18 @@ export default function BeastyPage() {
 
     return () => clearInterval(interval);
   }, [question, startedAt]);
+
+  useEffect(() => {
+    if (!revealStartedAt || !revealDurationMs) {
+      return;
+    }
+
+    const interval = setInterval(() => {
+      setTimerTick(Date.now());
+    }, 100);
+
+    return () => clearInterval(interval);
+  }, [revealStartedAt, revealDurationMs]);
 
   useEffect(() => {
     setSelectedAnswer(null);
@@ -323,6 +347,16 @@ export default function BeastyPage() {
       ? Math.max(0, (remainingMs / question.durationMs) * 100)
       : 0;
 
+  const revealRemainingMs =
+    revealStartedAt && revealDurationMs
+      ? Math.max(0, revealDurationMs - (timerTick - revealStartedAt))
+      : 0;
+  const revealTimeLeft = Math.ceil(revealRemainingMs / 1000);
+  const revealTimerPercent =
+    revealDurationMs > 0
+      ? Math.max(0, (revealRemainingMs / revealDurationMs) * 100)
+      : 0;
+
   const multiplierBadge = `x${difficultyMultiplier}`;
 
   if (!connected) {
@@ -408,69 +442,152 @@ export default function BeastyPage() {
         <div className="relative mx-auto max-w-6xl px-6 py-12">
           <div className="mb-10">
             <div className="inline-flex items-center rounded-full border border-emerald-400/30 bg-emerald-400/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-emerald-300">
-              Reveal risposta
+              Recap round
             </div>
             <h1 className="mt-4 text-4xl font-black tracking-tight text-white md:text-5xl">
               Round concluso
             </h1>
             <p className="mt-3 max-w-2xl text-sm text-slate-300 md:text-base">
-              Controlla subito la risposta corretta e guarda come cambia la
-              classifica.
+              Risposta corretta, scelte dei giocatori e punti ottenuti in questo round.
             </p>
           </div>
 
-          <div className="rounded-3xl border border-emerald-400/20 bg-slate-900/70 p-6 shadow-[0_0_40px_rgba(0,0,0,0.35)] backdrop-blur-sm md:p-8">
-            <div className="rounded-2xl border border-slate-800 bg-slate-950/50 p-5">
-              <div className="flex flex-wrap items-center gap-3">
-                <p className="text-sm uppercase tracking-[0.2em] text-emerald-300/80">
-                  {question.category}
-                </p>
-                <span className="rounded-full border border-indigo-400/30 bg-indigo-500/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-indigo-300">
-                  {question.difficulty}
-                </span>
-                <span className="rounded-full border border-fuchsia-400/30 bg-fuchsia-500/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-fuchsia-300">
-                  {multiplierBadge} punteggio
-                </span>
+          <div className="mb-6 rounded-3xl border border-emerald-400/20 bg-slate-900/70 p-5 shadow-[0_0_40px_rgba(0,0,0,0.35)] backdrop-blur-sm">
+            <div className="flex items-center justify-between gap-4">
+              <div className="text-sm font-semibold uppercase tracking-[0.2em] text-emerald-300">
+                Prossima domanda tra {revealTimeLeft} secondi
               </div>
 
-              <h2 className="mt-3 text-2xl font-black text-white md:text-3xl">
-                {question.text}
-              </h2>
             </div>
 
-            <div className="mt-6 rounded-2xl border border-emerald-400/30 bg-emerald-500/10 p-5">
-              <p className="text-sm uppercase tracking-[0.2em] text-emerald-300/80">
-                Risposta corretta
-              </p>
-              <div className="mt-3 text-2xl font-black text-emerald-200">
-                {reveal.correctAnswer}
+            <div className="mt-4 h-3 w-full overflow-hidden rounded-full bg-slate-800">
+              <div
+                className="h-full rounded-full bg-emerald-400 transition-all"
+                style={{ width: `${revealTimerPercent}%` }}
+              />
+            </div>
+          </div>
+
+          <div className="grid gap-6 lg:grid-cols-[1.2fr_1fr]">
+            <div className="rounded-3xl border border-emerald-400/20 bg-slate-900/70 p-6 shadow-[0_0_40px_rgba(0,0,0,0.35)] backdrop-blur-sm md:p-8">
+              <div className="rounded-2xl border border-slate-800 bg-slate-950/50 p-5">
+                <div className="flex flex-wrap items-center gap-3">
+                  <p className="text-sm uppercase tracking-[0.2em] text-emerald-300/80">
+                    {question.category}
+                  </p>
+                  <span className="rounded-full border border-indigo-400/30 bg-indigo-500/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-indigo-300">
+                    {question.difficulty}
+                  </span>
+                  <span className="rounded-full border border-fuchsia-400/30 bg-fuchsia-500/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-fuchsia-300">
+                    {multiplierBadge} punteggio
+                  </span>
+                </div>
+
+                <h2 className="mt-3 text-2xl font-black text-white md:text-3xl">
+                  {question.text}
+                </h2>
+              </div>
+
+              <div className="mt-6 space-y-3">
+                {question.options.map((option, index) => {
+                  const markersForOption = answerMarkers.filter(
+                    (marker) => marker.answerIndex === index
+                  );
+
+                  return (
+                    <div
+                      key={option}
+                      className={`rounded-2xl border p-4 ${
+                        index === reveal.correctIndex
+                          ? "border-emerald-400/40 bg-emerald-500/10"
+                          : "border-slate-800 bg-slate-950/50"
+                      }`}
+                    >
+                      <div className="flex items-center justify-between gap-4">
+                        <div className="font-semibold text-white">
+                          <span className="mr-3 inline-flex h-8 w-8 items-center justify-center rounded-full border border-amber-400/30 bg-amber-400/10 text-sm text-amber-300">
+                            {String.fromCharCode(65 + index)}
+                          </span>
+                          {option}
+                        </div>
+
+                        {index === reveal.correctIndex ? (
+                          <span className="rounded-full border border-emerald-400/30 bg-emerald-500/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-emerald-300">
+                            Corretta
+                          </span>
+                        ) : null}
+                      </div>
+
+                      {markersForOption.length > 0 ? (
+                        <div className="mt-4 flex flex-wrap gap-2">
+                          {markersForOption.map((marker) => (
+                            <div
+                              key={marker.playerId}
+                              title={marker.playerName}
+                              className="inline-flex h-9 min-w-9 items-center justify-center rounded-full border border-slate-700 bg-slate-800 px-2 text-xs font-bold text-slate-100"
+                            >
+                              {getPlayerBadge(marker.playerName)}
+                            </div>
+                          ))}
+                        </div>
+                      ) : (
+                        <div className="mt-4 text-sm text-slate-500">
+                          Nessun giocatore ha scelto questa risposta.
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
               </div>
             </div>
 
-            <div className="mt-8">
-              <h3 className="text-lg font-bold text-white">Classifica live</h3>
-              <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-                {sortedPlayers.map((player, index) => (
+            <div className="rounded-3xl border border-emerald-400/20 bg-slate-900/70 p-6 shadow-[0_0_40px_rgba(0,0,0,0.35)] backdrop-blur-sm md:p-8">
+              <h3 className="text-lg font-bold text-white">Recap round</h3>
+
+              <div className="mt-4 space-y-3">
+                {roundResults.map((result) => (
                   <div
-                    key={player.id}
+                    key={result.playerId}
                     className="rounded-2xl border border-slate-800 bg-slate-950/50 p-4"
                   >
-                    <div className="flex items-center justify-between">
+                    <div className="flex items-center justify-between gap-3">
                       <span className="font-semibold text-white">
-                        #{index + 1} {player.name}
+                        {result.playerName}
                       </span>
-                      <span className="text-amber-300">{player.score} pt</span>
+                      <span
+                        className={`rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] ${
+                          result.isCorrect
+                            ? "border border-emerald-400/30 bg-emerald-500/10 text-emerald-300"
+                            : "border border-red-400/30 bg-red-500/10 text-red-300"
+                        }`}
+                      >
+                        {result.isCorrect ? "Corretta" : "Sbagliata"}
+                      </span>
                     </div>
-                    <div className="mt-2 text-sm text-slate-400">
-                      {player.connected ? "Connesso" : "Disconnesso"}
+
+                    <div className="mt-3 text-sm text-slate-300">
+                      Risposta:{" "}
+                      <span className="font-semibold text-white">
+                        {result.selectedAnswer}
+                      </span>
+                    </div>
+
+                    <div className="mt-2 flex items-center justify-between text-sm">
+                      <span className="text-slate-400">Punti round</span>
+                      <span className="font-semibold text-amber-300">
+                        +{result.pointsEarned}
+                      </span>
+                    </div>
+
+                    <div className="mt-1 flex items-center justify-between text-sm">
+                      <span className="text-slate-400">Totale</span>
+                      <span className="font-semibold text-white">
+                        {result.totalScore}
+                      </span>
                     </div>
                   </div>
                 ))}
               </div>
-            </div>
-
-            <div className="mt-6 text-sm text-slate-400">
-              La prossima domanda partirà automaticamente tra pochi istanti.
             </div>
           </div>
         </div>
@@ -549,27 +666,51 @@ export default function BeastyPage() {
             </div>
 
             <div className="mt-8 grid gap-4 md:grid-cols-2">
-              {question.options.map((opt, i) => (
-                <button
-                  key={i}
-                  className={`rounded-2xl border p-5 text-left text-base font-semibold transition disabled:cursor-not-allowed disabled:opacity-60 ${
-                    selectedAnswer === i
-                      ? "border-amber-400/60 bg-amber-400/10 text-amber-100"
-                      : "border-slate-700 bg-slate-950/60 text-slate-100 hover:border-amber-400/50 hover:bg-slate-800"
-                  }`}
-                  onClick={() => handleSubmitAnswer(i)}
-                  disabled={
-                    submittingAnswer ||
-                    selectedAnswer !== null ||
-                    timeLeft <= 0
-                  }
-                >
-                  <span className="mr-3 inline-flex h-8 w-8 items-center justify-center rounded-full border border-amber-400/30 bg-amber-400/10 text-sm text-amber-300">
-                    {String.fromCharCode(65 + i)}
-                  </span>
-                  {opt}
-                </button>
-              ))}
+              {question.options.map((opt, i) => {
+                const markersForOption = answerMarkers.filter(
+                  (marker) => marker.answerIndex === i
+                );
+
+                return (
+                  <button
+                    key={i}
+                    className={`rounded-2xl border p-5 text-left text-base font-semibold transition disabled:cursor-not-allowed disabled:opacity-60 ${
+                      selectedAnswer === i
+                        ? "border-amber-400/60 bg-amber-400/10 text-amber-100"
+                        : "border-slate-700 bg-slate-950/60 text-slate-100 hover:border-amber-400/50 hover:bg-slate-800"
+                    }`}
+                    onClick={() => handleSubmitAnswer(i)}
+                    disabled={
+                      submittingAnswer ||
+                      selectedAnswer !== null ||
+                      timeLeft <= 0
+                    }
+                  >
+                    <div className="flex items-start gap-3">
+                      <span className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-amber-400/30 bg-amber-400/10 text-sm text-amber-300">
+                        {String.fromCharCode(65 + i)}
+                      </span>
+                      <div className="flex-1">
+                        <div>{opt}</div>
+
+                        {markersForOption.length > 0 ? (
+                          <div className="mt-4 flex flex-wrap gap-2">
+                            {markersForOption.map((marker) => (
+                              <div
+                                key={marker.playerId}
+                                title={marker.playerName}
+                                className="inline-flex h-8 min-w-8 items-center justify-center rounded-full border border-slate-600 bg-slate-800 px-2 text-[11px] font-bold text-slate-100"
+                              >
+                                {getPlayerBadge(marker.playerName)}
+                              </div>
+                            ))}
+                          </div>
+                        ) : null}
+                      </div>
+                    </div>
+                  </button>
+                );
+              })}
             </div>
 
             <div className="mt-10">
@@ -852,19 +993,19 @@ export default function BeastyPage() {
 
               <div className="rounded-2xl border border-slate-800 bg-slate-950/40 p-5">
                 <div className="text-sm uppercase tracking-[0.2em] text-amber-300/80">
-                  Rejoin
+                  Risposte visibili
                 </div>
                 <p className="mt-3 text-sm text-slate-300">
-                  Se rientri con lo stesso browser recuperi la tua sessione.
+                  Quando un giocatore risponde, compare la sua icona sotto la scelta fatta.
                 </p>
               </div>
 
               <div className="rounded-2xl border border-slate-800 bg-slate-950/40 p-5">
                 <div className="text-sm uppercase tracking-[0.2em] text-amber-300/80">
-                  Difficoltà
+                  Recap round
                 </div>
                 <p className="mt-3 text-sm text-slate-300">
-                  Le domande più difficili assegnano più punti.
+                  Ogni round mostra risposta corretta, scelte e punti ottenuti.
                 </p>
               </div>
             </div>

@@ -2,7 +2,15 @@
 
 import { useEffect, useState } from "react";
 import { socket } from "./socket";
-import type { Player, Question, QuestionCategory, Room, RoomSettings } from "./types";
+import type {
+  AnswerMarker,
+  Player,
+  Question,
+  QuestionCategory,
+  Room,
+  RoomSettings,
+  RoundResult,
+} from "./types";
 
 type RevealState = {
   correctIndex: number;
@@ -45,6 +53,10 @@ export function useBeasty() {
   const [doublePoints, setDoublePoints] = useState(false);
   const [difficultyMultiplier, setDifficultyMultiplier] = useState(1);
   const [categories] = useState<QuestionCategory[]>(DEFAULT_CATEGORIES);
+  const [answerMarkers, setAnswerMarkers] = useState<AnswerMarker[]>([]);
+  const [roundResults, setRoundResults] = useState<RoundResult[]>([]);
+  const [revealStartedAt, setRevealStartedAt] = useState<number | null>(null);
+  const [revealDurationMs, setRevealDurationMs] = useState(0);
 
   useEffect(() => {
     socket.connect();
@@ -68,12 +80,14 @@ export function useBeasty() {
       startedAt: nextStartedAt,
       doublePoints: nextDoublePoints,
       difficultyMultiplier: nextDifficultyMultiplier,
+      answerMarkers: nextAnswerMarkers,
     }: {
       room: Room;
       question: Question;
       startedAt: number;
       doublePoints?: boolean;
       difficultyMultiplier?: number;
+      answerMarkers?: AnswerMarker[];
     }) => {
       setRoom(updatedRoom);
       setQuestion(nextQuestion);
@@ -83,6 +97,18 @@ export function useBeasty() {
       setGameFinished(false);
       setDoublePoints(Boolean(nextDoublePoints));
       setDifficultyMultiplier(nextDifficultyMultiplier ?? 1);
+      setAnswerMarkers(nextAnswerMarkers ?? []);
+      setRoundResults([]);
+      setRevealStartedAt(null);
+      setRevealDurationMs(0);
+    };
+
+    const onAnswersUpdated = ({
+      answerMarkers: nextAnswerMarkers,
+    }: {
+      answerMarkers: AnswerMarker[];
+    }) => {
+      setAnswerMarkers(nextAnswerMarkers);
     };
 
     const onScoreboardUpdated = ({
@@ -100,6 +126,10 @@ export function useBeasty() {
       correctAnswer,
       players: updatedPlayers,
       difficultyMultiplier: nextDifficultyMultiplier,
+      answerMarkers: nextAnswerMarkers,
+      roundResults: nextRoundResults,
+      revealStartedAt: nextRevealStartedAt,
+      revealDurationMs: nextRevealDurationMs,
     }: {
       room: Room;
       question: Question;
@@ -107,6 +137,10 @@ export function useBeasty() {
       correctAnswer: string;
       players: Player[];
       difficultyMultiplier?: number;
+      answerMarkers?: AnswerMarker[];
+      roundResults?: RoundResult[];
+      revealStartedAt?: number;
+      revealDurationMs?: number;
     }) => {
       setRoom(updatedRoom);
       setQuestion(currentQuestion);
@@ -114,6 +148,10 @@ export function useBeasty() {
       setReveal({ correctIndex, correctAnswer });
       setStartedAt(null);
       setDifficultyMultiplier(nextDifficultyMultiplier ?? 1);
+      setAnswerMarkers(nextAnswerMarkers ?? []);
+      setRoundResults(nextRoundResults ?? []);
+      setRevealStartedAt(nextRevealStartedAt ?? null);
+      setRevealDurationMs(nextRevealDurationMs ?? 0);
     };
 
     const onGameFinished = ({
@@ -131,12 +169,16 @@ export function useBeasty() {
       setGameFinished(true);
       setDoublePoints(false);
       setDifficultyMultiplier(1);
+      setAnswerMarkers([]);
+      setRevealStartedAt(null);
+      setRevealDurationMs(0);
     };
 
     socket.on("connect", onConnect);
     socket.on("disconnect", onDisconnect);
     socket.on("room:updated", onRoomUpdated);
     socket.on("game:question", onGameQuestion);
+    socket.on("answers:updated", onAnswersUpdated);
     socket.on("scoreboard:updated", onScoreboardUpdated);
     socket.on("game:reveal", onGameReveal);
     socket.on("game:finished", onGameFinished);
@@ -146,6 +188,7 @@ export function useBeasty() {
       socket.off("disconnect", onDisconnect);
       socket.off("room:updated", onRoomUpdated);
       socket.off("game:question", onGameQuestion);
+      socket.off("answers:updated", onAnswersUpdated);
       socket.off("scoreboard:updated", onScoreboardUpdated);
       socket.off("game:reveal", onGameReveal);
       socket.off("game:finished", onGameFinished);
@@ -210,6 +253,10 @@ export function useBeasty() {
     doublePoints,
     difficultyMultiplier,
     categories,
+    answerMarkers,
+    roundResults,
+    revealStartedAt,
+    revealDurationMs,
     createRoom,
     joinRoom,
     updateRoomSettings,

@@ -11,12 +11,59 @@ const DEFAULT_CATEGORY_IDS = [
   "ages",
 ];
 
+type LandingMode = "create" | "join" | null;
+
 function getPlayerBadge(name: string) {
   const cleaned = name.trim();
   if (!cleaned) return "?";
 
   const parts = cleaned.split(/\s+/).slice(0, 2);
   return parts.map((part) => part[0]?.toUpperCase() ?? "").join("");
+}
+
+function HeroHeader({
+  title,
+  description,
+}: {
+  title: string;
+  description: string;
+}) {
+  return (
+    <div className="mb-10">
+      <div className="inline-flex items-center rounded-full border border-amber-400/30 bg-amber-400/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-amber-300">
+        Party Game AoE4
+      </div>
+
+      <div className="mt-4 flex flex-wrap gap-3">
+        <button
+          onClick={() => {
+            window.open("https://discord.com/users/240210612582481922", "_blank");
+          }}
+          className="inline-flex items-center justify-center rounded-2xl border border-amber-400/30 bg-amber-400/10 px-4 py-2 text-sm font-semibold text-amber-200 transition hover:border-amber-400/60 hover:bg-amber-400/15"
+        >
+          💬 Feedback
+        </button>
+
+        <button
+          onClick={() => {
+            window.localStorage.removeItem("beasty-landing-mode");
+            window.location.href = "/";
+          }}
+          className="inline-flex items-center justify-center rounded-2xl border border-slate-700 bg-slate-900/80 px-4 py-2 text-sm font-semibold text-slate-200 transition hover:border-amber-400/50 hover:text-amber-300"
+        >
+          ← Home
+        </button>
+      </div>
+
+      <h1 className="mt-6 text-4xl font-black tracking-tight text-white md:text-5xl">
+        {title}
+      </h1>
+
+      <p className="mt-3 max-w-2xl text-sm text-slate-300 md:text-base">
+        {description}
+      </p>
+    </div>
+  );
 }
 
 export default function BeastyPage() {
@@ -55,6 +102,7 @@ export default function BeastyPage() {
   );
   const [totalQuestions, setTotalQuestions] = useState(10);
   const [savingSettings, setSavingSettings] = useState(false);
+  const [landingMode, setLandingMode] = useState<LandingMode>(null);
 
   const previousPhaseRef = useRef<string | null>(null);
 
@@ -65,11 +113,14 @@ export default function BeastyPage() {
 
   const currentPlayer = useMemo(
     () =>
-      room && players.find((player) => player.sessionId && player.id === room.hostId),
-    [players, room]
+      room &&
+      players.find(
+        (player) => player.name.trim().toLowerCase() === name.trim().toLowerCase()
+      ),
+    [players, room, name]
   );
 
-  const isHost = Boolean(currentPlayer);
+  const isHost = Boolean(currentPlayer && room && currentPlayer.id === room.hostId);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -80,6 +131,7 @@ export default function BeastyPage() {
     const savedTotalQuestions = window.localStorage.getItem(
       "beasty-total-questions"
     );
+    const savedLandingMode = window.localStorage.getItem("beasty-landing-mode");
 
     if (savedName) setName(savedName);
     if (savedCode) setCode(savedCode);
@@ -98,6 +150,10 @@ export default function BeastyPage() {
       if (!Number.isNaN(parsed)) {
         setTotalQuestions(Math.max(5, Math.min(20, parsed)));
       }
+    }
+
+    if (savedLandingMode === "create" || savedLandingMode === "join") {
+      setLandingMode(savedLandingMode);
     }
   }, []);
 
@@ -123,6 +179,16 @@ export default function BeastyPage() {
     if (typeof window === "undefined") return;
     window.localStorage.setItem("beasty-total-questions", String(totalQuestions));
   }, [totalQuestions]);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    if (landingMode) {
+      window.localStorage.setItem("beasty-landing-mode", landingMode);
+    } else {
+      window.localStorage.removeItem("beasty-landing-mode");
+    }
+  }, [landingMode]);
 
   useEffect(() => {
     if (!room?.settings) return;
@@ -311,21 +377,6 @@ export default function BeastyPage() {
     setSubmittingAnswer(false);
   };
 
-  const handleRematch = async () => {
-    if (!room) return;
-
-    setActionError(null);
-
-    const response = (await requestRematch(room.code)) as {
-      ok?: boolean;
-      error?: string;
-    };
-
-    if (!response?.ok) {
-      setActionError(response?.error ?? "Impossibile avviare la rivincita.");
-    }
-  };
-
   const toggleCategory = (categoryId: string) => {
     setSelectedCategories((prev) => {
       if (prev.includes(categoryId)) {
@@ -383,17 +434,10 @@ export default function BeastyPage() {
       <div className="min-h-screen bg-[#020617] text-slate-100">
         <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(circle_at_top,rgba(245,158,11,0.10),transparent_30%)]" />
         <div className="relative mx-auto max-w-7xl px-6 py-12">
-          <div className="mb-10">
-            <div className="inline-flex items-center rounded-full border border-amber-400/30 bg-amber-400/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-amber-300">
-              Partita conclusa
-            </div>
-            <h1 className="mt-4 text-4xl font-black tracking-tight text-white md:text-5xl">
-              Riepilogo finale
-            </h1>
-            <p className="mt-3 max-w-2xl text-sm text-slate-300 md:text-base">
-              Tutti i giocatori, tutti i risultati e il dettaglio completo della partita.
-            </p>
-          </div>
+          <HeroHeader
+            title="Riepilogo finale"
+            description="Tutti i giocatori, tutti i risultati e il dettaglio completo della partita."
+          />
 
           {actionError ? (
             <div className="mb-6 rounded-2xl border border-red-500/20 bg-red-500/10 px-4 py-3 text-sm text-red-200">
@@ -406,12 +450,16 @@ export default function BeastyPage() {
               {finalResults.map((result, index) => (
                 <div
                   key={result.playerId}
-                  className="rounded-2xl border border-slate-800 bg-slate-950/50 p-5"
+                  className={`rounded-2xl border p-5 ${
+                    index === 0
+                      ? "border-amber-300/40 bg-[linear-gradient(180deg,rgba(245,158,11,0.12),rgba(2,6,23,0.6))] shadow-[0_0_30px_rgba(245,158,11,0.12)]"
+                      : "border-slate-800 bg-slate-950/50"
+                  }`}
                 >
                   <div className="flex items-center justify-between gap-3">
                     <div>
                       <div className="text-sm uppercase tracking-[0.2em] text-amber-300/80">
-                        #{index + 1}
+                        {index === 0 ? "🏆 Vincitore" : `#${index + 1}`}
                       </div>
                       <div className="mt-1 text-xl font-black text-white">
                         {result.playerName}
@@ -529,7 +577,10 @@ export default function BeastyPage() {
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
               <button
                 className="inline-flex items-center justify-center rounded-2xl border border-amber-400/40 bg-amber-500/90 px-5 py-3 font-semibold text-slate-950 transition hover:bg-amber-400"
-                onClick={handleRematch}
+                onClick={() => {
+                  window.localStorage.removeItem("beasty-landing-mode");
+                  window.location.reload();
+                }}
               >
                 Torna in lobby
               </button>
@@ -545,24 +596,16 @@ export default function BeastyPage() {
       <div className="min-h-screen bg-[#020617] text-slate-100">
         <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(circle_at_top,rgba(245,158,11,0.10),transparent_30%)]" />
         <div className="relative mx-auto max-w-6xl px-6 py-12">
-          <div className="mb-10">
-            <div className="inline-flex items-center rounded-full border border-emerald-400/30 bg-emerald-400/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-emerald-300">
-              Recap round
-            </div>
-            <h1 className="mt-4 text-4xl font-black tracking-tight text-white md:text-5xl">
-              Round concluso
-            </h1>
-            <p className="mt-3 max-w-2xl text-sm text-slate-300 md:text-base">
-              Risposta corretta, scelte dei giocatori e punti ottenuti in questo round.
-            </p>
-          </div>
+          <HeroHeader
+            title="Round concluso"
+            description="Risposta corretta, scelte dei giocatori e punti ottenuti in questo round."
+          />
 
           <div className="mb-6 rounded-3xl border border-emerald-400/20 bg-slate-900/70 p-5 shadow-[0_0_40px_rgba(0,0,0,0.35)] backdrop-blur-sm">
             <div className="flex items-center justify-between gap-4">
               <div className="text-sm font-semibold uppercase tracking-[0.2em] text-emerald-300">
                 Prossima domanda tra {revealTimeLeft} secondi
               </div>
-
             </div>
 
             <div className="mt-4 h-3 w-full overflow-hidden rounded-full bg-slate-800">
@@ -705,18 +748,10 @@ export default function BeastyPage() {
       <div className="min-h-screen bg-[#020617] text-slate-100">
         <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(circle_at_top,rgba(245,158,11,0.10),transparent_30%)]" />
         <div className="relative mx-auto max-w-6xl px-6 py-12">
-          <div className="mb-10">
-            <div className="inline-flex items-center rounded-full border border-amber-400/30 bg-amber-400/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-amber-300">
-              Party Game AoE4
-            </div>
-            <h1 className="mt-4 text-4xl font-black tracking-tight text-white md:text-5xl">
-              Who Wants to Be Beasty?
-            </h1>
-            <p className="mt-3 max-w-2xl text-sm text-slate-300 md:text-base">
-              Sfida live in corso. Rispondi più velocemente degli altri e scala
-              la classifica.
-            </p>
-          </div>
+          <HeroHeader
+            title="Who Wants to Be Beasty?"
+            description="Sfida live i tuoi amici. Rispondi più velocemente degli altri e scala la classifica."
+          />
 
           {actionError ? (
             <div className="mb-6 rounded-2xl border border-red-500/20 bg-red-500/10 px-4 py-3 text-sm text-red-200">
@@ -850,18 +885,10 @@ export default function BeastyPage() {
       <div className="min-h-screen bg-[#020617] text-slate-100">
         <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(circle_at_top,rgba(245,158,11,0.10),transparent_30%)]" />
         <div className="relative mx-auto max-w-6xl px-6 py-12">
-          <div className="mb-10">
-            <div className="inline-flex items-center rounded-full border border-amber-400/30 bg-amber-400/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-amber-300">
-              Party Game AoE4
-            </div>
-            <h1 className="mt-4 text-4xl font-black tracking-tight text-white md:text-5xl">
-              Who Wants to Be Beasty?
-            </h1>
-            <p className="mt-3 max-w-2xl text-sm text-slate-300 md:text-base">
-              Lobby privata pronta. Condividi il codice della stanza e attendi
-              gli altri giocatori.
-            </p>
-          </div>
+          <HeroHeader
+            title="Who Wants to Be Beasty?"
+            description="Lobby privata pronta. Condividi il codice della stanza e attendi gli altri giocatori."
+          />
 
           {actionError ? (
             <div className="mb-6 rounded-2xl border border-red-500/20 bg-red-500/10 px-4 py-3 text-sm text-red-200">
@@ -881,12 +908,18 @@ export default function BeastyPage() {
                   </h2>
                 </div>
 
-                <button
-                  className="inline-flex items-center justify-center rounded-2xl border border-amber-400/40 bg-amber-500/90 px-5 py-3 font-semibold text-slate-950 transition hover:bg-amber-400 disabled:cursor-not-allowed disabled:opacity-50"
-                  onClick={handleStartGame}
-                >
-                  Avvia partita
-                </button>
+                {isHost ? (
+                  <button
+                    className="inline-flex items-center justify-center rounded-2xl border border-amber-400/40 bg-amber-500/90 px-5 py-3 font-semibold text-slate-950 transition hover:bg-amber-400 disabled:cursor-not-allowed disabled:opacity-50"
+                    onClick={handleStartGame}
+                  >
+                    Avvia partita
+                  </button>
+                ) : (
+                  <div className="rounded-2xl border border-slate-800 bg-slate-950/40 px-4 py-3 text-sm text-slate-400">
+                    In attesa che l&apos;host avvii la partita.
+                  </div>
+                )}
               </div>
 
               <div className="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
@@ -991,7 +1024,7 @@ export default function BeastyPage() {
                 </button>
               ) : (
                 <div className="mt-6 rounded-2xl border border-slate-800 bg-slate-950/40 px-4 py-3 text-sm text-slate-400">
-                  Solo l'host può modificare le impostazioni.
+                  Solo l&apos;host può modificare le impostazioni.
                 </div>
               )}
             </div>
@@ -1005,20 +1038,10 @@ export default function BeastyPage() {
     <div className="min-h-screen bg-[#020617] text-slate-100">
       <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(circle_at_top,rgba(245,158,11,0.10),transparent_30%)]" />
       <div className="relative mx-auto max-w-6xl px-6 py-12">
-        <div className="mb-10">
-          <div className="inline-flex items-center rounded-full border border-amber-400/30 bg-amber-400/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-amber-300">
-            Party Game AoE4
-          </div>
-
-          <h1 className="mt-4 text-4xl font-black tracking-tight text-white md:text-5xl">
-            Who Wants to Be Beasty?
-          </h1>
-
-          <p className="mt-3 max-w-2xl text-sm text-slate-300 md:text-base">
-            Crea una stanza, invita gli altri giocatori con un codice e
-            sfidatevi a colpi di trivia su Age of Empires IV.
-          </p>
-        </div>
+        <HeroHeader
+          title="Who Wants to Be Beasty?"
+          description="Crea una stanza oppure unisciti a una lobby esistente e sfidatevi a colpi di trivia su Age of Empires IV."
+        />
 
         {actionError ? (
           <div className="mb-6 rounded-2xl border border-red-500/20 bg-red-500/10 px-4 py-3 text-sm text-red-200">
@@ -1028,92 +1051,237 @@ export default function BeastyPage() {
 
         <div className="grid gap-6 lg:grid-cols-[1.4fr_1fr]">
           <div className="rounded-3xl border border-amber-400/20 bg-slate-900/70 p-6 shadow-[0_0_40px_rgba(0,0,0,0.35)] backdrop-blur-sm md:p-8">
-            <div className="grid gap-6 md:grid-cols-2">
-              <div className="rounded-2xl border border-slate-800 bg-slate-950/40 p-5">
-                <h2 className="text-lg font-bold text-white">Crea stanza</h2>
-                <p className="mt-1 text-sm text-slate-400">
-                  Apri una lobby privata e condividi il codice con gli altri
-                  giocatori.
-                </p>
-
-                <div className="mt-4 space-y-3">
-                  <input
-                    placeholder="Nome giocatore"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    className="w-full rounded-2xl border border-slate-700 bg-slate-950/70 px-4 py-3 text-slate-100 outline-none transition focus:border-amber-400/60 focus:ring-2 focus:ring-amber-400/20"
-                  />
+            {!landingMode ? (
+              <div>
+                <div className="grid gap-6 md:grid-cols-2">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setActionError(null);
+                      setLandingMode("create");
+                    }}
+                    className="group rounded-3xl border border-amber-400/20 bg-slate-950/40 p-6 text-left transition hover:border-amber-400/40 hover:bg-slate-900/70"
+                  >
+                    <div className="inline-flex h-12 w-12 items-center justify-center rounded-2xl border border-amber-400/30 bg-amber-400/10 text-2xl text-amber-300">
+                      +
+                    </div>
+                    <h2 className="mt-5 text-2xl font-black text-white">
+                      Crea stanza
+                    </h2>
+                    <p className="mt-2 text-sm text-slate-400">
+                      Apri una nuova lobby privata, scegli le categorie e invita
+                      gli altri giocatori con un codice.
+                    </p>
+                    <div className="mt-5 text-sm font-semibold text-amber-300 transition group-hover:text-amber-200">
+                      Vai alla creazione →
+                    </div>
+                  </button>
 
                   <button
-                    className="inline-flex w-full items-center justify-center rounded-2xl border border-amber-400/40 bg-amber-500/90 px-5 py-3 font-semibold text-slate-950 transition hover:bg-amber-400 disabled:cursor-not-allowed disabled:opacity-50"
-                    onClick={handleCreateRoom}
-                    disabled={!name.trim()}
+                    type="button"
+                    onClick={() => {
+                      setActionError(null);
+                      setLandingMode("join");
+                    }}
+                    className="group rounded-3xl border border-slate-800 bg-slate-950/40 p-6 text-left transition hover:border-amber-400/40 hover:bg-slate-900/70"
                   >
-                    Crea stanza
+                    <div className="inline-flex h-12 w-12 items-center justify-center rounded-2xl border border-amber-400/30 bg-amber-400/10 text-2xl text-amber-300">
+                      →
+                    </div>
+                    <h2 className="mt-5 text-2xl font-black text-white">
+                      Unisciti a una stanza
+                    </h2>
+                    <p className="mt-2 text-sm text-slate-400">
+                      Inserisci il codice della lobby ed entra subito nella
+                      partita con gli altri giocatori.
+                    </p>
+                    <div className="mt-5 text-sm font-semibold text-amber-300 transition group-hover:text-amber-200">
+                      Vai all’ingresso →
+                    </div>
                   </button>
                 </div>
+
+                <div className="mt-8 grid gap-4 md:grid-cols-3">
+                  <div className="rounded-2xl border border-slate-800 bg-slate-950/40 p-5">
+                    <div className="text-sm uppercase tracking-[0.2em] text-amber-300/80">
+                      Lobby private
+                    </div>
+                    <p className="mt-3 text-sm text-slate-300">
+                      Ogni partita vive in una stanza dedicata con codice condivisibile.
+                    </p>
+                  </div>
+
+                  <div className="rounded-2xl border border-slate-800 bg-slate-950/40 p-5">
+                    <div className="text-sm uppercase tracking-[0.2em] text-amber-300/80">
+                      Risposte visibili
+                    </div>
+                    <p className="mt-3 text-sm text-slate-300">
+                      Quando un giocatore risponde, compare la sua icona sotto la scelta fatta.
+                    </p>
+                  </div>
+
+                  <div className="rounded-2xl border border-slate-800 bg-slate-950/40 p-5">
+                    <div className="text-sm uppercase tracking-[0.2em] text-amber-300/80">
+                      Riepilogo finale
+                    </div>
+                    <p className="mt-3 text-sm text-slate-300">
+                      A fine partita vedi statistiche complete e dettagli per ogni giocatore.
+                    </p>
+                  </div>
+                </div>
               </div>
-
-              <div className="rounded-2xl border border-slate-800 bg-slate-950/40 p-5">
-                <h2 className="text-lg font-bold text-white">Entra con codice</h2>
-                <p className="mt-1 text-sm text-slate-400">
-                  Inserisci il codice della lobby e unisciti subito alla partita.
-                </p>
-
-                <div className="mt-4 space-y-3">
-                  <input
-                    placeholder="Nome giocatore"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    className="w-full rounded-2xl border border-slate-700 bg-slate-950/70 px-4 py-3 text-slate-100 outline-none transition focus:border-amber-400/60 focus:ring-2 focus:ring-amber-400/20"
-                  />
-
-                  <input
-                    placeholder="Codice stanza"
-                    value={code}
-                    onChange={(e) => setCode(e.target.value.toUpperCase())}
-                    className="w-full rounded-2xl border border-slate-700 bg-slate-950/70 px-4 py-3 text-slate-100 outline-none transition focus:border-amber-400/60 focus:ring-2 focus:ring-amber-400/20"
-                  />
+            ) : landingMode === "create" ? (
+              <div>
+                <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
+                  <div>
+                    <div className="text-sm uppercase tracking-[0.2em] text-amber-300/80">
+                      Creazione lobby
+                    </div>
+                    <h2 className="mt-2 text-3xl font-black text-white">
+                      Crea una nuova stanza
+                    </h2>
+                    <p className="mt-2 text-sm text-slate-400">
+                      Scegli il tuo nome e crea subito una lobby privata.
+                    </p>
+                  </div>
 
                   <button
-                    className="inline-flex w-full items-center justify-center rounded-2xl border border-slate-700 bg-slate-800 px-5 py-3 font-semibold text-slate-100 transition hover:bg-slate-700 disabled:cursor-not-allowed disabled:opacity-50"
-                    onClick={handleJoinRoom}
-                    disabled={!name.trim() || !code.trim()}
+                    type="button"
+                    onClick={() => setLandingMode(null)}
+                    className="inline-flex items-center justify-center rounded-2xl border border-slate-700 bg-slate-900 px-4 py-2 text-sm font-semibold text-slate-200 transition hover:bg-slate-800"
                   >
-                    Entra nella stanza
+                    ← Indietro
                   </button>
                 </div>
-              </div>
-            </div>
 
-            <div className="mt-8 grid gap-4 md:grid-cols-3">
-              <div className="rounded-2xl border border-slate-800 bg-slate-950/40 p-5">
-                <div className="text-sm uppercase tracking-[0.2em] text-amber-300/80">
-                  Lobby private
-                </div>
-                <p className="mt-3 text-sm text-slate-300">
-                  Ogni partita vive in una stanza dedicata con codice condivisibile.
-                </p>
-              </div>
+                <div className="rounded-2xl border border-slate-800 bg-slate-950/40 p-5">
+                  <div className="space-y-3">
+                    <input
+                      placeholder="Nome giocatore"
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
+                      className="w-full rounded-2xl border border-slate-700 bg-slate-950/70 px-4 py-3 text-slate-100 outline-none transition focus:border-amber-400/60 focus:ring-2 focus:ring-amber-400/20"
+                    />
 
-              <div className="rounded-2xl border border-slate-800 bg-slate-950/40 p-5">
-                <div className="text-sm uppercase tracking-[0.2em] text-amber-300/80">
-                  Risposte visibili
+                    <button
+                      className="inline-flex w-full items-center justify-center rounded-2xl border border-amber-400/40 bg-amber-500/90 px-5 py-3 font-semibold text-slate-950 transition hover:bg-amber-400 disabled:cursor-not-allowed disabled:opacity-50"
+                      onClick={handleCreateRoom}
+                      disabled={!name.trim()}
+                    >
+                      Crea stanza
+                    </button>
+                  </div>
                 </div>
-                <p className="mt-3 text-sm text-slate-300">
-                  Quando un giocatore risponde, compare la sua icona sotto la scelta fatta.
-                </p>
-              </div>
 
-              <div className="rounded-2xl border border-slate-800 bg-slate-950/40 p-5">
-                <div className="text-sm uppercase tracking-[0.2em] text-amber-300/80">
-                  Riepilogo finale
+                <div className="mt-6 grid gap-4 md:grid-cols-3">
+                  <div className="rounded-2xl border border-slate-800 bg-slate-950/40 p-5">
+                    <div className="text-sm uppercase tracking-[0.2em] text-amber-300/80">
+                      Host
+                    </div>
+                    <p className="mt-3 text-sm text-slate-300">
+                      Sarai tu a far partire la partita e a gestire le impostazioni.
+                    </p>
+                  </div>
+
+                  <div className="rounded-2xl border border-slate-800 bg-slate-950/40 p-5">
+                    <div className="text-sm uppercase tracking-[0.2em] text-amber-300/80">
+                      Codice lobby
+                    </div>
+                    <p className="mt-3 text-sm text-slate-300">
+                      Il server genererà automaticamente un codice da condividere.
+                    </p>
+                  </div>
+
+                  <div className="rounded-2xl border border-slate-800 bg-slate-950/40 p-5">
+                    <div className="text-sm uppercase tracking-[0.2em] text-amber-300/80">
+                      Categorie
+                    </div>
+                    <p className="mt-3 text-sm text-slate-300">
+                      Le impostazioni qui a destra verranno usate nella nuova stanza.
+                    </p>
+                  </div>
                 </div>
-                <p className="mt-3 text-sm text-slate-300">
-                  A fine partita vedi statistiche complete e dettagli per ogni giocatore.
-                </p>
               </div>
-            </div>
+            ) : (
+              <div>
+                <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
+                  <div>
+                    <div className="text-sm uppercase tracking-[0.2em] text-amber-300/80">
+                      Ingresso lobby
+                    </div>
+                    <h2 className="mt-2 text-3xl font-black text-white">
+                      Unisciti a una stanza
+                    </h2>
+                    <p className="mt-2 text-sm text-slate-400">
+                      Inserisci il tuo nome e il codice stanza per entrare subito.
+                    </p>
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={() => setLandingMode(null)}
+                    className="inline-flex items-center justify-center rounded-2xl border border-slate-700 bg-slate-900 px-4 py-2 text-sm font-semibold text-slate-200 transition hover:bg-slate-800"
+                  >
+                    ← Indietro
+                  </button>
+                </div>
+
+                <div className="rounded-2xl border border-slate-800 bg-slate-950/40 p-5">
+                  <div className="space-y-3">
+                    <input
+                      placeholder="Nome giocatore"
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
+                      className="w-full rounded-2xl border border-slate-700 bg-slate-950/70 px-4 py-3 text-slate-100 outline-none transition focus:border-amber-400/60 focus:ring-2 focus:ring-amber-400/20"
+                    />
+
+                    <input
+                      placeholder="Codice stanza"
+                      value={code}
+                      onChange={(e) => setCode(e.target.value.toUpperCase())}
+                      className="w-full rounded-2xl border border-slate-700 bg-slate-950/70 px-4 py-3 text-slate-100 outline-none transition focus:border-amber-400/60 focus:ring-2 focus:ring-amber-400/20"
+                    />
+
+                    <button
+                      className="inline-flex w-full items-center justify-center rounded-2xl border border-slate-700 bg-slate-800 px-5 py-3 font-semibold text-slate-100 transition hover:bg-slate-700 disabled:cursor-not-allowed disabled:opacity-50"
+                      onClick={handleJoinRoom}
+                      disabled={!name.trim() || !code.trim()}
+                    >
+                      Entra nella stanza
+                    </button>
+                  </div>
+                </div>
+
+                <div className="mt-6 grid gap-4 md:grid-cols-3">
+                  <div className="rounded-2xl border border-slate-800 bg-slate-950/40 p-5">
+                    <div className="text-sm uppercase tracking-[0.2em] text-amber-300/80">
+                      Accesso rapido
+                    </div>
+                    <p className="mt-3 text-sm text-slate-300">
+                      Ti basta il codice lobby per entrare direttamente in partita.
+                    </p>
+                  </div>
+
+                  <div className="rounded-2xl border border-slate-800 bg-slate-950/40 p-5">
+                    <div className="text-sm uppercase tracking-[0.2em] text-amber-300/80">
+                      Rejoin
+                    </div>
+                    <p className="mt-3 text-sm text-slate-300">
+                      Se eri già nella stanza, puoi rientrare con la tua sessione.
+                    </p>
+                  </div>
+
+                  <div className="rounded-2xl border border-slate-800 bg-slate-950/40 p-5">
+                    <div className="text-sm uppercase tracking-[0.2em] text-amber-300/80">
+                      Subito pronto
+                    </div>
+                    <p className="mt-3 text-sm text-slate-300">
+                      Una volta dentro vedrai la lobby e aspetterai l’avvio dell’host.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
 
           <div className="rounded-3xl border border-amber-400/20 bg-slate-900/70 p-6 shadow-[0_0_40px_rgba(0,0,0,0.35)] backdrop-blur-sm md:p-8">

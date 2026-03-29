@@ -37,7 +37,8 @@ function getRankBadgeClass(position: number) {
 function formatRating(
   value?: number | null,
   position?: number,
-  mode?: "1v1" | "2v2" | "3v3" | "4v4"
+  mode?: "1v1" | "2v2" | "3v3" | "4v4",
+  small?: boolean
 ) {
   if (value == null) {
     return <span>-</span>;
@@ -56,7 +57,7 @@ function formatRating(
     else if (position === 3) className = "text-[#b97745]";
   }
 
-  return <span className={`text-xl font-bold ${className}`}>{value}</span>;
+  return <span className={`${small ? "text-sm" : "text-xl"} font-bold ${className}`}>{value}</span>;
 }
 
 function getSoloLeagueIcon(rankLevel?: string | null) {
@@ -367,7 +368,7 @@ export default function LeaderboardClient({
 
       {!activeBackground && <div className="absolute inset-0 bg-[#020b26]" />}
 
-      <section className="relative z-10 mx-auto max-w-[1800px] px-8 py-16">
+      <section className="relative z-10 mx-auto max-w-[1800px] px-4 py-10 sm:px-6 sm:py-12 lg:px-8 lg:py-16">
         <div className="mb-6 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
           <div className="flex items-center gap-4">
             {icon && (
@@ -396,8 +397,117 @@ export default function LeaderboardClient({
           </Link>
         </div>
 
-        <div className="rounded-[28px] border border-white/8 bg-[#0f1a36]/95 p-6 md:p-8 shadow-[0_10px_40px_rgba(0,0,0,0.35)]">
-          <div className="overflow-x-auto">
+        <div className="rounded-[28px] border border-white/8 bg-[#0f1a36]/95 p-4 sm:p-6 md:p-8 shadow-[0_10px_40px_rgba(0,0,0,0.35)]">
+          {/* Mobile card view */}
+          <div className="block md:hidden space-y-3">
+            {sortedPlayers.map((player, index) => {
+              const absoluteIndex = (currentPage - 1) * 50 + index + 1;
+              const pos1v1 = getPositionByMode(player.profile_id, top1v1Ids);
+              const pos2v2 = getPositionByMode(player.profile_id, top2v2Ids);
+              const pos3v3 = getPositionByMode(player.profile_id, top3v3Ids);
+              const pos4v4 = getPositionByMode(player.profile_id, top4v4Ids);
+
+              return (
+                <div
+                  key={player.profile_id}
+                  className="rounded-2xl bg-[#07122d] px-4 py-3 border border-white/5"
+                >
+                  <div className="flex items-center gap-3">
+                    <div
+                      className={`inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-xl text-sm font-bold ${getRankBadgeClass(absoluteIndex)}`}
+                    >
+                      {absoluteIndex}
+                    </div>
+
+                    <img
+                      src={player.avatarSmall ?? "/images/placeholder_pic.avif"}
+                      alt={player.name}
+                      className="h-10 w-10 shrink-0 rounded-xl border border-white/10 object-cover"
+                    />
+
+                    <div className="min-w-0 flex-1">
+                      <div className="truncate font-semibold text-white text-sm">
+                        {player.name}
+                      </div>
+                      <div className="text-xs text-[#8d99b3]">
+                        Rank Globale: {player.rank}
+                      </div>
+                    </div>
+
+                    <div className="flex shrink-0 items-center gap-1">
+                      <div className={`inline-flex items-center justify-center ${getLeagueGlow(player.soloRankLevel)}`}>
+                        <img
+                          src={getSoloLeagueIcon(player.soloRankLevel)}
+                          alt={player.soloRankLevel ?? "unranked"}
+                          className="h-8 w-8"
+                        />
+                      </div>
+                      <div className={`inline-flex items-center justify-center ${getLeagueGlow(player.teamRankLevel)}`}>
+                        <img
+                          src={getTeamLeagueIcon(player.teamRankLevel)}
+                          alt={player.teamRankLevel ?? "unranked"}
+                          className="h-8 w-8"
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="mt-2 grid grid-cols-4 gap-1 text-center text-xs">
+                    <div>
+                      <div className="text-[#7f8aa3] font-semibold">1v1</div>
+                      <div>{formatRating(player.rating1v1, pos1v1, "1v1", true)}</div>
+                    </div>
+                    <div>
+                      <div className="text-[#7f8aa3] font-semibold">2v2</div>
+                      <div>{formatRating(player.rating2v2, pos2v2, "2v2", true)}</div>
+                    </div>
+                    <div>
+                      <div className="text-[#7f8aa3] font-semibold">3v3</div>
+                      <div>{formatRating(player.rating3v3, pos3v3, "3v3", true)}</div>
+                    </div>
+                    <div>
+                      <div className="text-[#7f8aa3] font-semibold">4v4</div>
+                      <div>{formatRating(player.rating4v4, pos4v4, "4v4", true)}</div>
+                    </div>
+                  </div>
+
+                  <div className="mt-2 flex items-center justify-between">
+                    <div className="flex gap-1">
+                      {player.topCivilizations && player.topCivilizations.length > 0 ? (
+                        player.topCivilizations.map((civ) => (
+                          <img
+                            key={civ}
+                            src={getCivilizationIcon(civ)}
+                            alt={formatCivilizationName(civ)}
+                            className="h-7 w-7 object-contain"
+                            title={formatCivilizationName(civ)}
+                          />
+                        ))
+                      ) : (
+                        <img
+                          src="/images/civs/generic_flag.png"
+                          alt="unknown"
+                          className="h-7 w-7 object-contain opacity-70"
+                        />
+                      )}
+                    </div>
+
+                    <a
+                      href={`https://aoe4world.com/players/${player.profile_id}`}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="inline-flex items-center justify-center rounded-xl border border-[#f0b90b]/25 bg-[#f0b90b]/10 px-3 py-1.5 text-xs font-semibold text-[#f7cf59] transition hover:bg-[#f0b90b]/20"
+                    >
+                      View
+                    </a>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Desktop table view */}
+          <div className="hidden md:block overflow-x-auto">
             <table className="w-full min-w-[1650px] border-separate border-spacing-y-3">
               <thead>
                 <tr className="text-left text-sm uppercase tracking-[0.22em] text-[#7f8aa3]">
@@ -618,6 +728,7 @@ export default function LeaderboardClient({
               </tbody>
             </table>
           </div>
+          {/* End desktop table view */}
 
           <div className="mt-8 rounded-[24px] border border-white/8 bg-[#0b1430] px-5 py-4 shadow-[0_8px_30px_rgba(0,0,0,0.25)]">
             <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">

@@ -15,6 +15,13 @@ import {
 
 import { getDiscordWidgetData } from "./lib/discord";
 import { getTwitchLiveMap } from "./lib/twitch";
+import { Metadata } from "next";
+
+
+export const metadata: Metadata = {
+title: "Aoe4 Italia - Community, Classifica e Quiz",
+description: "Unisciti alla community italiana AoE4. Classifica aggiornata, quiz e matchmaking automatico."
+};
 
 export default async function Page() {
   const widgetData = await getDiscordWidgetData(SERVER_CONFIG.widgetServerId);

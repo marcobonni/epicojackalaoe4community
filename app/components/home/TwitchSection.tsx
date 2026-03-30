@@ -43,7 +43,7 @@ export default function TwitchSection({
       <div className="mt-10 space-y-8">
         {primaryStreamer ? (
           <div className="overflow-hidden rounded-[2rem] border border-slate-800 bg-slate-900 p-5 shadow-lg shadow-black/20">
-            <div className="mb-4 flex items-center justify-between gap-4">
+            <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
               <div>
                 <p className="text-sm font-semibold uppercase tracking-[0.2em] text-amber-300">
                   Streamer in evidenza
@@ -83,16 +83,17 @@ export default function TwitchSection({
             </div>
 
             <div className="overflow-hidden rounded-[1.5rem] border border-slate-800 bg-black">
-              <iframe
-                title={`Twitch player ${primaryStreamer.name}`}
-                src={`https://player.twitch.tv/?channel=${primaryStreamer.name}&parent=${TWITCH_PARENT_DOMAINS.join(
-                  "&parent="
-                )}`}
-                height="560"
-                width="100%"
-                allowFullScreen
-                loading="lazy"
-              />
+              <div className="relative w-full" style={{ paddingBottom: "56.25%" }}>
+                <iframe
+                  title={`Twitch player ${primaryStreamer.name}`}
+                  src={`https://player.twitch.tv/?channel=${primaryStreamer.name}&parent=${TWITCH_PARENT_DOMAINS.join(
+                    "&parent="
+                  )}`}
+                  className="absolute inset-0 h-full w-full"
+                  allowFullScreen
+                  loading="lazy"
+                />
+              </div>
             </div>
           </div>
         ) : null}
@@ -147,16 +148,17 @@ export default function TwitchSection({
                   </div>
 
                   <div className="overflow-hidden rounded-[1.5rem] border border-slate-800 bg-black">
-                    <iframe
-                      title={`Twitch player ${streamer.name}`}
-                      src={`https://player.twitch.tv/?channel=${streamer.name}&parent=${TWITCH_PARENT_DOMAINS.join(
-                        "&parent="
-                      )}`}
-                      height="320"
-                      width="100%"
-                      allowFullScreen
-                      loading="lazy"
-                    />
+                    <div className="relative w-full" style={{ paddingBottom: "56.25%" }}>
+                      <iframe
+                        title={`Twitch player ${streamer.name}`}
+                        src={`https://player.twitch.tv/?channel=${streamer.name}&parent=${TWITCH_PARENT_DOMAINS.join(
+                          "&parent="
+                        )}`}
+                        className="absolute inset-0 h-full w-full"
+                        allowFullScreen
+                        loading="lazy"
+                      />
+                    </div>
                   </div>
                 </div>
               ))

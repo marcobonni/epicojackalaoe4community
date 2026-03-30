@@ -60,8 +60,8 @@ export default function HeroSection() {
       {/* bottom fade into next section */}
       <div className="absolute inset-x-0 bottom-0 h-52 bg-gradient-to-b from-transparent via-[#020617] to-[#020617]" />
 
-      <div className="relative mx-auto max-w-7xl px-6 py-24 lg:px-8">
-        <div className="grid items-center gap-12 lg:grid-cols-2">
+      <div className="relative mx-auto max-w-7xl px-4 py-14 sm:px-6 sm:py-20 lg:px-8 lg:py-24">
+        <div className="grid items-center gap-10 lg:grid-cols-2">
           <div>
             <div className="mb-4 inline-flex items-center rounded-full border border-amber-400/30 bg-amber-400/10 px-4 py-1 text-sm text-amber-300">
               Age of Empires Community Discord
@@ -77,54 +77,50 @@ export default function HeroSection() {
               giocare davvero.
             </p>
 
-            <div className="mt-8 flex flex-wrap gap-4">
+            <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
               <LoadingLink
                 target="_blank"
                 rel="noopener noreferrer"
                 href={SERVER_CONFIG.inviteUrl}
-                className="rounded-2xl bg-amber-400 px-6 py-3 text-base font-semibold text-slate-950 shadow-lg shadow-amber-500/20 transition hover:-translate-y-0.5"
+                className="rounded-2xl bg-amber-400 px-6 py-3 text-base font-semibold text-slate-950 shadow-lg shadow-amber-500/20 transition hover:-translate-y-0.5 text-center"
               >
                 Entra nel server
               </LoadingLink>
 
               <LoadingLink
                 href="/leaderboard"
-                className="rounded-2xl bg-blue-600 px-6 py-3 text-base font-semibold text-white shadow-lg transition hover:-translate-y-0.5"
+                className="rounded-2xl bg-blue-600 px-6 py-3 text-base font-semibold text-white shadow-lg transition hover:-translate-y-0.5 text-center"
               >
                 Classifica italiana 🇮🇹
               </LoadingLink>
-<div className="flex gap-4">
 
-  <LoadingLink
-    href="/leaderboard/nord"
-    className="rounded-2xl bg-green-600 px-6 py-3 text-base font-semibold text-white shadow-lg transition hover:-translate-y-0.5"
-  >
-    Classifica Nord
-  </LoadingLink>
+              <LoadingLink
+                href="/leaderboard/nord"
+                className="rounded-2xl bg-green-600 px-6 py-3 text-base font-semibold text-white shadow-lg transition hover:-translate-y-0.5 text-center"
+              >
+                Classifica Nord
+              </LoadingLink>
 
-  <LoadingLink
-    href="/leaderboard/centro"
-    className="rounded-2xl bg-white px-6 py-3 text-base font-semibold text-slate-900 shadow-lg transition hover:-translate-y-0.5"
-  >
-    Classifica Centro
-  </LoadingLink>
+              <LoadingLink
+                href="/leaderboard/centro"
+                className="rounded-2xl bg-white px-6 py-3 text-base font-semibold text-slate-900 shadow-lg transition hover:-translate-y-0.5 text-center"
+              >
+                Classifica Centro
+              </LoadingLink>
 
-  <LoadingLink
-    href="/leaderboard/sud"
-    className="rounded-2xl bg-red-600 px-6 py-3 text-base font-semibold text-white shadow-lg transition hover:-translate-y-0.5"
-  >
-    Classifica Sud
-  </LoadingLink>
+              <LoadingLink
+                href="/leaderboard/sud"
+                className="rounded-2xl bg-red-600 px-6 py-3 text-base font-semibold text-white shadow-lg transition hover:-translate-y-0.5 text-center"
+              >
+                Classifica Sud
+              </LoadingLink>
 
-</div>
-  <LoadingLink
-    href="/beasty"
-    className="rounded-2xl bg-red-600 px-6 py-3 text-base font-semibold text-white shadow-lg transition hover:-translate-y-0.5"
-  >
-    Quiz
-  </LoadingLink>
-
-
+              <LoadingLink
+                href="/beasty"
+                className="rounded-2xl bg-red-600 px-6 py-3 text-base font-semibold text-white shadow-lg transition hover:-translate-y-0.5 text-center"
+              >
+                Quiz
+              </LoadingLink>
             </div>
           </div>
 

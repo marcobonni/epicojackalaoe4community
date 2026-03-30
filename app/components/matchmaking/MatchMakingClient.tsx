@@ -16,7 +16,7 @@ ZeneizeTV
 Tia`;
 
 const API_BASE_URL =
-  process.env.NEXT_PUBLIC_BEASTY_API_URL || "http://localhost:8080";
+  process.env.NEXT_PUBLIC_REALTIME_URL || "http://localhost:8080";
 
 type RatingMode = "solo" | "team";
 

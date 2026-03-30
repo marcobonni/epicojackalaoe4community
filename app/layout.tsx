@@ -24,8 +24,8 @@ export const metadata: Metadata = {
     icon: "/logo_mettere.png",
   },
     verification: {
-    google: "INYl7prs_q1YMW4BQ6kN8goWXzAz1blH-uktO0FEsxA",
-  },
+    google: "aSa09l_RJ8JF_3m-hu_bBLHrcW7_GrqSn40Ou-LPh2o",
+    },
 };
 
 export const viewport: Viewport = {

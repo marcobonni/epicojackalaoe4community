@@ -1,5 +1,5 @@
 "use client";
-
+import { Metadata } from "next";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useBeasty } from "@/app/lib/beasty/useBeasty";
 
@@ -10,7 +10,11 @@ const DEFAULT_CATEGORY_IDS = [
   "buildings",
   "ages",
 ];
-
+export const metadata: Metadata = {
+   title: "Quiz Age of Empires 4 - Sfida i tuoi amici",
+  description:
+    "Gioca al quiz AoE4 online con oltre 1000 domande. Sfida i tuoi amici in tempo reale.",
+}
 type LandingMode = "create" | "join" | null;
 
 function getPlayerBadge(name: string) {

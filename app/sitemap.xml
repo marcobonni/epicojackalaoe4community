@@ -1,0 +1,10 @@
+export default function sitemap() {
+  return [
+    { url: "https://aoe4community.vercel.app/" },
+    { url: "https://aoe4community.vercel.app/leaderboard" },
+    { url: "https://aoe4community.vercel.app/leaderboard/nord" },
+    { url: "https://aoe4community.vercel.app/leaderboard/centro" },
+    { url: "https://aoe4community.vercel.app/leaderboard/sud" },
+    { url: "https://aoe4community.vercel.app/beasty" },
+  ];
+}

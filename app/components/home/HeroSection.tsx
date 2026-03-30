@@ -4,6 +4,14 @@ import { useEffect, useRef } from "react";
 import { SERVER_CONFIG, HERO_STATS } from "@/app/config/site";
 import LoadingLink from "@/app/components/LoadingLink";
 
+function NewBadge() {
+  return (
+    <span className="ml-2 rounded-full bg-amber-400 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-slate-900">
+      NEW
+    </span>
+  );
+}
+
 export default function HeroSection() {
   const sectionRef = useRef<HTMLElement | null>(null);
   const backgroundRef = useRef<HTMLDivElement | null>(null);
@@ -51,13 +59,13 @@ export default function HeroSection() {
         />
       </div>
 
-      {/* dark overlay for readability */}
+      {/* dark overlay */}
       <div className="absolute inset-0 bg-slate-950/45" />
 
       {/* vignette */}
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_48%,rgba(2,6,23,0.65))]" />
 
-      {/* bottom fade into next section */}
+      {/* bottom fade */}
       <div className="absolute inset-x-0 bottom-0 h-52 bg-gradient-to-b from-transparent via-[#020617] to-[#020617]" />
 
       <div className="relative mx-auto max-w-7xl px-4 py-14 sm:px-6 sm:py-20 lg:px-8 lg:py-24">
@@ -117,9 +125,16 @@ export default function HeroSection() {
 
               <LoadingLink
                 href="/beasty"
-                className="rounded-2xl bg-red-600 px-6 py-3 text-base font-semibold text-white shadow-lg transition hover:-translate-y-0.5 text-center"
+                className="rounded-2xl bg-red-600 px-6 py-3 text-base font-semibold text-white shadow-lg transition hover:-translate-y-0.5 text-center flex items-center justify-center"
               >
-                Quiz
+                Quiz <NewBadge />
+              </LoadingLink>
+
+              <LoadingLink
+                href="/matchmaking"
+                className="rounded-2xl bg-slate-800 px-6 py-3 text-base font-semibold text-white shadow-lg transition hover:-translate-y-0.5 text-center flex items-center justify-center"
+              >
+                Matchmaking <NewBadge />
               </LoadingLink>
             </div>
           </div>

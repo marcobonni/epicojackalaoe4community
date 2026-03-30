@@ -10,9 +10,9 @@ import type {
 } from "@/app/lib/matchmaking";
 import { parseNamesFromTextarea } from "@/app/lib/matchmaking";
 
-const DEFAULT_PLAYERS = `EpicoJackal
-Jeiden97
-Massimi25
+const DEFAULT_PLAYERS = `ScapoloCaldo
+Paranoia
+ZeneizeTV
 Tia`;
 
 const API_BASE_URL =
@@ -350,6 +350,26 @@ Tia`}
                 value={result ? String(result.averageB) : "—"}
               />
             </div>
+
+            {result ? (
+              <>
+                <div className="mt-6 grid gap-4 sm:grid-cols-2">
+                  <SummaryBigCard
+                    label="Probabilità Team A"
+                    value={`${result.teamAWinProbability}%`}
+                  />
+                  <SummaryBigCard
+                    label="Probabilità Team B"
+                    value={`${result.teamBWinProbability}%`}
+                  />
+                </div>
+
+                <WinProbabilityBar
+                  teamAProbability={result.teamAWinProbability}
+                  teamBProbability={result.teamBWinProbability}
+                />
+              </>
+            ) : null}
           </div>
 
           <div className="rounded-[2rem] border border-slate-800 bg-slate-900/90 p-8 shadow-lg shadow-black/20">
@@ -418,6 +438,7 @@ Tia`}
               players={result.teamA}
               average={result.averageA}
               total={result.totalA}
+              winProbability={result.teamAWinProbability}
               accent="amber"
             />
 
@@ -426,31 +447,40 @@ Tia`}
               players={result.teamB}
               average={result.averageB}
               total={result.totalB}
+              winProbability={result.teamBWinProbability}
               accent="blue"
             />
           </div>
 
-          <div className="mt-8 rounded-[2rem] border border-emerald-400/20 bg-emerald-400/5 p-6">
-            <div className="flex flex-wrap items-center justify-between gap-4">
-              <div>
-                <p className="text-sm font-semibold uppercase tracking-[0.3em] text-emerald-300">
-                  Bilanciamento finale
-                </p>
+<div className="mt-8 rounded-[2rem] border border-emerald-400/20 bg-emerald-400/5 p-6">
+  <div className="flex flex-wrap items-center justify-between gap-4">
+    <div>
+      <p className="text-sm font-semibold uppercase tracking-[0.3em] text-emerald-300">
+        Bilanciamento finale
+      </p>
 
-                <h3 className="mt-2 text-3xl font-bold text-white">
-                  {getBalanceVerdict(result.diff)}
-                </h3>
+      <h3 className="mt-2 text-3xl font-bold text-white">
+        {getBalanceVerdict(result.diff)}
+      </h3>
 
-                <p className="mt-2 text-sm text-slate-300">
-                  Differenza totale: {result.diff} ELO
-                </p>
-              </div>
+      <p className="mt-2 text-sm text-slate-300">
+        Differenza totale: {result.diff} ELO
+      </p>
+    </div>
 
-              <div className="rounded-2xl border border-emerald-400/20 bg-slate-950/40 px-4 py-3 text-sm text-slate-200">
-                Team A {result.totalA} · Team B {result.totalB}
-              </div>
-            </div>
-          </div>
+    <div className="rounded-2xl border border-emerald-400/20 bg-slate-950/40 px-4 py-3 text-sm text-slate-200">
+      Team A {result.totalA} · Team B {result.totalB}
+    </div>
+  </div>
+
+  {/* 🔥 NUOVA BARRA */}
+  <div className="mt-6">
+    <WinProbabilityBar
+      teamAProbability={result.teamAWinProbability}
+      teamBProbability={result.teamBWinProbability}
+    />
+  </div>
+</div>
         </>
       ) : null}
 
@@ -495,17 +525,49 @@ function SummaryBigCard({
   );
 }
 
+function WinProbabilityBar({
+  teamAProbability,
+  teamBProbability,
+}: {
+  teamAProbability: number;
+  teamBProbability: number;
+}) {
+  return (
+    <div className="mt-6 rounded-2xl border border-slate-800 bg-slate-950/80 p-5">
+      <div className="flex items-center justify-between gap-4 text-sm font-semibold">
+        <div className="text-amber-300">Team A {teamAProbability}%</div>
+        <div className="text-blue-300">Team B {teamBProbability}%</div>
+      </div>
+
+      <div className="mt-4 h-4 overflow-hidden rounded-full bg-slate-800">
+        <div className="flex h-full w-full">
+          <div
+            className="h-full bg-amber-400/90 transition-all duration-500"
+            style={{ width: `${teamAProbability}%` }}
+          />
+          <div
+            className="h-full bg-blue-400/90 transition-all duration-500"
+            style={{ width: `${teamBProbability}%` }}
+          />
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function TeamCard({
   title,
   players,
   average,
   total,
+  winProbability,
   accent,
 }: {
   title: string;
   players: MatchmakingPlayer[];
   average: number;
   total: number;
+  winProbability: number;
   accent: "amber" | "blue";
 }) {
   const badgeClasses =
@@ -527,6 +589,13 @@ function TeamCard({
           <div className="text-xs uppercase tracking-[0.2em]">Media</div>
           <div className="mt-1 text-2xl font-bold">{average}</div>
         </div>
+      </div>
+
+      <div className="mt-4 rounded-2xl border border-slate-800 bg-slate-950/70 p-4">
+        <div className="text-xs uppercase tracking-[0.2em] text-slate-500">
+          Probabilità di vittoria
+        </div>
+        <div className="mt-2 text-2xl font-bold text-white">{winProbability}%</div>
       </div>
 
       <div className="mt-6 space-y-3">

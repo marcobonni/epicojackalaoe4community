@@ -19,6 +19,8 @@ export type MatchmakingResult = {
   averageA: number;
   averageB: number;
   diff: number;
+  teamAWinProbability: number;
+  teamBWinProbability: number;
 };
 
 export type MatchmakingErrorResponse = {

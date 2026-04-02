@@ -2,6 +2,12 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useBeasty } from "@/app/lib/beasty/useBeasty";
+import HeroHeader from "./components/HeroHeader";
+import LobbyView from "./components/LobbyView";
+import QuestionView from "./components/QuestionView";
+import RevealView from "./components/RevealView";
+import FinalResultsView from "./components/FinalResultView";
+import LandingView from "./components/LandingView";
 
 const DEFAULT_CATEGORY_IDS = [
   "civilizations",
@@ -12,192 +18,6 @@ const DEFAULT_CATEGORY_IDS = [
 ];
 
 type LandingMode = "create" | "join" | null;
-
-function getPlayerBadge(name: string) {
-  const cleaned = name.trim();
-  if (!cleaned) return "?";
-
-  const parts = cleaned.split(/\s+/).slice(0, 2);
-  return parts.map((part) => part[0]?.toUpperCase() ?? "").join("");
-}
-
-function formatChatTime(timestamp: number) {
-  return new Date(timestamp).toLocaleTimeString("it-IT", {
-    hour: "2-digit",
-    minute: "2-digit",
-  });
-}
-
-function HeroHeader({
-  title,
-  description,
-}: {
-  title: string;
-  description: string;
-}) {
-  return (
-    <div className="mb-10">
-      <div className="inline-flex items-center rounded-full border border-amber-400/30 bg-amber-400/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-amber-300">
-        Party Game AoE4
-      </div>
-
-      <div className="mt-4 flex flex-wrap gap-3">
-        <button
-          onClick={() => {
-            window.open("https://discord.com/users/240210612582481922", "_blank");
-          }}
-          className="inline-flex items-center justify-center rounded-2xl border border-amber-400/30 bg-amber-400/10 px-4 py-2 text-sm font-semibold text-amber-200 transition hover:border-amber-400/60 hover:bg-amber-400/15"
-        >
-          💬 Feedback
-        </button>
-
-        <button
-          onClick={() => {
-            window.localStorage.removeItem("beasty-landing-mode");
-            window.location.href = "/";
-          }}
-          className="inline-flex items-center justify-center rounded-2xl border border-slate-700 bg-slate-900/80 px-4 py-2 text-sm font-semibold text-slate-200 transition hover:border-amber-400/50 hover:text-amber-300"
-        >
-          ← Home
-        </button>
-      </div>
-
-      <h1 className="mt-6 text-4xl font-black tracking-tight text-white md:text-5xl">
-        {title}
-      </h1>
-
-      <p className="mt-3 max-w-2xl text-sm text-slate-300 md:text-base">
-        {description}
-      </p>
-    </div>
-  );
-}
-
-function ChatPanel({
-  roomCode,
-  currentPlayerName,
-  messages,
-  onSend,
-  disabled = false,
-}: {
-  roomCode?: string;
-  currentPlayerName?: string;
-  messages: {
-    id: string;
-    playerId: string;
-    playerName: string;
-    text: string;
-    createdAt: number;
-  }[];
-  onSend: (text: string) => Promise<void>;
-  disabled?: boolean;
-}) {
-  const [text, setText] = useState("");
-  const [sending, setSending] = useState(false);
-  const messagesEndRef = useRef<HTMLDivElement | null>(null);
-
-  useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages]);
-
-  const handleSend = async () => {
-    const cleaned = text.trim();
-    if (!cleaned || sending || disabled) return;
-
-    setSending(true);
-    await onSend(cleaned);
-    setSending(false);
-    setText("");
-  };
-
-  return (
-    <div className="rounded-3xl border border-slate-800 bg-slate-950/50 p-4">
-      <div className="flex items-center justify-between gap-3">
-        <h3 className="text-lg font-bold text-white">Chat stanza</h3>
-        {roomCode ? (
-          <span className="rounded-full border border-slate-700 bg-slate-900 px-3 py-1 text-xs text-slate-300">
-            {roomCode}
-          </span>
-        ) : null}
-      </div>
-
-      <div className="mt-4 h-72 overflow-y-auto rounded-2xl border border-slate-800 bg-slate-900/60 p-3">
-        {messages.length === 0 ? (
-          <div className="text-sm text-slate-500">Nessun messaggio ancora.</div>
-        ) : (
-          <div className="space-y-3">
-            {messages.map((message) => {
-              const isOwn =
-                currentPlayerName &&
-                message.playerName.trim().toLowerCase() ===
-                  currentPlayerName.trim().toLowerCase();
-
-              return (
-                <div
-                  key={message.id}
-                  className={`rounded-2xl border p-3 ${
-                    isOwn
-                      ? "border-amber-400/20 bg-amber-400/5"
-                      : "border-slate-800 bg-slate-950/70"
-                  }`}
-                >
-                  <div className="flex items-center justify-between gap-3">
-                    <span
-                      className={`text-sm font-semibold ${
-                        isOwn ? "text-amber-300" : "text-white"
-                      }`}
-                    >
-                      {message.playerName}
-                    </span>
-                    <span className="text-xs text-slate-500">
-                      {formatChatTime(message.createdAt)}
-                    </span>
-                  </div>
-                  <div className="mt-1 whitespace-pre-wrap break-words text-sm text-slate-200">
-                    {message.text}
-                  </div>
-                </div>
-              );
-            })}
-            <div ref={messagesEndRef} />
-          </div>
-        )}
-      </div>
-
-      <div className="mt-4 flex gap-3">
-        <input
-          value={text}
-          maxLength={250}
-          disabled={disabled || sending}
-          onChange={(e) => setText(e.target.value)}
-          onKeyDown={(e) => {
-            if (e.key === "Enter" && !e.shiftKey) {
-              e.preventDefault();
-              void handleSend();
-            }
-          }}
-          placeholder={
-            disabled
-              ? "Chat temporaneamente bloccata"
-              : "Scrivi un messaggio..."
-          }
-          className="flex-1 rounded-2xl border border-slate-700 bg-slate-950/70 px-4 py-3 text-sm text-slate-100 outline-none transition focus:border-amber-400/60 focus:ring-2 focus:ring-amber-400/20 disabled:opacity-60"
-        />
-        <button
-          onClick={() => void handleSend()}
-          disabled={disabled || sending || !text.trim()}
-          className="rounded-2xl border border-amber-400/40 bg-amber-500/90 px-5 py-3 text-sm font-semibold text-slate-950 transition hover:bg-amber-400 disabled:cursor-not-allowed disabled:opacity-50"
-        >
-          Invia
-        </button>
-      </div>
-
-      <div className="mt-2 text-xs text-slate-500">
-        Max 250 caratteri. Ultimi 100 messaggi salvati nella stanza.
-      </div>
-    </div>
-  );
-}
 
 export default function BeastyPage() {
   const {
@@ -737,167 +557,19 @@ export default function BeastyPage() {
             </div>
           ) : null}
 
-          <div className="grid gap-6 lg:grid-cols-[1.4fr_1fr]">
-            <div className="rounded-3xl border border-amber-400/20 bg-slate-900/70 p-6 shadow-[0_0_40px_rgba(0,0,0,0.35)] backdrop-blur-sm md:p-8">
-              <div className="grid gap-4 lg:grid-cols-2 xl:grid-cols-3">
-                {finalResults.map((result, index) => (
-                  <div
-                    key={result.playerId}
-                    className={`rounded-2xl border p-5 ${
-                      index === 0
-                        ? "border-amber-300/40 bg-[linear-gradient(180deg,rgba(245,158,11,0.12),rgba(2,6,23,0.6))] shadow-[0_0_30px_rgba(245,158,11,0.12)]"
-                        : "border-slate-800 bg-slate-950/50"
-                    }`}
-                  >
-                    <div className="flex items-center justify-between gap-3">
-                      <div>
-                        <div className="text-sm uppercase tracking-[0.2em] text-amber-300/80">
-                          {index === 0 ? "🏆 Vincitore" : `#${index + 1}`}
-                        </div>
-                        <div className="mt-1 text-xl font-black text-white">
-                          {result.playerName}
-                        </div>
-                      </div>
-
-                      <div className="rounded-2xl border border-amber-400/20 bg-amber-400/10 px-4 py-3 text-right">
-                        <div className="text-xs uppercase tracking-[0.2em] text-amber-300/80">
-                          Punteggio finale
-                        </div>
-                        <div className="text-2xl font-black text-amber-300">
-                          {result.finalScore}
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="mt-5 grid grid-cols-2 gap-3 text-sm">
-                      <div className="rounded-2xl border border-slate-800 bg-slate-900/70 p-3">
-                        <div className="text-slate-400">Corrette</div>
-                        <div className="mt-1 font-semibold text-emerald-300">
-                          {result.correctAnswers}
-                        </div>
-                      </div>
-                      <div className="rounded-2xl border border-slate-800 bg-slate-900/70 p-3">
-                        <div className="text-slate-400">Sbagliate</div>
-                        <div className="mt-1 font-semibold text-red-300">
-                          {result.wrongAnswers}
-                        </div>
-                      </div>
-                      <div className="rounded-2xl border border-slate-800 bg-slate-900/70 p-3">
-                        <div className="text-slate-400">Accuratezza</div>
-                        <div className="mt-1 font-semibold text-white">
-                          {result.accuracy}%
-                        </div>
-                      </div>
-                      <div className="rounded-2xl border border-slate-800 bg-slate-900/70 p-3">
-                        <div className="text-slate-400">Punti ottenuti</div>
-                        <div className="mt-1 font-semibold text-amber-300">
-                          {result.totalPointsEarned}
-                        </div>
-                      </div>
-                      <div className="col-span-2 rounded-2xl border border-slate-800 bg-slate-900/70 p-3">
-                        <div className="text-slate-400">Tempo medio risposta</div>
-                        <div className="mt-1 font-semibold text-cyan-300">
-                          {(result.avgResponseTimeMs / 1000).toFixed(2)}s
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="mt-6">
-                      <div className="text-sm font-semibold uppercase tracking-[0.2em] text-slate-300">
-                        Dettaglio round
-                      </div>
-
-                      <div className="mt-3 max-h-80 space-y-3 overflow-auto pr-1">
-                        {result.rounds.map((round, roundIndex) => (
-                          <div
-                            key={`${result.playerId}-${roundIndex}`}
-                            className="rounded-2xl border border-slate-800 bg-slate-900/70 p-4"
-                          >
-                            <div className="flex items-start justify-between gap-3">
-                              <div className="text-sm font-semibold text-white">
-                                {round.questionText}
-                              </div>
-                              <span
-                                className={`rounded-full px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.2em] ${
-                                  round.isCorrect
-                                    ? "border border-emerald-400/30 bg-emerald-500/10 text-emerald-300"
-                                    : "border border-red-400/30 bg-red-500/10 text-red-300"
-                                }`}
-                              >
-                                {round.isCorrect ? "Corretta" : "Sbagliata"}
-                              </span>
-                            </div>
-
-                            <div className="mt-2 flex flex-wrap gap-2">
-                              <span className="rounded-full border border-slate-700 bg-slate-800 px-2 py-1 text-[11px] uppercase tracking-[0.2em] text-slate-300">
-                                {round.category}
-                              </span>
-                              <span className="rounded-full border border-slate-700 bg-slate-800 px-2 py-1 text-[11px] uppercase tracking-[0.2em] text-slate-300">
-                                {round.difficulty}
-                              </span>
-                            </div>
-
-                            <div className="mt-3 text-sm text-slate-300">
-                              Risposta scelta:{" "}
-                              <span className="font-semibold text-white">
-                                {round.selectedAnswer}
-                              </span>
-                            </div>
-
-                            {!round.isCorrect ? (
-                              <div className="mt-1 text-sm text-slate-400">
-                                Corretta:{" "}
-                                <span className="font-semibold text-emerald-300">
-                                  {round.correctAnswer}
-                                </span>
-                              </div>
-                            ) : null}
-
-                            <div className="mt-2 text-sm text-slate-400">
-                              Punti round:{" "}
-                              <span className="font-semibold text-amber-300">
-                                +{round.pointsEarned}
-                              </span>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-
-              <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-                {isHost ? (
-                  <button
-                    className="inline-flex items-center justify-center rounded-2xl border border-amber-400/40 bg-amber-500/90 px-5 py-3 font-semibold text-slate-950 transition hover:bg-amber-400"
-                    onClick={handleRematch}
-                  >
-                    Torna in lobby
-                  </button>
-                ) : (
-                  <button
-                    className="inline-flex items-center justify-center rounded-2xl border border-amber-400/40 bg-amber-500/90 px-5 py-3 font-semibold text-slate-950 transition hover:bg-amber-400"
-                    onClick={() => {
-                      window.localStorage.removeItem("beasty-landing-mode");
-                      window.location.reload();
-                    }}
-                  >
-                    Esci
-                  </button>
-                )}
-              </div>
-            </div>
-
-            <div className="rounded-3xl border border-amber-400/20 bg-slate-900/70 p-6 shadow-[0_0_40px_rgba(0,0,0,0.35)] backdrop-blur-sm md:p-8">
-              <ChatPanel
-                roomCode={room.code}
-                currentPlayerName={name}
-                messages={chatMessages}
-                onSend={handleSendChat}
-              />
-            </div>
-          </div>
+          <FinalResultsView
+            room={room}
+            finalResults={finalResults}
+            isHost={isHost}
+            currentPlayerName={name}
+            chatMessages={chatMessages}
+            onSendChat={handleSendChat}
+            onRematch={handleRematch}
+            onExit={() => {
+              window.localStorage.removeItem("beasty-landing-mode");
+              window.location.reload();
+            }}
+          />
         </div>
       </div>
     );
@@ -919,204 +591,26 @@ export default function BeastyPage() {
             </div>
           ) : null}
 
-          <div className="mb-6 rounded-3xl border border-emerald-400/20 bg-slate-900/70 p-5 shadow-[0_0_40px_rgba(0,0,0,0.35)] backdrop-blur-sm">
-            <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-              <div className="text-sm font-semibold uppercase tracking-[0.2em] text-emerald-300">
-                {isResumeCountdownActive
-                  ? `Ripresa tra ${resumeCountdownSeconds}`
-                  : isPaused
-                  ? `${pauseLabel} · ${revealTimeLeft} secondi residui`
-                  : `Prossima domanda tra ${revealTimeLeft} secondi`}
-              </div>
-
-              {isHost ? (
-                <button
-                  onClick={handlePauseToggle}
-                  disabled={togglingPause || isResumeCountdownActive}
-                  className={`inline-flex items-center justify-center rounded-2xl px-4 py-2 text-sm font-semibold transition disabled:cursor-not-allowed disabled:opacity-60 ${
-                    isPaused
-                      ? "border border-emerald-400/40 bg-emerald-500/10 text-emerald-300 hover:bg-emerald-500/15"
-                      : "border border-amber-400/40 bg-amber-400/10 text-amber-200 hover:bg-amber-400/15"
-                  }`}
-                >
-                  {isPaused ? "Riprendi" : "Pausa"}
-                </button>
-              ) : null}
-            </div>
-
-            <div className="mt-4 h-3 w-full overflow-hidden rounded-full bg-slate-800">
-              <div
-                className={`h-full rounded-full transition-all ${
-                  isPaused ? "bg-amber-400" : "bg-emerald-400"
-                }`}
-                style={{ width: `${revealTimerPercent}%` }}
-              />
-            </div>
-          </div>
-
-          <div className="grid gap-6 lg:grid-cols-[1.2fr_1fr]">
-            <div className="relative rounded-3xl border border-emerald-400/20 bg-slate-900/70 p-6 shadow-[0_0_40px_rgba(0,0,0,0.35)] backdrop-blur-sm md:p-8">
-              {isPaused ? (
-                <div className="absolute inset-0 z-10 flex items-center justify-center rounded-3xl bg-slate-950/70 backdrop-blur-[2px]">
-                  <div className="rounded-3xl border border-amber-400/30 bg-slate-950/90 px-8 py-6 text-center shadow-[0_0_30px_rgba(245,158,11,0.12)]">
-                    <div className="text-sm font-semibold uppercase tracking-[0.3em] text-amber-300">
-                      {pauseLabel}
-                    </div>
-                    <div className="mt-3 text-3xl font-black text-white">
-                      {revealTimeLeft}s
-                    </div>
-                    <p className="mt-2 text-sm text-slate-300">
-                      In attesa che l&apos;host riprenda il quiz.
-                    </p>
-                  </div>
-                </div>
-              ) : null}
-
-              {isResumeCountdownActive ? (
-                <div className="absolute inset-0 z-20 flex items-center justify-center rounded-3xl bg-black/75 backdrop-blur-sm">
-                  <div className="text-center">
-                    <div className="text-sm font-semibold uppercase tracking-[0.3em] text-amber-300">
-                      Ripresa partita
-                    </div>
-                    <div className="mt-4 text-7xl font-black text-white">
-                      {resumeCountdownSeconds}
-                    </div>
-                  </div>
-                </div>
-              ) : null}
-
-              <div className="rounded-2xl border border-slate-800 bg-slate-950/50 p-5">
-                <div className="flex flex-wrap items-center gap-3">
-                  <p className="text-sm uppercase tracking-[0.2em] text-emerald-300/80">
-                    {question.category}
-                  </p>
-                  <span className="rounded-full border border-indigo-400/30 bg-indigo-500/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-indigo-300">
-                    {question.difficulty}
-                  </span>
-                  <span className="rounded-full border border-fuchsia-400/30 bg-fuchsia-500/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-fuchsia-300">
-                    {multiplierBadge} punteggio
-                  </span>
-                </div>
-
-                <h2 className="mt-3 text-2xl font-black text-white md:text-3xl">
-                  {question.text}
-                </h2>
-              </div>
-
-              <div className="mt-6 space-y-3">
-                {question.options.map((option, index) => {
-                  const markersForOption = answerMarkers.filter(
-                    (marker) => marker.answerIndex === index
-                  );
-
-                  return (
-                    <div
-                      key={option}
-                      className={`rounded-2xl border p-4 ${
-                        index === reveal.correctIndex
-                          ? "border-emerald-400/40 bg-emerald-500/10"
-                          : "border-slate-800 bg-slate-950/50"
-                      }`}
-                    >
-                      <div className="flex items-center justify-between gap-4">
-                        <div className="font-semibold text-white">
-                          <span className="mr-3 inline-flex h-8 w-8 items-center justify-center rounded-full border border-amber-400/30 bg-amber-400/10 text-sm text-amber-300">
-                            {String.fromCharCode(65 + index)}
-                          </span>
-                          {option}
-                        </div>
-
-                        {index === reveal.correctIndex ? (
-                          <span className="rounded-full border border-emerald-400/30 bg-emerald-500/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-emerald-300">
-                            Corretta
-                          </span>
-                        ) : null}
-                      </div>
-
-                      {markersForOption.length > 0 ? (
-                        <div className="mt-4 flex flex-wrap gap-2">
-                          {markersForOption.map((marker) => (
-                            <div
-                              key={marker.playerId}
-                              title={marker.playerName}
-                              className="inline-flex h-9 min-w-9 items-center justify-center rounded-full border border-slate-700 bg-slate-800 px-2 text-xs font-bold text-slate-100"
-                            >
-                              {getPlayerBadge(marker.playerName)}
-                            </div>
-                          ))}
-                        </div>
-                      ) : (
-                        <div className="mt-4 text-sm text-slate-500">
-                          Nessun giocatore ha scelto questa risposta.
-                        </div>
-                      )}
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-
-            <div className="space-y-6">
-              <div className="rounded-3xl border border-emerald-400/20 bg-slate-900/70 p-6 shadow-[0_0_40px_rgba(0,0,0,0.35)] backdrop-blur-sm md:p-8">
-                <h3 className="text-lg font-bold text-white">Recap round</h3>
-
-                <div className="mt-4 space-y-3">
-                  {roundResults.map((result) => (
-                    <div
-                      key={result.playerId}
-                      className="rounded-2xl border border-slate-800 bg-slate-950/50 p-4"
-                    >
-                      <div className="flex items-center justify-between gap-3">
-                        <span className="font-semibold text-white">
-                          {result.playerName}
-                        </span>
-                        <span
-                          className={`rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] ${
-                            result.isCorrect
-                              ? "border border-emerald-400/30 bg-emerald-500/10 text-emerald-300"
-                              : "border border-red-400/30 bg-red-500/10 text-red-300"
-                          }`}
-                        >
-                          {result.isCorrect ? "Corretta" : "Sbagliata"}
-                        </span>
-                      </div>
-
-                      <div className="mt-3 text-sm text-slate-300">
-                        Risposta:{" "}
-                        <span className="font-semibold text-white">
-                          {result.selectedAnswer}
-                        </span>
-                      </div>
-
-                      <div className="mt-2 flex items-center justify-between text-sm">
-                        <span className="text-slate-400">Punti round</span>
-                        <span className="font-semibold text-amber-300">
-                          +{result.pointsEarned}
-                        </span>
-                      </div>
-
-                      <div className="mt-1 flex items-center justify-between text-sm">
-                        <span className="text-slate-400">Totale</span>
-                        <span className="font-semibold text-white">
-                          {result.totalScore}
-                        </span>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              <div className="rounded-3xl border border-emerald-400/20 bg-slate-900/70 p-6 shadow-[0_0_40px_rgba(0,0,0,0.35)] backdrop-blur-sm md:p-8">
-                <ChatPanel
-                  roomCode={room.code}
-                  currentPlayerName={name}
-                  messages={chatMessages}
-                  onSend={handleSendChat}
-                  disabled={false}
-                />
-              </div>
-            </div>
-          </div>
+          <RevealView
+            room={room}
+            question={question}
+            reveal={reveal}
+            roundResults={roundResults}
+            answerMarkers={answerMarkers}
+            multiplierBadge={multiplierBadge}
+            isPaused={isPaused}
+            isHost={isHost}
+            togglingPause={togglingPause}
+            isResumeCountdownActive={isResumeCountdownActive}
+            resumeCountdownSeconds={resumeCountdownSeconds}
+            pauseLabel={pauseLabel}
+            revealTimeLeft={revealTimeLeft}
+            revealTimerPercent={revealTimerPercent}
+            chatMessages={chatMessages}
+            currentPlayerName={name}
+            onSendChat={handleSendChat}
+            onPauseToggle={handlePauseToggle}
+          />
         </div>
       </div>
     );
@@ -1138,196 +632,29 @@ export default function BeastyPage() {
             </div>
           ) : null}
 
-          <div className="grid gap-6 lg:grid-cols-[1.4fr_1fr]">
-            <div className="rounded-3xl border border-amber-400/20 bg-slate-900/70 p-6 shadow-[0_0_40px_rgba(0,0,0,0.35)] backdrop-blur-sm md:p-8">
-              <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
-                <div>
-                  <div className="flex flex-wrap items-center gap-3">
-                    <p className="text-sm uppercase tracking-[0.2em] text-amber-300/80">
-                      {question.category}
-                    </p>
-                    <span className="rounded-full border border-indigo-400/30 bg-indigo-500/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-indigo-300">
-                      {question.difficulty}
-                    </span>
-                    <span className="rounded-full border border-fuchsia-400/30 bg-fuchsia-500/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-fuchsia-300">
-                      {multiplierBadge} punteggio
-                    </span>
-                  </div>
-
-                  <h2 className="mt-3 text-2xl font-black text-white md:text-3xl">
-                    {question.text}
-                  </h2>
-                </div>
-
-                <div className="flex flex-wrap items-center gap-3">
-                  <div className="rounded-2xl border border-amber-400/20 bg-amber-400/10 px-4 py-3 text-sm font-semibold text-amber-200">
-                    Stanza {room.code}
-                  </div>
-
-                  {isHost ? (
-                    <button
-                      onClick={handlePauseToggle}
-                      disabled={togglingPause || isResumeCountdownActive}
-                      className={`inline-flex items-center justify-center rounded-2xl px-4 py-3 text-sm font-semibold transition disabled:cursor-not-allowed disabled:opacity-60 ${
-                        isPaused
-                          ? "border border-emerald-400/40 bg-emerald-500/10 text-emerald-300 hover:bg-emerald-500/15"
-                          : "border border-amber-400/40 bg-amber-400/10 text-amber-200 hover:bg-amber-400/15"
-                      }`}
-                    >
-                      {isPaused ? "Riprendi" : "Pausa"}
-                    </button>
-                  ) : null}
-                </div>
-              </div>
-
-              <div className="mt-4 flex flex-wrap items-center gap-3">
-                {doublePoints ? (
-                  <div className="inline-flex rounded-full border border-fuchsia-400/30 bg-fuchsia-500/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-fuchsia-300">
-                    Round a punti doppi
-                  </div>
-                ) : null}
-
-                {isPaused ? (
-                  <div className="inline-flex rounded-full border border-amber-400/30 bg-amber-400/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-amber-300">
-                    {pauseLabel}
-                  </div>
-                ) : null}
-
-                {isResumeCountdownActive ? (
-                  <div className="inline-flex rounded-full border border-cyan-400/30 bg-cyan-500/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-cyan-300">
-                    Ripresa tra {resumeCountdownSeconds}
-                  </div>
-                ) : null}
-              </div>
-
-              <div className="mt-6 flex items-center justify-between gap-4">
-                <div className="h-3 w-full overflow-hidden rounded-full bg-slate-800">
-                  <div
-                    className="h-full rounded-full bg-amber-400 transition-all"
-                    style={{ width: `${timerPercent}%` }}
-                  />
-                </div>
-
-                <div className="min-w-[90px] rounded-2xl border border-amber-400/20 bg-amber-400/10 px-4 py-2 text-center text-lg font-bold text-amber-300">
-                  {timeLeft}s
-                </div>
-              </div>
-
-              <div className="relative mt-8">
-                {isPaused ? (
-                  <div className="absolute inset-0 z-10 flex items-center justify-center rounded-3xl bg-slate-950/70 backdrop-blur-[2px]">
-                    <div className="rounded-3xl border border-amber-400/30 bg-slate-950/90 px-8 py-6 text-center shadow-[0_0_30px_rgba(245,158,11,0.12)]">
-                      <div className="text-sm font-semibold uppercase tracking-[0.3em] text-amber-300">
-                        {pauseLabel}
-                      </div>
-                      <div className="mt-3 text-3xl font-black text-white">
-                        {timeLeft}s
-                      </div>
-                      <p className="mt-2 text-sm text-slate-300">
-                        Le risposte sono bloccate finché l&apos;host non riprende la
-                        partita.
-                      </p>
-                    </div>
-                  </div>
-                ) : null}
-
-                {isResumeCountdownActive ? (
-                  <div className="absolute inset-0 z-20 flex items-center justify-center rounded-3xl bg-black/75 backdrop-blur-sm">
-                    <div className="text-center">
-                      <div className="text-sm font-semibold uppercase tracking-[0.3em] text-amber-300">
-                        Ripresa partita
-                      </div>
-                      <div className="mt-4 text-7xl font-black text-white">
-                        {resumeCountdownSeconds}
-                      </div>
-                    </div>
-                  </div>
-                ) : null}
-
-                <div className="grid gap-4 md:grid-cols-2">
-                  {question.options.map((opt, i) => {
-                    const markersForOption = answerMarkers.filter(
-                      (marker) => marker.answerIndex === i
-                    );
-
-                    return (
-                      <button
-                        key={i}
-                        className={`rounded-2xl border p-5 text-left text-base font-semibold transition disabled:cursor-not-allowed disabled:opacity-60 ${
-                          selectedAnswer === i
-                            ? "border-amber-400/60 bg-amber-400/10 text-amber-100"
-                            : "border-slate-700 bg-slate-950/60 text-slate-100 hover:border-amber-400/50 hover:bg-slate-800"
-                        }`}
-                        onClick={() => handleSubmitAnswer(i)}
-                        disabled={
-                          submittingAnswer ||
-                          selectedAnswer !== null ||
-                          timeLeft <= 0 ||
-                          isPaused ||
-                          isResumeCountdownActive
-                        }
-                      >
-                        <div className="flex items-start gap-3">
-                          <span className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-amber-400/30 bg-amber-400/10 text-sm text-amber-300">
-                            {String.fromCharCode(65 + i)}
-                          </span>
-                          <div className="flex-1">
-                            <div>{opt}</div>
-
-                            {markersForOption.length > 0 ? (
-                              <div className="mt-4 flex flex-wrap gap-2">
-                                {markersForOption.map((marker) => (
-                                  <div
-                                    key={marker.playerId}
-                                    title={marker.playerName}
-                                    className="inline-flex h-8 min-w-8 items-center justify-center rounded-full border border-slate-600 bg-slate-800 px-2 text-[11px] font-bold text-slate-100"
-                                  >
-                                    {getPlayerBadge(marker.playerName)}
-                                  </div>
-                                ))}
-                              </div>
-                            ) : null}
-                          </div>
-                        </div>
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
-
-              <div className="mt-10">
-                <h3 className="text-lg font-bold text-white">Classifica live</h3>
-                <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-                  {sortedPlayers.map((player, index) => (
-                    <div
-                      key={player.id}
-                      className="rounded-2xl border border-slate-800 bg-slate-950/50 p-4"
-                    >
-                      <div className="flex items-center justify-between">
-                        <span className="font-semibold text-white">
-                          #{index + 1} {player.name}
-                        </span>
-                        <span className="text-amber-300">{player.score} pt</span>
-                      </div>
-                      <div className="mt-2 text-sm text-slate-400">
-                        {player.connected ? "Connesso" : "Disconnesso"}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-
-            <div className="rounded-3xl border border-amber-400/20 bg-slate-900/70 p-6 shadow-[0_0_40px_rgba(0,0,0,0.35)] backdrop-blur-sm md:p-8">
-              <ChatPanel
-                roomCode={room.code}
-                currentPlayerName={name}
-                messages={chatMessages}
-                onSend={handleSendChat}
-                disabled={false}
-              />
-            </div>
-          </div>
+          <QuestionView
+            room={room}
+            question={question}
+            sortedPlayers={sortedPlayers}
+            answerMarkers={answerMarkers}
+            multiplierBadge={multiplierBadge}
+            doublePoints={doublePoints}
+            selectedAnswer={selectedAnswer}
+            submittingAnswer={submittingAnswer}
+            isPaused={isPaused}
+            isHost={isHost}
+            togglingPause={togglingPause}
+            isResumeCountdownActive={isResumeCountdownActive}
+            resumeCountdownSeconds={resumeCountdownSeconds}
+            pauseLabel={pauseLabel}
+            timeLeft={timeLeft}
+            timerPercent={timerPercent}
+            chatMessages={chatMessages}
+            currentPlayerName={name}
+            onSendChat={handleSendChat}
+            onPauseToggle={handlePauseToggle}
+            onSubmitAnswer={handleSubmitAnswer}
+          />
         </div>
       </div>
     );
@@ -1349,146 +676,22 @@ export default function BeastyPage() {
             </div>
           ) : null}
 
-          <div className="grid gap-6 lg:grid-cols-[1.4fr_1fr]">
-            <div className="space-y-6 rounded-3xl border border-amber-400/20 bg-slate-900/70 p-6 shadow-[0_0_40px_rgba(0,0,0,0.35)] backdrop-blur-sm md:p-8">
-              <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-                <div>
-                  <p className="text-sm uppercase tracking-[0.2em] text-amber-300/80">
-                    Lobby attiva
-                  </p>
-                  <h2 className="mt-2 text-3xl font-black text-white">
-                    Stanza {room.code}
-                  </h2>
-                </div>
-
-                {isHost ? (
-                  <button
-                    className="inline-flex items-center justify-center rounded-2xl border border-amber-400/40 bg-amber-500/90 px-5 py-3 font-semibold text-slate-950 transition hover:bg-amber-400 disabled:cursor-not-allowed disabled:opacity-50"
-                    onClick={handleStartGame}
-                  >
-                    Avvia partita
-                  </button>
-                ) : (
-                  <div className="rounded-2xl border border-slate-800 bg-slate-950/40 px-4 py-3 text-sm text-slate-400">
-                    In attesa che l&apos;host avvii la partita.
-                  </div>
-                )}
-              </div>
-
-              <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-                {players.map((player) => (
-                  <div
-                    key={player.id}
-                    className={`rounded-2xl border p-4 ${
-                      player.id === room.hostId
-                        ? "border-amber-400/30 bg-amber-400/10"
-                        : "border-slate-800 bg-slate-950/50"
-                    }`}
-                  >
-                    <div className="flex items-center justify-between gap-3">
-                      <span className="font-semibold text-white">
-                        {player.name}
-                      </span>
-
-                      <span
-                        className={`rounded-full px-2 py-1 text-xs ${
-                          player.connected
-                            ? "border border-emerald-400/20 bg-emerald-400/10 text-emerald-300"
-                            : "border border-slate-700 bg-slate-800 text-slate-300"
-                        }`}
-                      >
-                        {player.connected ? "online" : "offline"}
-                      </span>
-                    </div>
-
-                    <div className="mt-3 text-sm text-slate-400">
-                      Punti:{" "}
-                      <span className="font-semibold text-slate-200">
-                        {player.score}
-                      </span>
-                    </div>
-
-                    {player.id === room.hostId ? (
-                      <div className="mt-2 text-xs uppercase tracking-[0.2em] text-amber-300">
-                        Host
-                      </div>
-                    ) : null}
-                  </div>
-                ))}
-              </div>
-
-              <ChatPanel
-                roomCode={room.code}
-                currentPlayerName={name}
-                messages={chatMessages}
-                onSend={handleSendChat}
-              />
-            </div>
-
-            <div className="rounded-3xl border border-amber-400/20 bg-slate-900/70 p-6 shadow-[0_0_40px_rgba(0,0,0,0.35)] backdrop-blur-sm md:p-8">
-              <h3 className="text-xl font-bold text-white">Impostazioni</h3>
-              <p className="mt-2 text-sm text-slate-400">
-                Le categorie selezionate decidono il pool di domande.
-              </p>
-
-              <div className="mt-6 space-y-3">
-                {categories.map((category) => {
-                  const checked = selectedCategories.includes(category.id);
-
-                  return (
-                    <label
-                      key={category.id}
-                      className="flex cursor-pointer items-center justify-between rounded-2xl border border-slate-800 bg-slate-950/40 px-4 py-3"
-                    >
-                      <span className="text-sm font-semibold text-slate-100">
-                        {category.label}
-                      </span>
-                      <input
-                        type="checkbox"
-                        checked={checked}
-                        disabled={!isHost}
-                        onChange={() => toggleCategory(category.id)}
-                        className="h-4 w-4 accent-amber-400"
-                      />
-                    </label>
-                  );
-                })}
-              </div>
-
-              <div className="mt-6">
-                <label className="mb-2 block text-sm font-semibold text-slate-200">
-                  Numero domande
-                </label>
-                <input
-                  type="range"
-                  min={5}
-                  max={20}
-                  step={1}
-                  value={totalQuestions}
-                  disabled={!isHost}
-                  onChange={(e) => setTotalQuestions(Number(e.target.value))}
-                  className="w-full accent-amber-400"
-                />
-                <div className="mt-2 text-sm text-slate-400">
-                  {totalQuestions} domande
-                </div>
-              </div>
-
-              {isHost ? (
-                <button
-                  className="mt-6 inline-flex w-full items-center justify-center rounded-2xl border border-slate-700 bg-slate-800 px-5 py-3 font-semibold text-slate-100 transition hover:bg-slate-700 disabled:opacity-50"
-                  onClick={handleSaveSettings}
-                  disabled={savingSettings}
-                >
-                  Salva impostazioni
-                </button>
-              ) : (
-                <div className="mt-6 rounded-2xl border border-slate-800 bg-slate-950/40 px-4 py-3 text-sm text-slate-400">
-                  Solo l&apos;host può modificare le impostazioni.
-                </div>
-              )}
-            </div>
-          </div>
+          <LobbyView
+            room={room}
+            players={players}
+            categories={categories}
+            selectedCategories={selectedCategories}
+            totalQuestions={totalQuestions}
+            savingSettings={savingSettings}
+            isHost={isHost}
+            currentPlayerName={name}
+            chatMessages={chatMessages}
+            onSendChat={handleSendChat}
+            onStartGame={handleStartGame}
+            onSaveSettings={handleSaveSettings}
+            onToggleCategory={toggleCategory}
+            onTotalQuestionsChange={setTotalQuestions}
+          />
         </div>
       </div>
     );
@@ -1509,309 +712,21 @@ export default function BeastyPage() {
           </div>
         ) : null}
 
-        <div className="grid gap-6 lg:grid-cols-[1.4fr_1fr]">
-          <div className="rounded-3xl border border-amber-400/20 bg-slate-900/70 p-6 shadow-[0_0_40px_rgba(0,0,0,0.35)] backdrop-blur-sm md:p-8">
-            {!landingMode ? (
-              <div>
-                <div className="grid gap-6 md:grid-cols-2">
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setActionError(null);
-                      setLandingMode("create");
-                    }}
-                    className="group rounded-3xl border border-amber-400/20 bg-slate-950/40 p-6 text-left transition hover:border-amber-400/40 hover:bg-slate-900/70"
-                  >
-                    <div className="inline-flex h-12 w-12 items-center justify-center rounded-2xl border border-amber-400/30 bg-amber-400/10 text-2xl text-amber-300">
-                      +
-                    </div>
-                    <h2 className="mt-5 text-2xl font-black text-white">
-                      Crea stanza
-                    </h2>
-                    <p className="mt-2 text-sm text-slate-400">
-                      Apri una nuova lobby privata, scegli le categorie e invita
-                      gli altri giocatori con un codice.
-                    </p>
-                    <div className="mt-5 text-sm font-semibold text-amber-300 transition group-hover:text-amber-200">
-                      Vai alla creazione →
-                    </div>
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setActionError(null);
-                      setLandingMode("join");
-                    }}
-                    className="group rounded-3xl border border-slate-800 bg-slate-950/40 p-6 text-left transition hover:border-amber-400/40 hover:bg-slate-900/70"
-                  >
-                    <div className="inline-flex h-12 w-12 items-center justify-center rounded-2xl border border-amber-400/30 bg-amber-400/10 text-2xl text-amber-300">
-                      →
-                    </div>
-                    <h2 className="mt-5 text-2xl font-black text-white">
-                      Unisciti a una stanza
-                    </h2>
-                    <p className="mt-2 text-sm text-slate-400">
-                      Inserisci il codice della lobby ed entra subito nella
-                      partita con gli altri giocatori.
-                    </p>
-                    <div className="mt-5 text-sm font-semibold text-amber-300 transition group-hover:text-amber-200">
-                      Vai all’ingresso →
-                    </div>
-                  </button>
-                </div>
-
-                <div className="mt-8 grid gap-4 md:grid-cols-3">
-                  <div className="rounded-2xl border border-slate-800 bg-slate-950/40 p-5">
-                    <div className="text-sm uppercase tracking-[0.2em] text-amber-300/80">
-                      Lobby private
-                    </div>
-                    <p className="mt-3 text-sm text-slate-300">
-                      Ogni partita vive in una stanza dedicata con codice condivisibile.
-                    </p>
-                  </div>
-
-                  <div className="rounded-2xl border border-slate-800 bg-slate-950/40 p-5">
-                    <div className="text-sm uppercase tracking-[0.2em] text-amber-300/80">
-                      Risposte visibili
-                    </div>
-                    <p className="mt-3 text-sm text-slate-300">
-                      Quando un giocatore risponde, compare la sua icona sotto la scelta fatta.
-                    </p>
-                  </div>
-
-                  <div className="rounded-2xl border border-slate-800 bg-slate-950/40 p-5">
-                    <div className="text-sm uppercase tracking-[0.2em] text-amber-300/80">
-                      Riepilogo finale
-                    </div>
-                    <p className="mt-3 text-sm text-slate-300">
-                      A fine partita vedi statistiche complete e dettagli per ogni giocatore.
-                    </p>
-                  </div>
-                </div>
-              </div>
-            ) : landingMode === "create" ? (
-              <div>
-                <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
-                  <div>
-                    <div className="text-sm uppercase tracking-[0.2em] text-amber-300/80">
-                      Creazione lobby
-                    </div>
-                    <h2 className="mt-2 text-3xl font-black text-white">
-                      Crea una nuova stanza
-                    </h2>
-                    <p className="mt-2 text-sm text-slate-400">
-                      Scegli il tuo nome e crea subito una lobby privata.
-                    </p>
-                  </div>
-
-                  <button
-                    type="button"
-                    onClick={() => setLandingMode(null)}
-                    className="inline-flex items-center justify-center rounded-2xl border border-slate-700 bg-slate-900 px-4 py-2 text-sm font-semibold text-slate-200 transition hover:bg-slate-800"
-                  >
-                    ← Indietro
-                  </button>
-                </div>
-
-                <div className="rounded-2xl border border-slate-800 bg-slate-950/40 p-5">
-                  <div className="space-y-3">
-                    <input
-                      placeholder="Nome giocatore"
-                      value={name}
-                      onChange={(e) => setName(e.target.value)}
-                      className="w-full rounded-2xl border border-slate-700 bg-slate-950/70 px-4 py-3 text-slate-100 outline-none transition focus:border-amber-400/60 focus:ring-2 focus:ring-amber-400/20"
-                    />
-
-                    <button
-                      className="inline-flex w-full items-center justify-center rounded-2xl border border-amber-400/40 bg-amber-500/90 px-5 py-3 font-semibold text-slate-950 transition hover:bg-amber-400 disabled:cursor-not-allowed disabled:opacity-50"
-                      onClick={handleCreateRoom}
-                      disabled={!name.trim()}
-                    >
-                      Crea stanza
-                    </button>
-                  </div>
-                </div>
-
-                <div className="mt-6 grid gap-4 md:grid-cols-3">
-                  <div className="rounded-2xl border border-slate-800 bg-slate-950/40 p-5">
-                    <div className="text-sm uppercase tracking-[0.2em] text-amber-300/80">
-                      Host
-                    </div>
-                    <p className="mt-3 text-sm text-slate-300">
-                      Sarai tu a far partire la partita e a gestire le impostazioni.
-                    </p>
-                  </div>
-
-                  <div className="rounded-2xl border border-slate-800 bg-slate-950/40 p-5">
-                    <div className="text-sm uppercase tracking-[0.2em] text-amber-300/80">
-                      Codice lobby
-                    </div>
-                    <p className="mt-3 text-sm text-slate-300">
-                      Il server genererà automaticamente un codice da condividere.
-                    </p>
-                  </div>
-
-                  <div className="rounded-2xl border border-slate-800 bg-slate-950/40 p-5">
-                    <div className="text-sm uppercase tracking-[0.2em] text-amber-300/80">
-                      Categorie
-                    </div>
-                    <p className="mt-3 text-sm text-slate-300">
-                      Le impostazioni qui a destra verranno usate nella nuova stanza.
-                    </p>
-                  </div>
-                </div>
-              </div>
-            ) : (
-              <div>
-                <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
-                  <div>
-                    <div className="text-sm uppercase tracking-[0.2em] text-amber-300/80">
-                      Ingresso lobby
-                    </div>
-                    <h2 className="mt-2 text-3xl font-black text-white">
-                      Unisciti a una stanza
-                    </h2>
-                    <p className="mt-2 text-sm text-slate-400">
-                      Inserisci il tuo nome e il codice stanza per entrare subito.
-                    </p>
-                  </div>
-
-                  <button
-                    type="button"
-                    onClick={() => setLandingMode(null)}
-                    className="inline-flex items-center justify-center rounded-2xl border border-slate-700 bg-slate-900 px-4 py-2 text-sm font-semibold text-slate-200 transition hover:bg-slate-800"
-                  >
-                    ← Indietro
-                  </button>
-                </div>
-
-                <div className="rounded-2xl border border-slate-800 bg-slate-950/40 p-5">
-                  <div className="space-y-3">
-                    <input
-                      placeholder="Nome giocatore"
-                      value={name}
-                      onChange={(e) => setName(e.target.value)}
-                      className="w-full rounded-2xl border border-slate-700 bg-slate-950/70 px-4 py-3 text-slate-100 outline-none transition focus:border-amber-400/60 focus:ring-2 focus:ring-amber-400/20"
-                    />
-
-                    <input
-                      placeholder="Codice stanza"
-                      value={code}
-                      onChange={(e) => setCode(e.target.value.toUpperCase())}
-                      className="w-full rounded-2xl border border-slate-700 bg-slate-950/70 px-4 py-3 text-slate-100 outline-none transition focus:border-amber-400/60 focus:ring-2 focus:ring-amber-400/20"
-                    />
-
-                    <button
-                      className="inline-flex w-full items-center justify-center rounded-2xl border border-slate-700 bg-slate-800 px-5 py-3 font-semibold text-slate-100 transition hover:bg-slate-700 disabled:cursor-not-allowed disabled:opacity-50"
-                      onClick={handleJoinRoom}
-                      disabled={!name.trim() || !code.trim()}
-                    >
-                      Entra nella stanza
-                    </button>
-                  </div>
-                </div>
-
-                <div className="mt-6 grid gap-4 md:grid-cols-3">
-                  <div className="rounded-2xl border border-slate-800 bg-slate-950/40 p-5">
-                    <div className="text-sm uppercase tracking-[0.2em] text-amber-300/80">
-                      Accesso rapido
-                    </div>
-                    <p className="mt-3 text-sm text-slate-300">
-                      Ti basta il codice lobby per entrare direttamente in partita.
-                    </p>
-                  </div>
-
-                  <div className="rounded-2xl border border-slate-800 bg-slate-950/40 p-5">
-                    <div className="text-sm uppercase tracking-[0.2em] text-amber-300/80">
-                      Rejoin
-                    </div>
-                    <p className="mt-3 text-sm text-slate-300">
-                      Se eri già nella stanza, puoi rientrare con la tua sessione.
-                    </p>
-                  </div>
-
-                  <div className="rounded-2xl border border-slate-800 bg-slate-950/40 p-5">
-                    <div className="text-sm uppercase tracking-[0.2em] text-amber-300/80">
-                      Subito pronto
-                    </div>
-                    <p className="mt-3 text-sm text-slate-300">
-                      Una volta dentro vedrai la lobby e aspetterai l’avvio dell’host.
-                    </p>
-                  </div>
-                </div>
-              </div>
-            )}
-          </div>
-
-          <div className="space-y-6">
-            <div className="rounded-3xl border border-amber-400/20 bg-slate-900/70 p-6 shadow-[0_0_40px_rgba(0,0,0,0.35)] backdrop-blur-sm md:p-8">
-              <h3 className="text-xl font-bold text-white">Categorie iniziali</h3>
-              <p className="mt-2 text-sm text-slate-400">
-                Queste impostazioni verranno usate quando crei una nuova stanza.
-              </p>
-
-              <div className="mt-6 space-y-3">
-                {categories.map((category) => {
-                  const checked = selectedCategories.includes(category.id);
-
-                  return (
-                    <label
-                      key={category.id}
-                      className="flex cursor-pointer items-center justify-between rounded-2xl border border-slate-800 bg-slate-950/40 px-4 py-3"
-                    >
-                      <span className="text-sm font-semibold text-slate-100">
-                        {category.label}
-                      </span>
-                      <input
-                        type="checkbox"
-                        checked={checked}
-                        onChange={() => toggleCategory(category.id)}
-                        className="h-4 w-4 accent-amber-400"
-                      />
-                    </label>
-                  );
-                })}
-              </div>
-
-              <div className="mt-6">
-                <label className="mb-2 block text-sm font-semibold text-slate-200">
-                  Numero domande
-                </label>
-                <input
-                  type="range"
-                  min={5}
-                  max={20}
-                  step={1}
-                  value={totalQuestions}
-                  onChange={(e) => setTotalQuestions(Number(e.target.value))}
-                  className="w-full accent-amber-400"
-                />
-                <div className="mt-2 text-sm text-slate-400">
-                  {totalQuestions} domande
-                </div>
-              </div>
-
-              <div className="mt-6 rounded-2xl border border-slate-800 bg-slate-950/40 px-4 py-4 text-sm text-slate-300">
-                <div className="font-semibold text-white">Moltiplicatori difficoltà</div>
-                <div className="mt-2 space-y-1">
-                  <div>Easy → x1</div>
-                  <div>Medium → x1.5</div>
-                  <div>Hard → x2</div>
-                </div>
-              </div>
-            </div>
-
-            <div className="rounded-3xl border border-amber-400/20 bg-slate-900/70 p-6 shadow-[0_0_40px_rgba(0,0,0,0.35)] backdrop-blur-sm md:p-8">
-              <ChatPanel
-                currentPlayerName={name}
-                messages={chatMessages}
-                onSend={handleSendChat}
-                disabled={!room}
-              />
-            </div>
-          </div>
-        </div>
+        <LandingView
+          landingMode={landingMode}
+          setLandingMode={setLandingMode}
+          name={name}
+          setName={setName}
+          code={code}
+          setCode={setCode}
+          categories={categories}
+          selectedCategories={selectedCategories}
+          totalQuestions={totalQuestions}
+          onToggleCategory={toggleCategory}
+          onTotalQuestionsChange={setTotalQuestions}
+          onCreateRoom={handleCreateRoom}
+          onJoinRoom={handleJoinRoom}
+        />
       </div>
     </div>
   );

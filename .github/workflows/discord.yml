@@ -1,4 +1,4 @@
-name: Notify Discord on Push
+name: Notify Discord Patch Notes
 
 on:
   push:
@@ -11,18 +11,121 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Send Discord message
+      - name: Build patch notes
+        id: patchnotes
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const commits = context.payload.commits || [];
+
+            const importantPrefixes = [
+              "feat:",
+              "fix:",
+              "perf:",
+              "refactor:",
+              "release:",
+              "hotfix:"
+            ];
+
+            const skipPrefixes = [
+              "chore:",
+              "docs:",
+              "style:",
+              "test:",
+              "ci:",
+              "build:"
+            ];
+
+            const importantCommits = commits.filter((commit) => {
+              const message = (commit.message || "").trim();
+              const lower = message.toLowerCase();
+
+              if (lower.includes("[no-discord]")) return false;
+              if (skipPrefixes.some((prefix) => lower.startsWith(prefix))) return false;
+
+              return importantPrefixes.some((prefix) => lower.startsWith(prefix));
+            });
+
+            if (importantCommits.length === 0) {
+              core.setOutput("should_send", "false");
+              core.setOutput("title", "");
+              core.setOutput("description", "");
+              core.setOutput("compare_url", "");
+              core.setOutput("repo", "");
+              core.setOutput("branch", "");
+              core.setOutput("site_url", "");
+              return;
+            }
+
+            const repo = context.payload.repository?.name || "repository";
+            const branch = context.ref.replace("refs/heads/", "");
+            const compareUrl = context.payload.compare || "";
+            const siteUrl = "https://aoe4community.vercel.app";
+
+            const lines = importantCommits.map((commit) => {
+              const fullMessage = (commit.message || "").trim();
+              const firstLine = fullMessage.split("\n")[0];
+              const author = commit.author?.name || "Unknown";
+              const shortSha = commit.id?.slice(0, 7) || "unknown";
+              return `• \`${shortSha}\` ${firstLine} — ${author}`;
+            });
+
+            const title =
+              importantCommits.length === 1
+                ? "✅ Nuovo aggiornamento importante del sito"
+                : "✅ Nuovi aggiornamenti importanti del sito";
+
+            const description = lines.join("\n");
+
+            core.setOutput("should_send", "true");
+            core.setOutput("title", title);
+            core.setOutput("description", description);
+            core.setOutput("compare_url", compareUrl);
+            core.setOutput("repo", repo);
+            core.setOutput("branch", branch);
+            core.setOutput("site_url", siteUrl);
+
+      - name: Send Discord embed
+        if: steps.patchnotes.outputs.should_send == 'true'
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+          TITLE: ${{ steps.patchnotes.outputs.title }}
+          DESCRIPTION: ${{ steps.patchnotes.outputs.description }}
+          COMPARE_URL: ${{ steps.patchnotes.outputs.compare_url }}
+          REPO: ${{ steps.patchnotes.outputs.repo }}
+          BRANCH: ${{ steps.patchnotes.outputs.branch }}
+          SITE_URL: ${{ steps.patchnotes.outputs.site_url }}
         run: |
-          curl -H "Content-Type: application/json" \
-          -X POST \
-          -d "$(jq -n \
-            --arg repo "${{ github.event.repository.name }}" \
-            --arg branch "${{ github.ref_name }}" \
-            --arg commit "${{ github.event.head_commit.message }}" \
-            --arg author "${{ github.event.head_commit.author.name }}" \
+          jq -n \
+            --arg content "<@&1477743270665912350>" \
+            --arg title "$TITLE" \
+            --arg description "$DESCRIPTION" \
+            --arg repo "$REPO" \
+            --arg branch "$BRANCH" \
+            --arg compare "$COMPARE_URL" \
+            --arg site "$SITE_URL" \
             '{
-              content: "<@&1477743270665912350>\n\n✅ Nuovo update del sito\n\n📦 Repo: \($repo)\n🌿 Branch: \($branch)\n📝 Commit: \($commit)\n👤 Autore: \($author)\n🔗 https://aoe4community.vercel.app",
-              allowed_mentions: { parse: ["roles"] }
-            }'
-          )" \
-          "${{ secrets.DISCORD_WEBHOOK }}"
+              content: $content,
+              allowed_mentions: { roles: ["1477743270665912350"] },
+              embeds: [
+                {
+                  title: $title,
+                  color: 16760576,
+                  description: $description,
+                  fields: [
+                    { name: "📦 Repo", value: $repo, inline: true },
+                    { name: "🌿 Branch", value: $branch, inline: true },
+                    { name: "🌍 Sito", value: $site, inline: false },
+                    { name: "🧾 Confronto commit", value: ($compare | if . == "" then "Non disponibile" else . end), inline: false }
+                  ],
+                  footer: {
+                    text: "EpicoJackal Aoe4 Community"
+                  },
+                  timestamp: (now | todateiso8601)
+                }
+              ]
+            }' \
+          | curl -H "Content-Type: application/json" \
+                 -X POST \
+                 -d @- \
+                 "$DISCORD_WEBHOOK"

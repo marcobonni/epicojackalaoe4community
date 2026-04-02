@@ -21,6 +21,13 @@ function getPlayerBadge(name: string) {
   return parts.map((part) => part[0]?.toUpperCase() ?? "").join("");
 }
 
+function formatChatTime(timestamp: number) {
+  return new Date(timestamp).toLocaleTimeString("it-IT", {
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+}
+
 function HeroHeader({
   title,
   description,
@@ -66,6 +73,132 @@ function HeroHeader({
   );
 }
 
+function ChatPanel({
+  roomCode,
+  currentPlayerName,
+  messages,
+  onSend,
+  disabled = false,
+}: {
+  roomCode?: string;
+  currentPlayerName?: string;
+  messages: {
+    id: string;
+    playerId: string;
+    playerName: string;
+    text: string;
+    createdAt: number;
+  }[];
+  onSend: (text: string) => Promise<void>;
+  disabled?: boolean;
+}) {
+  const [text, setText] = useState("");
+  const [sending, setSending] = useState(false);
+  const messagesEndRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
+
+  const handleSend = async () => {
+    const cleaned = text.trim();
+    if (!cleaned || sending || disabled) return;
+
+    setSending(true);
+    await onSend(cleaned);
+    setSending(false);
+    setText("");
+  };
+
+  return (
+    <div className="rounded-3xl border border-slate-800 bg-slate-950/50 p-4">
+      <div className="flex items-center justify-between gap-3">
+        <h3 className="text-lg font-bold text-white">Chat stanza</h3>
+        {roomCode ? (
+          <span className="rounded-full border border-slate-700 bg-slate-900 px-3 py-1 text-xs text-slate-300">
+            {roomCode}
+          </span>
+        ) : null}
+      </div>
+
+      <div className="mt-4 h-72 overflow-y-auto rounded-2xl border border-slate-800 bg-slate-900/60 p-3">
+        {messages.length === 0 ? (
+          <div className="text-sm text-slate-500">Nessun messaggio ancora.</div>
+        ) : (
+          <div className="space-y-3">
+            {messages.map((message) => {
+              const isOwn =
+                currentPlayerName &&
+                message.playerName.trim().toLowerCase() ===
+                  currentPlayerName.trim().toLowerCase();
+
+              return (
+                <div
+                  key={message.id}
+                  className={`rounded-2xl border p-3 ${
+                    isOwn
+                      ? "border-amber-400/20 bg-amber-400/5"
+                      : "border-slate-800 bg-slate-950/70"
+                  }`}
+                >
+                  <div className="flex items-center justify-between gap-3">
+                    <span
+                      className={`text-sm font-semibold ${
+                        isOwn ? "text-amber-300" : "text-white"
+                      }`}
+                    >
+                      {message.playerName}
+                    </span>
+                    <span className="text-xs text-slate-500">
+                      {formatChatTime(message.createdAt)}
+                    </span>
+                  </div>
+                  <div className="mt-1 whitespace-pre-wrap break-words text-sm text-slate-200">
+                    {message.text}
+                  </div>
+                </div>
+              );
+            })}
+            <div ref={messagesEndRef} />
+          </div>
+        )}
+      </div>
+
+      <div className="mt-4 flex gap-3">
+        <input
+          value={text}
+          maxLength={250}
+          disabled={disabled || sending}
+          onChange={(e) => setText(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" && !e.shiftKey) {
+              e.preventDefault();
+              void handleSend();
+            }
+          }}
+          placeholder={
+            disabled
+              ? "Chat temporaneamente bloccata"
+              : "Scrivi un messaggio..."
+          }
+          className="flex-1 rounded-2xl border border-slate-700 bg-slate-950/70 px-4 py-3 text-sm text-slate-100 outline-none transition focus:border-amber-400/60 focus:ring-2 focus:ring-amber-400/20 disabled:opacity-60"
+        />
+        <button
+          onClick={() => void handleSend()}
+          disabled={disabled || sending || !text.trim()}
+          className="rounded-2xl border border-amber-400/40 bg-amber-500/90 px-5 py-3 text-sm font-semibold text-slate-950 transition hover:bg-amber-400 disabled:cursor-not-allowed disabled:opacity-50"
+        >
+          Invia
+        </button>
+      </div>
+
+      <div className="mt-2 text-xs text-slate-500">
+        Max 250 caratteri. Ultimi 100 messaggi salvati nella stanza.
+      </div>
+    </div>
+  );
+}
+
 export default function BeastyPage() {
   const {
     connected,
@@ -95,6 +228,8 @@ export default function BeastyPage() {
     remainingMs,
     timerPhase,
     resumeCountdownAt,
+    chatMessages,
+    sendChatMessage,
   } = useBeasty();
 
   const [name, setName] = useState("");
@@ -495,6 +630,19 @@ export default function BeastyPage() {
     setSubmittingAnswer(false);
   };
 
+  const handleSendChat = async (text: string) => {
+    if (!room) return;
+
+    const response = (await sendChatMessage(room.code, text)) as {
+      ok?: boolean;
+      error?: string;
+    };
+
+    if (!response?.ok) {
+      setActionError(response?.error ?? "Impossibile inviare il messaggio.");
+    }
+  };
+
   const toggleCategory = (categoryId: string) => {
     setSelectedCategories((prev) => {
       if (prev.includes(categoryId)) {
@@ -589,154 +737,165 @@ export default function BeastyPage() {
             </div>
           ) : null}
 
-          <div className="rounded-3xl border border-amber-400/20 bg-slate-900/70 p-6 shadow-[0_0_40px_rgba(0,0,0,0.35)] backdrop-blur-sm md:p-8">
-            <div className="grid gap-4 lg:grid-cols-3">
-              {finalResults.map((result, index) => (
-                <div
-                  key={result.playerId}
-                  className={`rounded-2xl border p-5 ${
-                    index === 0
-                      ? "border-amber-300/40 bg-[linear-gradient(180deg,rgba(245,158,11,0.12),rgba(2,6,23,0.6))] shadow-[0_0_30px_rgba(245,158,11,0.12)]"
-                      : "border-slate-800 bg-slate-950/50"
-                  }`}
-                >
-                  <div className="flex items-center justify-between gap-3">
-                    <div>
-                      <div className="text-sm uppercase tracking-[0.2em] text-amber-300/80">
-                        {index === 0 ? "🏆 Vincitore" : `#${index + 1}`}
+          <div className="grid gap-6 lg:grid-cols-[1.4fr_1fr]">
+            <div className="rounded-3xl border border-amber-400/20 bg-slate-900/70 p-6 shadow-[0_0_40px_rgba(0,0,0,0.35)] backdrop-blur-sm md:p-8">
+              <div className="grid gap-4 lg:grid-cols-2 xl:grid-cols-3">
+                {finalResults.map((result, index) => (
+                  <div
+                    key={result.playerId}
+                    className={`rounded-2xl border p-5 ${
+                      index === 0
+                        ? "border-amber-300/40 bg-[linear-gradient(180deg,rgba(245,158,11,0.12),rgba(2,6,23,0.6))] shadow-[0_0_30px_rgba(245,158,11,0.12)]"
+                        : "border-slate-800 bg-slate-950/50"
+                    }`}
+                  >
+                    <div className="flex items-center justify-between gap-3">
+                      <div>
+                        <div className="text-sm uppercase tracking-[0.2em] text-amber-300/80">
+                          {index === 0 ? "🏆 Vincitore" : `#${index + 1}`}
+                        </div>
+                        <div className="mt-1 text-xl font-black text-white">
+                          {result.playerName}
+                        </div>
                       </div>
-                      <div className="mt-1 text-xl font-black text-white">
-                        {result.playerName}
+
+                      <div className="rounded-2xl border border-amber-400/20 bg-amber-400/10 px-4 py-3 text-right">
+                        <div className="text-xs uppercase tracking-[0.2em] text-amber-300/80">
+                          Punteggio finale
+                        </div>
+                        <div className="text-2xl font-black text-amber-300">
+                          {result.finalScore}
+                        </div>
                       </div>
                     </div>
 
-                    <div className="rounded-2xl border border-amber-400/20 bg-amber-400/10 px-4 py-3 text-right">
-                      <div className="text-xs uppercase tracking-[0.2em] text-amber-300/80">
-                        Punteggio finale
+                    <div className="mt-5 grid grid-cols-2 gap-3 text-sm">
+                      <div className="rounded-2xl border border-slate-800 bg-slate-900/70 p-3">
+                        <div className="text-slate-400">Corrette</div>
+                        <div className="mt-1 font-semibold text-emerald-300">
+                          {result.correctAnswers}
+                        </div>
                       </div>
-                      <div className="text-2xl font-black text-amber-300">
-                        {result.finalScore}
+                      <div className="rounded-2xl border border-slate-800 bg-slate-900/70 p-3">
+                        <div className="text-slate-400">Sbagliate</div>
+                        <div className="mt-1 font-semibold text-red-300">
+                          {result.wrongAnswers}
+                        </div>
                       </div>
-                    </div>
-                  </div>
-
-                  <div className="mt-5 grid grid-cols-2 gap-3 text-sm">
-                    <div className="rounded-2xl border border-slate-800 bg-slate-900/70 p-3">
-                      <div className="text-slate-400">Corrette</div>
-                      <div className="mt-1 font-semibold text-emerald-300">
-                        {result.correctAnswers}
+                      <div className="rounded-2xl border border-slate-800 bg-slate-900/70 p-3">
+                        <div className="text-slate-400">Accuratezza</div>
+                        <div className="mt-1 font-semibold text-white">
+                          {result.accuracy}%
+                        </div>
                       </div>
-                    </div>
-                    <div className="rounded-2xl border border-slate-800 bg-slate-900/70 p-3">
-                      <div className="text-slate-400">Sbagliate</div>
-                      <div className="mt-1 font-semibold text-red-300">
-                        {result.wrongAnswers}
+                      <div className="rounded-2xl border border-slate-800 bg-slate-900/70 p-3">
+                        <div className="text-slate-400">Punti ottenuti</div>
+                        <div className="mt-1 font-semibold text-amber-300">
+                          {result.totalPointsEarned}
+                        </div>
                       </div>
-                    </div>
-                    <div className="rounded-2xl border border-slate-800 bg-slate-900/70 p-3">
-                      <div className="text-slate-400">Accuratezza</div>
-                      <div className="mt-1 font-semibold text-white">
-                        {result.accuracy}%
+                      <div className="col-span-2 rounded-2xl border border-slate-800 bg-slate-900/70 p-3">
+                        <div className="text-slate-400">Tempo medio risposta</div>
+                        <div className="mt-1 font-semibold text-cyan-300">
+                          {(result.avgResponseTimeMs / 1000).toFixed(2)}s
+                        </div>
                       </div>
-                    </div>
-                    <div className="rounded-2xl border border-slate-800 bg-slate-900/70 p-3">
-                      <div className="text-slate-400">Punti ottenuti</div>
-                      <div className="mt-1 font-semibold text-amber-300">
-                        {result.totalPointsEarned}
-                      </div>
-                    </div>
-                    <div className="col-span-2 rounded-2xl border border-slate-800 bg-slate-900/70 p-3">
-                      <div className="text-slate-400">Tempo medio risposta</div>
-                      <div className="mt-1 font-semibold text-cyan-300">
-                        {(result.avgResponseTimeMs / 1000).toFixed(2)}s
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="mt-6">
-                    <div className="text-sm font-semibold uppercase tracking-[0.2em] text-slate-300">
-                      Dettaglio round
                     </div>
 
-                    <div className="mt-3 max-h-80 space-y-3 overflow-auto pr-1">
-                      {result.rounds.map((round, roundIndex) => (
-                        <div
-                          key={`${result.playerId}-${roundIndex}`}
-                          className="rounded-2xl border border-slate-800 bg-slate-900/70 p-4"
-                        >
-                          <div className="flex items-start justify-between gap-3">
-                            <div className="text-sm font-semibold text-white">
-                              {round.questionText}
-                            </div>
-                            <span
-                              className={`rounded-full px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.2em] ${
-                                round.isCorrect
-                                  ? "border border-emerald-400/30 bg-emerald-500/10 text-emerald-300"
-                                  : "border border-red-400/30 bg-red-500/10 text-red-300"
-                              }`}
-                            >
-                              {round.isCorrect ? "Corretta" : "Sbagliata"}
-                            </span>
-                          </div>
+                    <div className="mt-6">
+                      <div className="text-sm font-semibold uppercase tracking-[0.2em] text-slate-300">
+                        Dettaglio round
+                      </div>
 
-                          <div className="mt-2 flex flex-wrap gap-2">
-                            <span className="rounded-full border border-slate-700 bg-slate-800 px-2 py-1 text-[11px] uppercase tracking-[0.2em] text-slate-300">
-                              {round.category}
-                            </span>
-                            <span className="rounded-full border border-slate-700 bg-slate-800 px-2 py-1 text-[11px] uppercase tracking-[0.2em] text-slate-300">
-                              {round.difficulty}
-                            </span>
-                          </div>
-
-                          <div className="mt-3 text-sm text-slate-300">
-                            Risposta scelta:{" "}
-                            <span className="font-semibold text-white">
-                              {round.selectedAnswer}
-                            </span>
-                          </div>
-
-                          {!round.isCorrect ? (
-                            <div className="mt-1 text-sm text-slate-400">
-                              Corretta:{" "}
-                              <span className="font-semibold text-emerald-300">
-                                {round.correctAnswer}
+                      <div className="mt-3 max-h-80 space-y-3 overflow-auto pr-1">
+                        {result.rounds.map((round, roundIndex) => (
+                          <div
+                            key={`${result.playerId}-${roundIndex}`}
+                            className="rounded-2xl border border-slate-800 bg-slate-900/70 p-4"
+                          >
+                            <div className="flex items-start justify-between gap-3">
+                              <div className="text-sm font-semibold text-white">
+                                {round.questionText}
+                              </div>
+                              <span
+                                className={`rounded-full px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.2em] ${
+                                  round.isCorrect
+                                    ? "border border-emerald-400/30 bg-emerald-500/10 text-emerald-300"
+                                    : "border border-red-400/30 bg-red-500/10 text-red-300"
+                                }`}
+                              >
+                                {round.isCorrect ? "Corretta" : "Sbagliata"}
                               </span>
                             </div>
-                          ) : null}
 
-                          <div className="mt-2 text-sm text-slate-400">
-                            Punti round:{" "}
-                            <span className="font-semibold text-amber-300">
-                              +{round.pointsEarned}
-                            </span>
+                            <div className="mt-2 flex flex-wrap gap-2">
+                              <span className="rounded-full border border-slate-700 bg-slate-800 px-2 py-1 text-[11px] uppercase tracking-[0.2em] text-slate-300">
+                                {round.category}
+                              </span>
+                              <span className="rounded-full border border-slate-700 bg-slate-800 px-2 py-1 text-[11px] uppercase tracking-[0.2em] text-slate-300">
+                                {round.difficulty}
+                              </span>
+                            </div>
+
+                            <div className="mt-3 text-sm text-slate-300">
+                              Risposta scelta:{" "}
+                              <span className="font-semibold text-white">
+                                {round.selectedAnswer}
+                              </span>
+                            </div>
+
+                            {!round.isCorrect ? (
+                              <div className="mt-1 text-sm text-slate-400">
+                                Corretta:{" "}
+                                <span className="font-semibold text-emerald-300">
+                                  {round.correctAnswer}
+                                </span>
+                              </div>
+                            ) : null}
+
+                            <div className="mt-2 text-sm text-slate-400">
+                              Punti round:{" "}
+                              <span className="font-semibold text-amber-300">
+                                +{round.pointsEarned}
+                              </span>
+                            </div>
                           </div>
-                        </div>
-                      ))}
+                        ))}
+                      </div>
                     </div>
                   </div>
-                </div>
-              ))}
+                ))}
+              </div>
+
+              <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+                {isHost ? (
+                  <button
+                    className="inline-flex items-center justify-center rounded-2xl border border-amber-400/40 bg-amber-500/90 px-5 py-3 font-semibold text-slate-950 transition hover:bg-amber-400"
+                    onClick={handleRematch}
+                  >
+                    Torna in lobby
+                  </button>
+                ) : (
+                  <button
+                    className="inline-flex items-center justify-center rounded-2xl border border-amber-400/40 bg-amber-500/90 px-5 py-3 font-semibold text-slate-950 transition hover:bg-amber-400"
+                    onClick={() => {
+                      window.localStorage.removeItem("beasty-landing-mode");
+                      window.location.reload();
+                    }}
+                  >
+                    Esci
+                  </button>
+                )}
+              </div>
             </div>
 
-            <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-              {isHost ? (
-                <button
-                  className="inline-flex items-center justify-center rounded-2xl border border-amber-400/40 bg-amber-500/90 px-5 py-3 font-semibold text-slate-950 transition hover:bg-amber-400"
-                  onClick={handleRematch}
-                >
-                  Torna in lobby
-                </button>
-              ) : (
-                <button
-                  className="inline-flex items-center justify-center rounded-2xl border border-amber-400/40 bg-amber-500/90 px-5 py-3 font-semibold text-slate-950 transition hover:bg-amber-400"
-                  onClick={() => {
-                    window.localStorage.removeItem("beasty-landing-mode");
-                    window.location.reload();
-                  }}
-                >
-                  Esci
-                </button>
-              )}
+            <div className="rounded-3xl border border-amber-400/20 bg-slate-900/70 p-6 shadow-[0_0_40px_rgba(0,0,0,0.35)] backdrop-blur-sm md:p-8">
+              <ChatPanel
+                roomCode={room.code}
+                currentPlayerName={name}
+                messages={chatMessages}
+                onSend={handleSendChat}
+              />
             </div>
           </div>
         </div>
@@ -897,52 +1056,64 @@ export default function BeastyPage() {
               </div>
             </div>
 
-            <div className="rounded-3xl border border-emerald-400/20 bg-slate-900/70 p-6 shadow-[0_0_40px_rgba(0,0,0,0.35)] backdrop-blur-sm md:p-8">
-              <h3 className="text-lg font-bold text-white">Recap round</h3>
+            <div className="space-y-6">
+              <div className="rounded-3xl border border-emerald-400/20 bg-slate-900/70 p-6 shadow-[0_0_40px_rgba(0,0,0,0.35)] backdrop-blur-sm md:p-8">
+                <h3 className="text-lg font-bold text-white">Recap round</h3>
 
-              <div className="mt-4 space-y-3">
-                {roundResults.map((result) => (
-                  <div
-                    key={result.playerId}
-                    className="rounded-2xl border border-slate-800 bg-slate-950/50 p-4"
-                  >
-                    <div className="flex items-center justify-between gap-3">
-                      <span className="font-semibold text-white">
-                        {result.playerName}
-                      </span>
-                      <span
-                        className={`rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] ${
-                          result.isCorrect
-                            ? "border border-emerald-400/30 bg-emerald-500/10 text-emerald-300"
-                            : "border border-red-400/30 bg-red-500/10 text-red-300"
-                        }`}
-                      >
-                        {result.isCorrect ? "Corretta" : "Sbagliata"}
-                      </span>
-                    </div>
+                <div className="mt-4 space-y-3">
+                  {roundResults.map((result) => (
+                    <div
+                      key={result.playerId}
+                      className="rounded-2xl border border-slate-800 bg-slate-950/50 p-4"
+                    >
+                      <div className="flex items-center justify-between gap-3">
+                        <span className="font-semibold text-white">
+                          {result.playerName}
+                        </span>
+                        <span
+                          className={`rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] ${
+                            result.isCorrect
+                              ? "border border-emerald-400/30 bg-emerald-500/10 text-emerald-300"
+                              : "border border-red-400/30 bg-red-500/10 text-red-300"
+                          }`}
+                        >
+                          {result.isCorrect ? "Corretta" : "Sbagliata"}
+                        </span>
+                      </div>
 
-                    <div className="mt-3 text-sm text-slate-300">
-                      Risposta:{" "}
-                      <span className="font-semibold text-white">
-                        {result.selectedAnswer}
-                      </span>
-                    </div>
+                      <div className="mt-3 text-sm text-slate-300">
+                        Risposta:{" "}
+                        <span className="font-semibold text-white">
+                          {result.selectedAnswer}
+                        </span>
+                      </div>
 
-                    <div className="mt-2 flex items-center justify-between text-sm">
-                      <span className="text-slate-400">Punti round</span>
-                      <span className="font-semibold text-amber-300">
-                        +{result.pointsEarned}
-                      </span>
-                    </div>
+                      <div className="mt-2 flex items-center justify-between text-sm">
+                        <span className="text-slate-400">Punti round</span>
+                        <span className="font-semibold text-amber-300">
+                          +{result.pointsEarned}
+                        </span>
+                      </div>
 
-                    <div className="mt-1 flex items-center justify-between text-sm">
-                      <span className="text-slate-400">Totale</span>
-                      <span className="font-semibold text-white">
-                        {result.totalScore}
-                      </span>
+                      <div className="mt-1 flex items-center justify-between text-sm">
+                        <span className="text-slate-400">Totale</span>
+                        <span className="font-semibold text-white">
+                          {result.totalScore}
+                        </span>
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  ))}
+                </div>
+              </div>
+
+              <div className="rounded-3xl border border-emerald-400/20 bg-slate-900/70 p-6 shadow-[0_0_40px_rgba(0,0,0,0.35)] backdrop-blur-sm md:p-8">
+                <ChatPanel
+                  roomCode={room.code}
+                  currentPlayerName={name}
+                  messages={chatMessages}
+                  onSend={handleSendChat}
+                  disabled={false}
+                />
               </div>
             </div>
           </div>
@@ -967,182 +1138,194 @@ export default function BeastyPage() {
             </div>
           ) : null}
 
-          <div className="rounded-3xl border border-amber-400/20 bg-slate-900/70 p-6 shadow-[0_0_40px_rgba(0,0,0,0.35)] backdrop-blur-sm md:p-8">
-            <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
-              <div>
-                <div className="flex flex-wrap items-center gap-3">
-                  <p className="text-sm uppercase tracking-[0.2em] text-amber-300/80">
-                    {question.category}
-                  </p>
-                  <span className="rounded-full border border-indigo-400/30 bg-indigo-500/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-indigo-300">
-                    {question.difficulty}
-                  </span>
-                  <span className="rounded-full border border-fuchsia-400/30 bg-fuchsia-500/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-fuchsia-300">
-                    {multiplierBadge} punteggio
-                  </span>
+          <div className="grid gap-6 lg:grid-cols-[1.4fr_1fr]">
+            <div className="rounded-3xl border border-amber-400/20 bg-slate-900/70 p-6 shadow-[0_0_40px_rgba(0,0,0,0.35)] backdrop-blur-sm md:p-8">
+              <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
+                <div>
+                  <div className="flex flex-wrap items-center gap-3">
+                    <p className="text-sm uppercase tracking-[0.2em] text-amber-300/80">
+                      {question.category}
+                    </p>
+                    <span className="rounded-full border border-indigo-400/30 bg-indigo-500/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-indigo-300">
+                      {question.difficulty}
+                    </span>
+                    <span className="rounded-full border border-fuchsia-400/30 bg-fuchsia-500/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-fuchsia-300">
+                      {multiplierBadge} punteggio
+                    </span>
+                  </div>
+
+                  <h2 className="mt-3 text-2xl font-black text-white md:text-3xl">
+                    {question.text}
+                  </h2>
                 </div>
 
-                <h2 className="mt-3 text-2xl font-black text-white md:text-3xl">
-                  {question.text}
-                </h2>
+                <div className="flex flex-wrap items-center gap-3">
+                  <div className="rounded-2xl border border-amber-400/20 bg-amber-400/10 px-4 py-3 text-sm font-semibold text-amber-200">
+                    Stanza {room.code}
+                  </div>
+
+                  {isHost ? (
+                    <button
+                      onClick={handlePauseToggle}
+                      disabled={togglingPause || isResumeCountdownActive}
+                      className={`inline-flex items-center justify-center rounded-2xl px-4 py-3 text-sm font-semibold transition disabled:cursor-not-allowed disabled:opacity-60 ${
+                        isPaused
+                          ? "border border-emerald-400/40 bg-emerald-500/10 text-emerald-300 hover:bg-emerald-500/15"
+                          : "border border-amber-400/40 bg-amber-400/10 text-amber-200 hover:bg-amber-400/15"
+                      }`}
+                    >
+                      {isPaused ? "Riprendi" : "Pausa"}
+                    </button>
+                  ) : null}
+                </div>
               </div>
 
-              <div className="flex flex-wrap items-center gap-3">
-                <div className="rounded-2xl border border-amber-400/20 bg-amber-400/10 px-4 py-3 text-sm font-semibold text-amber-200">
-                  Stanza {room.code}
-                </div>
+              <div className="mt-4 flex flex-wrap items-center gap-3">
+                {doublePoints ? (
+                  <div className="inline-flex rounded-full border border-fuchsia-400/30 bg-fuchsia-500/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-fuchsia-300">
+                    Round a punti doppi
+                  </div>
+                ) : null}
 
-                {isHost ? (
-                  <button
-                    onClick={handlePauseToggle}
-                    disabled={togglingPause || isResumeCountdownActive}
-                    className={`inline-flex items-center justify-center rounded-2xl px-4 py-3 text-sm font-semibold transition disabled:cursor-not-allowed disabled:opacity-60 ${
-                      isPaused
-                        ? "border border-emerald-400/40 bg-emerald-500/10 text-emerald-300 hover:bg-emerald-500/15"
-                        : "border border-amber-400/40 bg-amber-400/10 text-amber-200 hover:bg-amber-400/15"
-                    }`}
-                  >
-                    {isPaused ? "Riprendi" : "Pausa"}
-                  </button>
+                {isPaused ? (
+                  <div className="inline-flex rounded-full border border-amber-400/30 bg-amber-400/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-amber-300">
+                    {pauseLabel}
+                  </div>
+                ) : null}
+
+                {isResumeCountdownActive ? (
+                  <div className="inline-flex rounded-full border border-cyan-400/30 bg-cyan-500/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-cyan-300">
+                    Ripresa tra {resumeCountdownSeconds}
+                  </div>
                 ) : null}
               </div>
-            </div>
 
-            <div className="mt-4 flex flex-wrap items-center gap-3">
-              {doublePoints ? (
-                <div className="inline-flex rounded-full border border-fuchsia-400/30 bg-fuchsia-500/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-fuchsia-300">
-                  Round a punti doppi
-                </div>
-              ) : null}
-
-              {isPaused ? (
-                <div className="inline-flex rounded-full border border-amber-400/30 bg-amber-400/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-amber-300">
-                  {pauseLabel}
-                </div>
-              ) : null}
-
-              {isResumeCountdownActive ? (
-                <div className="inline-flex rounded-full border border-cyan-400/30 bg-cyan-500/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-cyan-300">
-                  Ripresa tra {resumeCountdownSeconds}
-                </div>
-              ) : null}
-            </div>
-
-            <div className="mt-6 flex items-center justify-between gap-4">
-              <div className="h-3 w-full overflow-hidden rounded-full bg-slate-800">
-                <div
-                  className="h-full rounded-full bg-amber-400 transition-all"
-                  style={{ width: `${timerPercent}%` }}
-                />
-              </div>
-
-              <div className="min-w-[90px] rounded-2xl border border-amber-400/20 bg-amber-400/10 px-4 py-2 text-center text-lg font-bold text-amber-300">
-                {timeLeft}s
-              </div>
-            </div>
-
-            <div className="relative mt-8">
-              {isPaused ? (
-                <div className="absolute inset-0 z-10 flex items-center justify-center rounded-3xl bg-slate-950/70 backdrop-blur-[2px]">
-                  <div className="rounded-3xl border border-amber-400/30 bg-slate-950/90 px-8 py-6 text-center shadow-[0_0_30px_rgba(245,158,11,0.12)]">
-                    <div className="text-sm font-semibold uppercase tracking-[0.3em] text-amber-300">
-                      {pauseLabel}
-                    </div>
-                    <div className="mt-3 text-3xl font-black text-white">
-                      {timeLeft}s
-                    </div>
-                    <p className="mt-2 text-sm text-slate-300">
-                      Le risposte sono bloccate finché l&apos;host non riprende la
-                      partita.
-                    </p>
-                  </div>
-                </div>
-              ) : null}
-
-              {isResumeCountdownActive ? (
-                <div className="absolute inset-0 z-20 flex items-center justify-center rounded-3xl bg-black/75 backdrop-blur-sm">
-                  <div className="text-center">
-                    <div className="text-sm font-semibold uppercase tracking-[0.3em] text-amber-300">
-                      Ripresa partita
-                    </div>
-                    <div className="mt-4 text-7xl font-black text-white">
-                      {resumeCountdownSeconds}
-                    </div>
-                  </div>
-                </div>
-              ) : null}
-
-              <div className="grid gap-4 md:grid-cols-2">
-                {question.options.map((opt, i) => {
-                  const markersForOption = answerMarkers.filter(
-                    (marker) => marker.answerIndex === i
-                  );
-
-                  return (
-                    <button
-                      key={i}
-                      className={`rounded-2xl border p-5 text-left text-base font-semibold transition disabled:cursor-not-allowed disabled:opacity-60 ${
-                        selectedAnswer === i
-                          ? "border-amber-400/60 bg-amber-400/10 text-amber-100"
-                          : "border-slate-700 bg-slate-950/60 text-slate-100 hover:border-amber-400/50 hover:bg-slate-800"
-                      }`}
-                      onClick={() => handleSubmitAnswer(i)}
-                      disabled={
-                        submittingAnswer ||
-                        selectedAnswer !== null ||
-                        timeLeft <= 0 ||
-                        isPaused ||
-                        isResumeCountdownActive
-                      }
-                    >
-                      <div className="flex items-start gap-3">
-                        <span className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-amber-400/30 bg-amber-400/10 text-sm text-amber-300">
-                          {String.fromCharCode(65 + i)}
-                        </span>
-                        <div className="flex-1">
-                          <div>{opt}</div>
-
-                          {markersForOption.length > 0 ? (
-                            <div className="mt-4 flex flex-wrap gap-2">
-                              {markersForOption.map((marker) => (
-                                <div
-                                  key={marker.playerId}
-                                  title={marker.playerName}
-                                  className="inline-flex h-8 min-w-8 items-center justify-center rounded-full border border-slate-600 bg-slate-800 px-2 text-[11px] font-bold text-slate-100"
-                                >
-                                  {getPlayerBadge(marker.playerName)}
-                                </div>
-                              ))}
-                            </div>
-                          ) : null}
-                        </div>
-                      </div>
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-
-            <div className="mt-10">
-              <h3 className="text-lg font-bold text-white">Classifica live</h3>
-              <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-                {sortedPlayers.map((player, index) => (
+              <div className="mt-6 flex items-center justify-between gap-4">
+                <div className="h-3 w-full overflow-hidden rounded-full bg-slate-800">
                   <div
-                    key={player.id}
-                    className="rounded-2xl border border-slate-800 bg-slate-950/50 p-4"
-                  >
-                    <div className="flex items-center justify-between">
-                      <span className="font-semibold text-white">
-                        #{index + 1} {player.name}
-                      </span>
-                      <span className="text-amber-300">{player.score} pt</span>
-                    </div>
-                    <div className="mt-2 text-sm text-slate-400">
-                      {player.connected ? "Connesso" : "Disconnesso"}
+                    className="h-full rounded-full bg-amber-400 transition-all"
+                    style={{ width: `${timerPercent}%` }}
+                  />
+                </div>
+
+                <div className="min-w-[90px] rounded-2xl border border-amber-400/20 bg-amber-400/10 px-4 py-2 text-center text-lg font-bold text-amber-300">
+                  {timeLeft}s
+                </div>
+              </div>
+
+              <div className="relative mt-8">
+                {isPaused ? (
+                  <div className="absolute inset-0 z-10 flex items-center justify-center rounded-3xl bg-slate-950/70 backdrop-blur-[2px]">
+                    <div className="rounded-3xl border border-amber-400/30 bg-slate-950/90 px-8 py-6 text-center shadow-[0_0_30px_rgba(245,158,11,0.12)]">
+                      <div className="text-sm font-semibold uppercase tracking-[0.3em] text-amber-300">
+                        {pauseLabel}
+                      </div>
+                      <div className="mt-3 text-3xl font-black text-white">
+                        {timeLeft}s
+                      </div>
+                      <p className="mt-2 text-sm text-slate-300">
+                        Le risposte sono bloccate finché l&apos;host non riprende la
+                        partita.
+                      </p>
                     </div>
                   </div>
-                ))}
+                ) : null}
+
+                {isResumeCountdownActive ? (
+                  <div className="absolute inset-0 z-20 flex items-center justify-center rounded-3xl bg-black/75 backdrop-blur-sm">
+                    <div className="text-center">
+                      <div className="text-sm font-semibold uppercase tracking-[0.3em] text-amber-300">
+                        Ripresa partita
+                      </div>
+                      <div className="mt-4 text-7xl font-black text-white">
+                        {resumeCountdownSeconds}
+                      </div>
+                    </div>
+                  </div>
+                ) : null}
+
+                <div className="grid gap-4 md:grid-cols-2">
+                  {question.options.map((opt, i) => {
+                    const markersForOption = answerMarkers.filter(
+                      (marker) => marker.answerIndex === i
+                    );
+
+                    return (
+                      <button
+                        key={i}
+                        className={`rounded-2xl border p-5 text-left text-base font-semibold transition disabled:cursor-not-allowed disabled:opacity-60 ${
+                          selectedAnswer === i
+                            ? "border-amber-400/60 bg-amber-400/10 text-amber-100"
+                            : "border-slate-700 bg-slate-950/60 text-slate-100 hover:border-amber-400/50 hover:bg-slate-800"
+                        }`}
+                        onClick={() => handleSubmitAnswer(i)}
+                        disabled={
+                          submittingAnswer ||
+                          selectedAnswer !== null ||
+                          timeLeft <= 0 ||
+                          isPaused ||
+                          isResumeCountdownActive
+                        }
+                      >
+                        <div className="flex items-start gap-3">
+                          <span className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-amber-400/30 bg-amber-400/10 text-sm text-amber-300">
+                            {String.fromCharCode(65 + i)}
+                          </span>
+                          <div className="flex-1">
+                            <div>{opt}</div>
+
+                            {markersForOption.length > 0 ? (
+                              <div className="mt-4 flex flex-wrap gap-2">
+                                {markersForOption.map((marker) => (
+                                  <div
+                                    key={marker.playerId}
+                                    title={marker.playerName}
+                                    className="inline-flex h-8 min-w-8 items-center justify-center rounded-full border border-slate-600 bg-slate-800 px-2 text-[11px] font-bold text-slate-100"
+                                  >
+                                    {getPlayerBadge(marker.playerName)}
+                                  </div>
+                                ))}
+                              </div>
+                            ) : null}
+                          </div>
+                        </div>
+                      </button>
+                    );
+                  })}
+                </div>
               </div>
+
+              <div className="mt-10">
+                <h3 className="text-lg font-bold text-white">Classifica live</h3>
+                <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                  {sortedPlayers.map((player, index) => (
+                    <div
+                      key={player.id}
+                      className="rounded-2xl border border-slate-800 bg-slate-950/50 p-4"
+                    >
+                      <div className="flex items-center justify-between">
+                        <span className="font-semibold text-white">
+                          #{index + 1} {player.name}
+                        </span>
+                        <span className="text-amber-300">{player.score} pt</span>
+                      </div>
+                      <div className="mt-2 text-sm text-slate-400">
+                        {player.connected ? "Connesso" : "Disconnesso"}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            <div className="rounded-3xl border border-amber-400/20 bg-slate-900/70 p-6 shadow-[0_0_40px_rgba(0,0,0,0.35)] backdrop-blur-sm md:p-8">
+              <ChatPanel
+                roomCode={room.code}
+                currentPlayerName={name}
+                messages={chatMessages}
+                onSend={handleSendChat}
+                disabled={false}
+              />
             </div>
           </div>
         </div>
@@ -1167,7 +1350,7 @@ export default function BeastyPage() {
           ) : null}
 
           <div className="grid gap-6 lg:grid-cols-[1.4fr_1fr]">
-            <div className="rounded-3xl border border-amber-400/20 bg-slate-900/70 p-6 shadow-[0_0_40px_rgba(0,0,0,0.35)] backdrop-blur-sm md:p-8">
+            <div className="space-y-6 rounded-3xl border border-amber-400/20 bg-slate-900/70 p-6 shadow-[0_0_40px_rgba(0,0,0,0.35)] backdrop-blur-sm md:p-8">
               <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
                 <div>
                   <p className="text-sm uppercase tracking-[0.2em] text-amber-300/80">
@@ -1192,7 +1375,7 @@ export default function BeastyPage() {
                 )}
               </div>
 
-              <div className="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+              <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
                 {players.map((player) => (
                   <div
                     key={player.id}
@@ -1233,6 +1416,13 @@ export default function BeastyPage() {
                   </div>
                 ))}
               </div>
+
+              <ChatPanel
+                roomCode={room.code}
+                currentPlayerName={name}
+                messages={chatMessages}
+                onSend={handleSendChat}
+              />
             </div>
 
             <div className="rounded-3xl border border-amber-400/20 bg-slate-900/70 p-6 shadow-[0_0_40px_rgba(0,0,0,0.35)] backdrop-blur-sm md:p-8">
@@ -1554,60 +1744,71 @@ export default function BeastyPage() {
             )}
           </div>
 
-          <div className="rounded-3xl border border-amber-400/20 bg-slate-900/70 p-6 shadow-[0_0_40px_rgba(0,0,0,0.35)] backdrop-blur-sm md:p-8">
-            <h3 className="text-xl font-bold text-white">Categorie iniziali</h3>
-            <p className="mt-2 text-sm text-slate-400">
-              Queste impostazioni verranno usate quando crei una nuova stanza.
-            </p>
+          <div className="space-y-6">
+            <div className="rounded-3xl border border-amber-400/20 bg-slate-900/70 p-6 shadow-[0_0_40px_rgba(0,0,0,0.35)] backdrop-blur-sm md:p-8">
+              <h3 className="text-xl font-bold text-white">Categorie iniziali</h3>
+              <p className="mt-2 text-sm text-slate-400">
+                Queste impostazioni verranno usate quando crei una nuova stanza.
+              </p>
 
-            <div className="mt-6 space-y-3">
-              {categories.map((category) => {
-                const checked = selectedCategories.includes(category.id);
+              <div className="mt-6 space-y-3">
+                {categories.map((category) => {
+                  const checked = selectedCategories.includes(category.id);
 
-                return (
-                  <label
-                    key={category.id}
-                    className="flex cursor-pointer items-center justify-between rounded-2xl border border-slate-800 bg-slate-950/40 px-4 py-3"
-                  >
-                    <span className="text-sm font-semibold text-slate-100">
-                      {category.label}
-                    </span>
-                    <input
-                      type="checkbox"
-                      checked={checked}
-                      onChange={() => toggleCategory(category.id)}
-                      className="h-4 w-4 accent-amber-400"
-                    />
-                  </label>
-                );
-              })}
+                  return (
+                    <label
+                      key={category.id}
+                      className="flex cursor-pointer items-center justify-between rounded-2xl border border-slate-800 bg-slate-950/40 px-4 py-3"
+                    >
+                      <span className="text-sm font-semibold text-slate-100">
+                        {category.label}
+                      </span>
+                      <input
+                        type="checkbox"
+                        checked={checked}
+                        onChange={() => toggleCategory(category.id)}
+                        className="h-4 w-4 accent-amber-400"
+                      />
+                    </label>
+                  );
+                })}
+              </div>
+
+              <div className="mt-6">
+                <label className="mb-2 block text-sm font-semibold text-slate-200">
+                  Numero domande
+                </label>
+                <input
+                  type="range"
+                  min={5}
+                  max={20}
+                  step={1}
+                  value={totalQuestions}
+                  onChange={(e) => setTotalQuestions(Number(e.target.value))}
+                  className="w-full accent-amber-400"
+                />
+                <div className="mt-2 text-sm text-slate-400">
+                  {totalQuestions} domande
+                </div>
+              </div>
+
+              <div className="mt-6 rounded-2xl border border-slate-800 bg-slate-950/40 px-4 py-4 text-sm text-slate-300">
+                <div className="font-semibold text-white">Moltiplicatori difficoltà</div>
+                <div className="mt-2 space-y-1">
+                  <div>Easy → x1</div>
+                  <div>Medium → x1.5</div>
+                  <div>Hard → x2</div>
+                </div>
+              </div>
             </div>
 
-            <div className="mt-6">
-              <label className="mb-2 block text-sm font-semibold text-slate-200">
-                Numero domande
-              </label>
-              <input
-                type="range"
-                min={5}
-                max={20}
-                step={1}
-                value={totalQuestions}
-                onChange={(e) => setTotalQuestions(Number(e.target.value))}
-                className="w-full accent-amber-400"
+            <div className="rounded-3xl border border-amber-400/20 bg-slate-900/70 p-6 shadow-[0_0_40px_rgba(0,0,0,0.35)] backdrop-blur-sm md:p-8">
+              <ChatPanel
+                currentPlayerName={name}
+                messages={chatMessages}
+                onSend={handleSendChat}
+                disabled={!room}
               />
-              <div className="mt-2 text-sm text-slate-400">
-                {totalQuestions} domande
-              </div>
-            </div>
-
-            <div className="mt-6 rounded-2xl border border-slate-800 bg-slate-950/40 px-4 py-4 text-sm text-slate-300">
-              <div className="font-semibold text-white">Moltiplicatori difficoltà</div>
-              <div className="mt-2 space-y-1">
-                <div>Easy → x1</div>
-                <div>Medium → x1.5</div>
-                <div>Hard → x2</div>
-              </div>
             </div>
           </div>
         </div>

@@ -3,10 +3,8 @@ export type Player = {
   name: string;
   score: number;
   connected: boolean;
-  sessionId?: string;
+  sessionId: string;
 };
-
-export type RoomState = "lobby" | "question" | "reveal" | "finished";
 
 export type RoomSettings = {
   categories: string[];
@@ -25,6 +23,11 @@ export type Room = {
   remainingMs?: number | null;
 };
 
+export type QuestionCategory = {
+  id: string;
+  label: string;
+};
+
 export type Question = {
   id: string;
   category: string;
@@ -32,11 +35,6 @@ export type Question = {
   text: string;
   options: string[];
   durationMs: number;
-};
-
-export type QuestionCategory = {
-  id: string;
-  label: string;
 };
 
 export type AnswerMarker = {
@@ -76,4 +74,12 @@ export type FinalResult = {
   totalPointsEarned: number;
   avgResponseTimeMs: number;
   rounds: FinalRoundDetail[];
+};
+
+export type ChatMessage = {
+  id: string;
+  playerId: string;
+  playerName: string;
+  text: string;
+  createdAt: number;
 };

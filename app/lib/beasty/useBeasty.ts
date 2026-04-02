@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { socket } from "./socket";
 import type {
   AnswerMarker,
+  ChatMessage,
   FinalResult,
   Player,
   Question,
@@ -65,6 +66,7 @@ export function useBeasty() {
     null
   );
   const [resumeCountdownAt, setResumeCountdownAt] = useState<number | null>(null);
+  const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
 
   useEffect(() => {
     socket.connect();
@@ -310,6 +312,14 @@ export function useBeasty() {
       setResumeCountdownAt(null);
     };
 
+    const onChatUpdated = ({
+      messages,
+    }: {
+      messages: ChatMessage[];
+    }) => {
+      setChatMessages(messages ?? []);
+    };
+
     socket.on("connect", onConnect);
     socket.on("disconnect", onDisconnect);
     socket.on("room:updated", onRoomUpdated);
@@ -322,6 +332,7 @@ export function useBeasty() {
     socket.on("game:paused", onGamePaused);
     socket.on("game:resume-countdown", onResumeCountdown);
     socket.on("game:resumed", onGameResumed);
+    socket.on("chat:updated", onChatUpdated);
 
     return () => {
       socket.off("connect", onConnect);
@@ -336,6 +347,7 @@ export function useBeasty() {
       socket.off("game:paused", onGamePaused);
       socket.off("game:resume-countdown", onResumeCountdown);
       socket.off("game:resumed", onGameResumed);
+      socket.off("chat:updated", onChatUpdated);
       socket.disconnect();
     };
   }, []);
@@ -396,6 +408,11 @@ export function useBeasty() {
       socket.emit("game:rematch", { code }, resolve);
     });
 
+  const sendChatMessage = (code: string, text: string) =>
+    new Promise((resolve) => {
+      socket.emit("chat:send", { code, text }, resolve);
+    });
+
   return {
     connected,
     room,
@@ -416,6 +433,7 @@ export function useBeasty() {
     remainingMs,
     timerPhase,
     resumeCountdownAt,
+    chatMessages,
     createRoom,
     joinRoom,
     updateRoomSettings,
@@ -424,5 +442,6 @@ export function useBeasty() {
     resumeGame,
     submitAnswer,
     requestRematch,
+    sendChatMessage,
   };
 }

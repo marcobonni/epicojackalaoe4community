@@ -1,5 +1,7 @@
 "use client";
 
+import type { PlayerProfileResponse } from "@/app/lib/aoe4world";
+
 type RatingPoint = {
   rating: number;
   games_count?: number;
@@ -8,32 +10,11 @@ type RatingPoint = {
   orig_rating?: number;
 };
 
-type RatingHistory = Record<string, RatingPoint>;
-
 type CivilizationStat = {
   civilization: string;
   win_rate?: number;
   pick_rate?: number;
   games_count?: number;
-};
-
-type ModeStats = {
-  rating?: number;
-  max_rating?: number;
-  rank?: number | null;
-  rank_level?: string | null;
-  streak?: number | null;
-  games_count?: number;
-  wins_count?: number;
-  losses_count?: number;
-  disputes_count?: number;
-  drops_count?: number;
-  last_game_at?: string;
-  win_rate?: number;
-  rating_history?: RatingHistory;
-  civilizations?: CivilizationStat[];
-  previous_seasons?: PreviousSeason[];
-  season?: number;
 };
 
 type PreviousSeason = {
@@ -49,32 +30,6 @@ type PreviousSeason = {
   last_game_at?: string;
 };
 
-type PlayerProfile = {
-  name: string;
-  profile_id: number;
-  country?: string;
-  site_url?: string;
-  avatars?: {
-    small?: string;
-    medium?: string;
-    full?: string;
-  };
-  modes: {
-    rm_solo?: ModeStats;
-    rm_1v1_elo?: ModeStats;
-    rm_2v2_elo?: ModeStats;
-    rm_3v3_elo?: ModeStats;
-    rm_4v4_elo?: ModeStats;
-    rm_team?: ModeStats;
-    [key: string]: ModeStats | undefined;
-  };
-};
-
-type PlayerDashboardProps = {
-  player: PlayerProfile;
-  civIcons?: Record<string, string>;
-};
-
 type PerformanceRow = {
   key: string;
   label: string;
@@ -85,6 +40,11 @@ type PerformanceRow = {
   games: number | null;
   lastGameAt: string | null;
   history: Array<{ ts: number; rating: number }>;
+};
+
+type PlayerDashboardProps = {
+  player: PlayerProfileResponse;
+  civIcons?: Record<string, string>;
 };
 
 const DEFAULT_CIV_ICON = "/images/civs/generic.png";
@@ -147,20 +107,21 @@ function getStreakTone(streak: number | null) {
   return "text-rose-300";
 }
 
-function getModeRows(player: PlayerProfile): PerformanceRow[] {
+function getModeRows(player: PlayerProfileResponse): PerformanceRow[] {
   const mapping = [
     { key: "rm_1v1_elo", label: "1v1" },
     { key: "rm_2v2_elo", label: "2v2" },
     { key: "rm_3v3_elo", label: "3v3" },
     { key: "rm_4v4_elo", label: "4v4" },
-  ];
+  ] as const;
 
   return mapping.map(({ key, label }) => {
-    const mode = player.modes[key];
+    const mode = player.modes?.[key];
+
     const history = Object.entries(mode?.rating_history ?? {})
       .map(([ts, point]) => ({
         ts: Number(ts),
-        rating: point.rating,
+        rating: typeof point?.rating === "number" ? point.rating : NaN,
       }))
       .filter((item) => Number.isFinite(item.ts) && Number.isFinite(item.rating))
       .sort((a, b) => a.ts - b.ts);
@@ -179,9 +140,9 @@ function getModeRows(player: PlayerProfile): PerformanceRow[] {
   });
 }
 
-function getCurrentSoloSummary(player: PlayerProfile) {
-  const rankedSolo = player.modes.rm_solo;
-  const eloSolo = player.modes.rm_1v1_elo;
+function getCurrentSoloSummary(player: PlayerProfileResponse) {
+  const rankedSolo = player.modes?.rm_solo;
+  const eloSolo = player.modes?.rm_1v1_elo;
 
   return {
     rankLevel: getRankLabel(rankedSolo?.rank_level),
@@ -213,7 +174,7 @@ function getCurrentSoloSummary(player: PlayerProfile) {
   };
 }
 
-function getBestMode(rows: PerformanceRow[]) {
+function getBestMode(rows: PerformanceRow[]): PerformanceRow | null {
   const rowsWithWinRate = rows.filter(
     (row) => typeof row.winRate === "number" && typeof row.rating === "number"
   );
@@ -227,7 +188,7 @@ function getBestMode(rows: PerformanceRow[]) {
   })[0];
 }
 
-function getWorstRecentDrop(history: Array<{ ts: number; rating: number }>) {
+function getWorstRecentDrop(history: Array<{ ts: number; rating: number }>): number | null {
   if (history.length < 2) return null;
 
   let worstDrop = 0;
@@ -240,21 +201,28 @@ function getWorstRecentDrop(history: Array<{ ts: number; rating: number }>) {
   return worstDrop === 0 ? null : worstDrop;
 }
 
-function getPeakRating(rows: PerformanceRow[]) {
+function getPeakRating(
+  rows: PerformanceRow[]
+): { mode: string; rating: number } | null {
   let peak: { mode: string; rating: number } | null = null;
 
-  rows.forEach((row) => {
+  for (const row of rows) {
     const rowPeak =
       row.history.length > 0
         ? Math.max(...row.history.map((point) => point.rating))
         : row.rating;
 
-    if (typeof rowPeak !== "number") return;
-
-    if (!peak || rowPeak > peak.rating) {
-      peak = { mode: row.label, rating: rowPeak };
+    if (typeof rowPeak !== "number") {
+      continue;
     }
-  });
+
+    if (peak === null || rowPeak > peak.rating) {
+      peak = {
+        mode: row.label,
+        rating: rowPeak,
+      };
+    }
+  }
 
   return peak;
 }
@@ -263,7 +231,9 @@ function getTeamVsSoloInsight(rows: PerformanceRow[]) {
   const solo = rows.find((row) => row.label === "1v1");
   const teamRows = rows.filter((row) => row.label !== "1v1" && row.winRate !== null);
 
-  if (!solo?.winRate || teamRows.length === 0) return null;
+  if (solo?.winRate === null || solo?.winRate === undefined || teamRows.length === 0) {
+    return null;
+  }
 
   const teamAvg =
     teamRows.reduce((sum, row) => sum + (row.winRate ?? 0), 0) / teamRows.length;
@@ -274,23 +244,43 @@ function getTeamVsSoloInsight(rows: PerformanceRow[]) {
   return "Performance abbastanza equilibrata tra solo e team game.";
 }
 
-function getAllSeasons(player: PlayerProfile): PreviousSeason[] {
+function getAllSeasons(player: PlayerProfileResponse): PreviousSeason[] {
   const seasonMap = new Map<number, PreviousSeason>();
 
-  Object.values(player.modes).forEach((mode) => {
+  const modes = player.modes ? Object.values(player.modes) : [];
+
+  modes.forEach((mode) => {
     (mode?.previous_seasons ?? []).forEach((season) => {
+      if (typeof season?.season !== "number") return;
+
+      const normalizedSeason: PreviousSeason = {
+        season: season.season,
+        rating: typeof season.rating === "number" ? season.rating : undefined,
+        rank: typeof season.rank === "number" ? season.rank : null,
+        rank_level: season.rank_level ?? null,
+        streak: typeof season.streak === "number" ? season.streak : null,
+        games_count:
+          typeof season.games_count === "number" ? season.games_count : undefined,
+        wins_count:
+          typeof season.wins_count === "number" ? season.wins_count : undefined,
+        losses_count:
+          typeof season.losses_count === "number" ? season.losses_count : undefined,
+        win_rate: typeof season.win_rate === "number" ? season.win_rate : undefined,
+        last_game_at: season.last_game_at ?? undefined,
+      };
+
       const existing = seasonMap.get(season.season);
 
       if (!existing) {
-        seasonMap.set(season.season, season);
+        seasonMap.set(season.season, normalizedSeason);
         return;
       }
 
       const existingScore = existing.rating ?? -1;
-      const nextScore = season.rating ?? -1;
+      const nextScore = normalizedSeason.rating ?? -1;
 
       if (nextScore > existingScore) {
-        seasonMap.set(season.season, season);
+        seasonMap.set(season.season, normalizedSeason);
       }
     });
   });
@@ -298,15 +288,27 @@ function getAllSeasons(player: PlayerProfile): PreviousSeason[] {
   return [...seasonMap.values()].sort((a, b) => a.season - b.season);
 }
 
-function getTopCivs(player: PlayerProfile): CivilizationStat[] {
+function getTopCivs(player: PlayerProfileResponse): CivilizationStat[] {
   const civs =
-    player.modes.rm_team?.civilizations?.length
+    player.modes?.rm_team?.civilizations?.length
       ? player.modes.rm_team.civilizations
-      : player.modes.rm_solo?.civilizations?.length
+      : player.modes?.rm_solo?.civilizations?.length
       ? player.modes.rm_solo.civilizations
       : [];
 
-  return [...civs].sort((a, b) => (b.games_count ?? 0) - (a.games_count ?? 0)).slice(0, 3);
+  return [...civs]
+    .filter(
+      (civ): civ is NonNullable<typeof civ> =>
+        !!civ && typeof civ.civilization === "string" && civ.civilization.trim() !== ""
+    )
+    .map((civ) => ({
+      civilization: civ.civilization as string,
+      win_rate: typeof civ.win_rate === "number" ? civ.win_rate : undefined,
+      pick_rate: typeof civ.pick_rate === "number" ? civ.pick_rate : undefined,
+      games_count: typeof civ.games_count === "number" ? civ.games_count : undefined,
+    }))
+    .sort((a, b) => (b.games_count ?? 0) - (a.games_count ?? 0))
+    .slice(0, 3);
 }
 
 function getInitials(name: string) {
@@ -365,12 +367,16 @@ function EloLineChart({
         <div className="grid gap-2 sm:grid-cols-3">
           <div className="rounded-2xl border border-slate-800 bg-slate-950/80 px-4 py-3">
             <div className="text-xs uppercase tracking-[0.2em] text-slate-500">Inizio</div>
-            <div className="mt-1 text-sm font-semibold text-white">{formatNumber(first.rating)}</div>
+            <div className="mt-1 text-sm font-semibold text-white">
+              {formatNumber(first.rating)}
+            </div>
           </div>
 
           <div className="rounded-2xl border border-slate-800 bg-slate-950/80 px-4 py-3">
             <div className="text-xs uppercase tracking-[0.2em] text-slate-500">Fine</div>
-            <div className="mt-1 text-sm font-semibold text-white">{formatNumber(last.rating)}</div>
+            <div className="mt-1 text-sm font-semibold text-white">
+              {formatNumber(last.rating)}
+            </div>
           </div>
 
           <div className="rounded-2xl border border-slate-800 bg-slate-950/80 px-4 py-3">
@@ -403,11 +409,7 @@ function EloLineChart({
                   className="stroke-slate-800"
                   strokeWidth="1"
                 />
-                <text
-                  x={8}
-                  y={y + 4}
-                  className="fill-slate-500 text-[12px]"
-                >
+                <text x={8} y={y + 4} className="fill-slate-500 text-[12px]">
                   {label}
                 </text>
               </g>
@@ -430,7 +432,9 @@ function EloLineChart({
               <g key={`${point.ts}-${index}`}>
                 <circle cx={x} cy={y} r="4" fill="white" />
                 <title>
-                  {`${formatShortDate(new Date(point.ts * 1000).toISOString())} • ${point.rating} ELO`}
+                  {`${formatShortDate(
+                    new Date(point.ts * 1000).toISOString()
+                  )} • ${point.rating} ELO`}
                 </title>
               </g>
             );
@@ -459,13 +463,17 @@ export default function PlayerDashboard({
     bestMode
       ? `Modalità migliore: ${bestMode.label} (${formatPercent(bestMode.winRate)} winrate).`
       : null,
-    peak ? `Peak rating registrato: ${formatNumber(peak.rating)} in ${peak.mode}.` : null,
-    worstDrop ? `Peggior calo recente in 1v1: ${formatNumber(worstDrop)} ELO.` : null,
-    summary.totalGames && summary.totalGames >= 500
+    peak !== null
+      ? `Peak rating registrato: ${formatNumber(peak.rating)} in ${peak.mode}.`
+      : null,
+    worstDrop !== null
+      ? `Peggior calo recente in 1v1: ${formatNumber(worstDrop)} ELO.`
+      : null,
+    summary.totalGames !== null && summary.totalGames >= 500
       ? `Profilo molto rodato: ${formatNumber(summary.totalGames)} partite in 1v1.`
       : null,
     teamVsSoloInsight,
-  ].filter(Boolean) as string[];
+  ].filter((value): value is string => Boolean(value));
 
   return (
     <section className="mx-auto max-w-7xl px-6 py-12 lg:px-8">
@@ -475,13 +483,13 @@ export default function PlayerDashboard({
             <div className="flex items-center gap-5">
               {player.avatars?.full || player.avatars?.medium || player.avatars?.small ? (
                 <img
-                  src={player.avatars.full || player.avatars.medium || player.avatars.small}
-                  alt={player.name}
+                  src={player.avatars.full || player.avatars.medium || player.avatars.small || ""}
+                  alt={player.name ?? "Player avatar"}
                   className="h-20 w-20 rounded-2xl border border-slate-700 object-cover"
                 />
               ) : (
                 <div className="flex h-20 w-20 items-center justify-center rounded-2xl border border-slate-700 bg-slate-900 text-2xl font-bold text-amber-300">
-                  {getInitials(player.name)}
+                  {getInitials(player.name ?? "Player")}
                 </div>
               )}
 
@@ -491,7 +499,7 @@ export default function PlayerDashboard({
                 </p>
 
                 <h1 className="mt-2 text-3xl font-bold text-white sm:text-4xl">
-                  {player.name}
+                  {player.name ?? "Giocatore"}
                 </h1>
 
                 <div className="mt-3 flex flex-wrap items-center gap-3 text-sm text-slate-300">
@@ -540,7 +548,7 @@ export default function PlayerDashboard({
 
               <div className="rounded-2xl border border-slate-800 bg-slate-950/80 p-4 text-center">
                 <div className="text-2xl font-bold text-amber-300">
-                  {peak ? formatNumber(peak.rating) : "—"}
+                  {peak !== null ? formatNumber(peak.rating) : "—"}
                 </div>
                 <div className="mt-1 text-sm text-slate-400">Peak ELO</div>
               </div>
@@ -654,10 +662,12 @@ export default function PlayerDashboard({
 
               <div className="rounded-2xl border border-slate-800 bg-slate-950/80 p-4">
                 <div className="text-sm font-semibold text-white">
-                  {summary.totalGames && summary.totalGames >= 500 ? "Grinder esperto" : "Sample ridotto"}
+                  {summary.totalGames !== null && summary.totalGames >= 500
+                    ? "Grinder esperto"
+                    : "Sample ridotto"}
                 </div>
                 <p className="mt-2 text-sm leading-7 text-slate-400">
-                  {summary.totalGames && summary.totalGames >= 500
+                  {summary.totalGames !== null && summary.totalGames >= 500
                     ? "Grande volume di partite, dati molto più affidabili della media."
                     : "Servono più partite per descrivere il profilo con precisione."}
                 </p>
@@ -665,10 +675,12 @@ export default function PlayerDashboard({
 
               <div className="rounded-2xl border border-slate-800 bg-slate-950/80 p-4">
                 <div className="text-sm font-semibold text-white">
-                  {worstDrop && worstDrop <= -100 ? "Rischio tilt recente" : "Andamento abbastanza stabile"}
+                  {worstDrop !== null && worstDrop <= -100
+                    ? "Rischio tilt recente"
+                    : "Andamento abbastanza stabile"}
                 </div>
                 <p className="mt-2 text-sm leading-7 text-slate-400">
-                  {worstDrop && worstDrop <= -100
+                  {worstDrop !== null && worstDrop <= -100
                     ? `Nello storico 1v1 compare un calo brusco di ${formatNumber(worstDrop)} ELO.`
                     : "Non emergono crolli recenti particolarmente pesanti nello storico disponibile."}
                 </p>
@@ -696,7 +708,8 @@ export default function PlayerDashboard({
                         Season {season.season}
                       </div>
                       <div className="mt-1 text-sm text-slate-400">
-                        {getRankLabel(season.rank_level)} • Ultima partita {formatDate(season.last_game_at)}
+                        {getRankLabel(season.rank_level)} • Ultima partita{" "}
+                        {formatDate(season.last_game_at)}
                       </div>
                     </div>
 

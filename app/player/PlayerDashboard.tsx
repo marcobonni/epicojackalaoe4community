@@ -246,12 +246,15 @@ function getTeamVsSoloInsight(rows: PerformanceRow[]) {
 
 function getAllSeasons(player: PlayerProfileResponse): PreviousSeason[] {
   const seasonMap = new Map<number, PreviousSeason>();
-
   const modes = player.modes ? Object.values(player.modes) : [];
 
   modes.forEach((mode) => {
-    (mode?.previous_seasons ?? []).forEach((season) => {
-      if (typeof season?.season !== "number") return;
+    if (!mode || !("previous_seasons" in mode) || !Array.isArray(mode.previous_seasons)) {
+      return;
+    }
+
+    mode.previous_seasons.forEach((season) => {
+      if (!season || typeof season.season !== "number") return;
 
       const normalizedSeason: PreviousSeason = {
         season: season.season,
@@ -289,17 +292,22 @@ function getAllSeasons(player: PlayerProfileResponse): PreviousSeason[] {
 }
 
 function getTopCivs(player: PlayerProfileResponse): CivilizationStat[] {
+  const teamMode = player.modes?.rm_team;
+  const soloMode = player.modes?.rm_solo;
+
   const civs =
-    player.modes?.rm_team?.civilizations?.length
-      ? player.modes.rm_team.civilizations
-      : player.modes?.rm_solo?.civilizations?.length
-      ? player.modes.rm_solo.civilizations
+    teamMode && "civilizations" in teamMode && Array.isArray(teamMode.civilizations)
+      ? teamMode.civilizations
+      : soloMode && "civilizations" in soloMode && Array.isArray(soloMode.civilizations)
+      ? soloMode.civilizations
       : [];
 
-  return [...civs]
+  return civs
     .filter(
       (civ): civ is NonNullable<typeof civ> =>
-        !!civ && typeof civ.civilization === "string" && civ.civilization.trim() !== ""
+        Boolean(civ) &&
+        typeof civ.civilization === "string" &&
+        civ.civilization.trim() !== ""
     )
     .map((civ) => ({
       civilization: civ.civilization as string,

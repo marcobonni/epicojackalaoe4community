@@ -1,14 +1,7 @@
 "use client";
 
+import Link from "next/link";
 import type { PlayerProfileResponse } from "@/app/lib/aoe4world";
-
-type RatingPoint = {
-  rating: number;
-  games_count?: number;
-  wins_count?: number;
-  streak?: number | null;
-  orig_rating?: number;
-};
 
 type CivilizationStat = {
   civilization: string;
@@ -82,6 +75,14 @@ function formatShortDate(value?: string | null) {
     day: "2-digit",
     month: "2-digit",
   }).format(date);
+}
+
+function prettifyCivilizationName(value: string) {
+  return value
+    .replaceAll("_", " ")
+    .split(" ")
+    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+    .join(" ");
 }
 
 function getRankLabel(rankLevel?: string | null) {
@@ -316,7 +317,7 @@ function getTopCivs(player: PlayerProfileResponse): CivilizationStat[] {
       games_count: typeof civ.games_count === "number" ? civ.games_count : undefined,
     }))
     .sort((a, b) => (b.games_count ?? 0) - (a.games_count ?? 0))
-    .slice(0, 3);
+    .slice(0, 5);
 }
 
 function getInitials(name: string) {
@@ -453,6 +454,336 @@ function EloLineChart({
   );
 }
 
+function ComparisonBarChart({
+  title,
+  subtitle,
+  items,
+  suffix = "",
+  decimals = 0,
+  maxValue,
+}: {
+  title: string;
+  subtitle: string;
+  items: Array<{ label: string; value: number | null }>;
+  suffix?: string;
+  decimals?: number;
+  maxValue?: number;
+}) {
+  const validItems = items.filter(
+    (item): item is { label: string; value: number } =>
+      typeof item.value === "number" && Number.isFinite(item.value)
+  );
+
+  if (validItems.length === 0) {
+    return (
+      <div className="rounded-[2rem] border border-slate-800 bg-slate-900 p-6 shadow-lg shadow-black/20">
+        <p className="text-sm font-semibold uppercase tracking-[0.2em] text-amber-300">
+          {title}
+        </p>
+        <h3 className="mt-2 text-2xl font-semibold text-white">{subtitle}</h3>
+        <div className="mt-6 rounded-2xl border border-slate-800 bg-slate-950/80 p-4 text-sm text-slate-400">
+          Nessun dato disponibile.
+        </div>
+      </div>
+    );
+  }
+
+  const chartMax =
+    typeof maxValue === "number" && Number.isFinite(maxValue)
+      ? maxValue
+      : Math.max(...validItems.map((item) => item.value), 1);
+
+  return (
+    <div className="rounded-[2rem] border border-slate-800 bg-slate-900 p-6 shadow-lg shadow-black/20">
+      <p className="text-sm font-semibold uppercase tracking-[0.2em] text-amber-300">
+        {title}
+      </p>
+      <h3 className="mt-2 text-2xl font-semibold text-white">{subtitle}</h3>
+
+      <div className="mt-6 space-y-4">
+        {validItems.map((item) => {
+          const width = `${Math.max((item.value / chartMax) * 100, 3)}%`;
+
+          return (
+            <div key={item.label}>
+              <div className="mb-2 flex items-center justify-between gap-4 text-sm">
+                <span className="font-semibold text-white">{item.label}</span>
+                <span className="text-slate-300">
+                  {item.value.toFixed(decimals)}
+                  {suffix}
+                </span>
+              </div>
+
+              <div className="h-4 overflow-hidden rounded-full border border-slate-800 bg-slate-950/80">
+                <div
+                  className="h-full rounded-full bg-[linear-gradient(90deg,rgba(59,130,246,0.85),rgba(245,158,11,0.95))]"
+                  style={{ width }}
+                />
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+function SeasonsRatingChart({ seasons }: { seasons: PreviousSeason[] }) {
+  const validSeasons = seasons.filter(
+    (season): season is PreviousSeason & { rating: number } =>
+      typeof season.rating === "number" && Number.isFinite(season.rating)
+  );
+
+  if (validSeasons.length === 0) {
+    return (
+      <div className="rounded-[2rem] border border-slate-800 bg-slate-900 p-6 shadow-lg shadow-black/20">
+        <p className="text-sm font-semibold uppercase tracking-[0.2em] text-amber-300">
+          Trend stagioni
+        </p>
+        <h3 className="mt-2 text-2xl font-semibold text-white">Rating per season</h3>
+        <div className="mt-6 rounded-2xl border border-slate-800 bg-slate-950/80 p-4 text-sm text-slate-400">
+          Nessuna season con rating disponibile.
+        </div>
+      </div>
+    );
+  }
+
+  const width = 900;
+  const height = 260;
+  const padding = 40;
+  const minY = Math.min(...validSeasons.map((season) => season.rating));
+  const maxY = Math.max(...validSeasons.map((season) => season.rating));
+  const yRange = Math.max(maxY - minY, 1);
+
+  const points = validSeasons.map((season, index) => {
+    const x =
+      padding + (index / Math.max(validSeasons.length - 1, 1)) * (width - padding * 2);
+    const y =
+      height -
+      padding -
+      ((season.rating - minY) / yRange) * (height - padding * 2);
+
+    return { x, y, season: season.season, rating: season.rating };
+  });
+
+  const polyline = points.map((point) => `${point.x},${point.y}`).join(" ");
+
+  return (
+    <div className="rounded-[2rem] border border-slate-800 bg-slate-900 p-6 shadow-lg shadow-black/20">
+      <p className="text-sm font-semibold uppercase tracking-[0.2em] text-amber-300">
+        Trend stagioni
+      </p>
+      <h3 className="mt-2 text-2xl font-semibold text-white">Rating per season</h3>
+
+      <div className="mt-6 overflow-hidden rounded-[1.5rem] border border-slate-800 bg-slate-950/80 p-4">
+        <svg viewBox={`0 0 ${width} ${height}`} className="h-72 w-full">
+          {[0, 0.25, 0.5, 0.75, 1].map((step) => {
+            const y = padding + step * (height - padding * 2);
+            const label = Math.round(maxY - step * yRange);
+
+            return (
+              <g key={step}>
+                <line
+                  x1={padding}
+                  y1={y}
+                  x2={width - padding}
+                  y2={y}
+                  className="stroke-slate-800"
+                  strokeWidth="1"
+                />
+                <text x={6} y={y + 4} className="fill-slate-500 text-[12px]">
+                  {label}
+                </text>
+              </g>
+            );
+          })}
+
+          <polyline
+            fill="none"
+            points={polyline}
+            stroke="rgb(96 165 250)"
+            strokeWidth="4"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+
+          {points.map((point) => (
+            <g key={point.season}>
+              <circle cx={point.x} cy={point.y} r="5" fill="rgb(251 191 36)" />
+              <text
+                x={point.x}
+                y={height - 10}
+                textAnchor="middle"
+                className="fill-slate-400 text-[12px]"
+              >
+                S{point.season}
+              </text>
+              <title>{`Season ${point.season} • ${point.rating}`}</title>
+            </g>
+          ))}
+        </svg>
+      </div>
+    </div>
+  );
+}
+
+function CivilizationRadarChart({
+  civs,
+}: {
+  civs: CivilizationStat[];
+}) {
+  const validCivs = civs.filter(
+    (civ): civ is CivilizationStat & { civilization: string; games_count: number } =>
+      typeof civ.civilization === "string" &&
+      civ.civilization.trim() !== "" &&
+      typeof civ.games_count === "number" &&
+      Number.isFinite(civ.games_count)
+  );
+
+  if (validCivs.length < 3) {
+    return (
+      <div className="rounded-[2rem] border border-slate-800 bg-slate-900 p-6 shadow-lg shadow-black/20">
+        <p className="text-sm font-semibold uppercase tracking-[0.2em] text-amber-300">
+          Aerogramma civ
+        </p>
+        <h3 className="mt-2 text-2xl font-semibold text-white">
+          Civilizzazioni più giocate
+        </h3>
+        <div className="mt-6 rounded-2xl border border-slate-800 bg-slate-950/80 p-4 text-sm text-slate-400">
+          Servono almeno 3 civiltà con statistiche valide per mostrare l&apos;aerogramma.
+        </div>
+      </div>
+    );
+  }
+
+  const width = 520;
+  const height = 520;
+  const cx = width / 2;
+  const cy = height / 2;
+  const radius = 170;
+  const levels = 4;
+  const maxValue = Math.max(...validCivs.map((civ) => civ.games_count), 1);
+
+  const getPoint = (index: number, ratio: number) => {
+    const angle = (Math.PI * 2 * index) / validCivs.length - Math.PI / 2;
+    return {
+      x: cx + Math.cos(angle) * radius * ratio,
+      y: cy + Math.sin(angle) * radius * ratio,
+    };
+  };
+
+  const levelPolygons = Array.from({ length: levels }, (_, i) => {
+    const ratio = (i + 1) / levels;
+    return validCivs
+      .map((_, index) => {
+        const point = getPoint(index, ratio);
+        return `${point.x},${point.y}`;
+      })
+      .join(" ");
+  });
+
+  const valuePolygon = validCivs
+    .map((civ, index) => {
+      const ratio = civ.games_count / maxValue;
+      const point = getPoint(index, ratio);
+      return `${point.x},${point.y}`;
+    })
+    .join(" ");
+
+  return (
+    <div className="rounded-[2rem] border border-slate-800 bg-slate-900 p-6 shadow-lg shadow-black/20">
+      <p className="text-sm font-semibold uppercase tracking-[0.2em] text-amber-300">
+        Aerogramma civ
+      </p>
+      <h3 className="mt-2 text-2xl font-semibold text-white">
+        Civilizzazioni più giocate
+      </h3>
+
+      <div className="mt-6 grid gap-6 xl:grid-cols-[1.25fr_0.75fr]">
+        <div className="overflow-hidden rounded-[1.5rem] border border-slate-800 bg-slate-950/80 p-4">
+          <svg viewBox={`0 0 ${width} ${height}`} className="w-full">
+            {levelPolygons.map((polygon, index) => (
+              <polygon
+                key={index}
+                points={polygon}
+                fill="none"
+                stroke="rgb(51 65 85)"
+                strokeWidth="1"
+              />
+            ))}
+
+            {validCivs.map((civ, index) => {
+              const outer = getPoint(index, 1);
+              const inner = getPoint(index, 0);
+
+              return (
+                <g key={civ.civilization}>
+                  <line
+                    x1={inner.x}
+                    y1={inner.y}
+                    x2={outer.x}
+                    y2={outer.y}
+                    stroke="rgb(51 65 85)"
+                    strokeWidth="1"
+                  />
+                  <text
+                    x={getPoint(index, 1.14).x}
+                    y={getPoint(index, 1.14).y}
+                    textAnchor="middle"
+                    className="fill-slate-300 text-[12px]"
+                  >
+                    {prettifyCivilizationName(civ.civilization)}
+                  </text>
+                </g>
+              );
+            })}
+
+            <polygon
+              points={valuePolygon}
+              fill="rgba(245,158,11,0.22)"
+              stroke="rgb(245 158 11)"
+              strokeWidth="3"
+            />
+
+            {validCivs.map((civ, index) => {
+              const point = getPoint(index, civ.games_count / maxValue);
+
+              return (
+                <g key={`${civ.civilization}-point`}>
+                  <circle cx={point.x} cy={point.y} r="5" fill="white" />
+                  <title>{`${prettifyCivilizationName(civ.civilization)} • ${civ.games_count} partite`}</title>
+                </g>
+              );
+            })}
+          </svg>
+        </div>
+
+        <div className="space-y-3">
+          {validCivs.map((civ) => (
+            <div
+              key={civ.civilization}
+              className="rounded-2xl border border-slate-800 bg-slate-950/80 p-4"
+            >
+              <div className="text-sm font-semibold text-white">
+                {prettifyCivilizationName(civ.civilization)}
+              </div>
+              <div className="mt-2 text-sm text-slate-400">
+                Partite: {formatNumber(civ.games_count)}
+              </div>
+              <div className="mt-1 text-sm text-slate-400">
+                Pick rate: {formatPercent(civ.pick_rate)}
+              </div>
+              <div className="mt-1 text-sm text-slate-400">
+                Winrate: {formatPercent(civ.win_rate)}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function PlayerDashboard({
   player,
   civIcons = {},
@@ -486,6 +817,24 @@ export default function PlayerDashboard({
   return (
     <section className="mx-auto max-w-7xl px-6 py-12 lg:px-8">
       <div className="space-y-8">
+        <div className="flex flex-wrap items-center justify-between gap-4">
+          <div className="flex flex-wrap gap-3">
+            <Link
+              href="/"
+              className="inline-flex rounded-2xl border border-slate-700 bg-slate-900/80 px-5 py-3 text-sm font-semibold text-slate-100 transition hover:-translate-y-0.5 hover:border-slate-500"
+            >
+              ← Torna alla home
+            </Link>
+
+            <Link
+              href="/leaderboard"
+              className="inline-flex rounded-2xl bg-amber-400 px-5 py-3 text-sm font-semibold text-slate-950 transition hover:-translate-y-0.5"
+            >
+              Vai alla leaderboard
+            </Link>
+          </div>
+        </div>
+
         <div className="rounded-[2rem] border border-amber-500/20 bg-[radial-gradient(circle_at_top,rgba(245,158,11,0.12),transparent_35%),#0f172a] p-8 shadow-2xl shadow-black/30">
           <div className="flex flex-col gap-8 lg:flex-row lg:items-center lg:justify-between">
             <div className="flex items-center gap-5">
@@ -627,6 +976,33 @@ export default function PlayerDashboard({
 
         <EloLineChart data={soloHistory} title="Storico 1v1" />
 
+        <div className="grid gap-6 xl:grid-cols-2">
+          <ComparisonBarChart
+            title="Confronto modalità"
+            subtitle="Winrate per modalità"
+            items={rows.map((row) => ({
+              label: row.label,
+              value: row.winRate,
+            }))}
+            suffix="%"
+            decimals={1}
+            maxValue={100}
+          />
+
+          <ComparisonBarChart
+            title="Volume di gioco"
+            subtitle="Partite per modalità"
+            items={rows.map((row) => ({
+              label: row.label,
+              value: row.games,
+            }))}
+          />
+        </div>
+
+        <SeasonsRatingChart seasons={seasons} />
+
+        <CivilizationRadarChart civs={topCivs} />
+
         <div className="grid gap-6 lg:grid-cols-2">
           <div className="rounded-[2rem] border border-slate-800 bg-slate-900 p-6 shadow-lg shadow-black/20">
             <p className="text-sm font-semibold uppercase tracking-[0.3em] text-amber-300">
@@ -767,7 +1143,7 @@ export default function PlayerDashboard({
 
                         <div>
                           <div className="text-sm font-semibold text-white">
-                            {civ.civilization.replaceAll("_", " ")}
+                            {prettifyCivilizationName(civ.civilization)}
                           </div>
                           <div className="mt-1 text-sm text-slate-400">
                             {formatNumber(civ.games_count)} partite

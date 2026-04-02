@@ -8,7 +8,7 @@ type Coach = {
   role: string;
   description: string;
   specialty: string;
-  price: string;
+  price: string | null;
   availability: string;
   contactUrl: string;
   profileUrl: string | null;

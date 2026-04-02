@@ -59,6 +59,11 @@ export function useBeasty() {
   const [revealStartedAt, setRevealStartedAt] = useState<number | null>(null);
   const [revealDurationMs, setRevealDurationMs] = useState(0);
   const [finalResults, setFinalResults] = useState<FinalResult[]>([]);
+  const [isPaused, setIsPaused] = useState(false);
+  const [remainingMs, setRemainingMs] = useState<number | null>(null);
+  const [timerPhase, setTimerPhase] = useState<"question" | "reveal" | null>(
+    null
+  );
 
   useEffect(() => {
     socket.connect();
@@ -71,9 +76,13 @@ export function useBeasty() {
       setConnected(false);
     };
 
-    const onRoomUpdated = (updatedRoom: Room) => {
+    const onRoomUpdated = (updatedRoom: Room & { isPaused?: boolean; remainingMs?: number | null }) => {
       setRoom(updatedRoom);
       setPlayers(updatedRoom.players);
+      setIsPaused(Boolean(updatedRoom.isPaused));
+      setRemainingMs(
+        typeof updatedRoom.remainingMs === "number" ? updatedRoom.remainingMs : null
+      );
     };
 
     const onGameQuestion = ({
@@ -83,6 +92,8 @@ export function useBeasty() {
       doublePoints: nextDoublePoints,
       difficultyMultiplier: nextDifficultyMultiplier,
       answerMarkers: nextAnswerMarkers,
+      isPaused: nextIsPaused,
+      remainingMs: nextRemainingMs,
     }: {
       room: Room;
       question: Question;
@@ -90,6 +101,8 @@ export function useBeasty() {
       doublePoints?: boolean;
       difficultyMultiplier?: number;
       answerMarkers?: AnswerMarker[];
+      isPaused?: boolean;
+      remainingMs?: number;
     }) => {
       setRoom(updatedRoom);
       setQuestion(nextQuestion);
@@ -104,6 +117,13 @@ export function useBeasty() {
       setRevealStartedAt(null);
       setRevealDurationMs(0);
       setFinalResults([]);
+      setIsPaused(Boolean(nextIsPaused));
+      setRemainingMs(
+        typeof nextRemainingMs === "number"
+          ? nextRemainingMs
+          : nextQuestion.durationMs
+      );
+      setTimerPhase("question");
     };
 
     const onAnswersUpdated = ({
@@ -133,6 +153,8 @@ export function useBeasty() {
       roundResults: nextRoundResults,
       revealStartedAt: nextRevealStartedAt,
       revealDurationMs: nextRevealDurationMs,
+      isPaused: nextIsPaused,
+      remainingMs: nextRemainingMs,
     }: {
       room: Room;
       question: Question;
@@ -144,6 +166,8 @@ export function useBeasty() {
       roundResults?: RoundResult[];
       revealStartedAt?: number;
       revealDurationMs?: number;
+      isPaused?: boolean;
+      remainingMs?: number;
     }) => {
       setRoom(updatedRoom);
       setQuestion(currentQuestion);
@@ -155,6 +179,13 @@ export function useBeasty() {
       setRoundResults(nextRoundResults ?? []);
       setRevealStartedAt(nextRevealStartedAt ?? null);
       setRevealDurationMs(nextRevealDurationMs ?? 0);
+      setIsPaused(Boolean(nextIsPaused));
+      setRemainingMs(
+        typeof nextRemainingMs === "number"
+          ? nextRemainingMs
+          : (nextRevealDurationMs ?? 0)
+      );
+      setTimerPhase("reveal");
     };
 
     const onGameFinished = ({
@@ -175,9 +206,81 @@ export function useBeasty() {
       setDoublePoints(false);
       setDifficultyMultiplier(1);
       setAnswerMarkers([]);
+      setRoundResults([]);
       setRevealStartedAt(null);
       setRevealDurationMs(0);
       setFinalResults(nextFinalResults ?? []);
+      setIsPaused(false);
+      setRemainingMs(null);
+      setTimerPhase(null);
+    };
+
+    const onGameTimer = ({
+      phase,
+      remainingMs: nextRemainingMs,
+      isPaused: nextIsPaused,
+    }: {
+      phase: "question" | "reveal";
+      remainingMs: number;
+      isPaused: boolean;
+    }) => {
+      setTimerPhase(phase);
+      setRemainingMs(nextRemainingMs);
+      setIsPaused(nextIsPaused);
+    };
+
+    const onGamePaused = ({
+      room: updatedRoom,
+      isPaused: nextIsPaused,
+      phase,
+      remainingMs: nextRemainingMs,
+    }: {
+      room?: Room;
+      isPaused?: boolean;
+      phase?: "question" | "reveal";
+      remainingMs?: number;
+    }) => {
+      if (updatedRoom) {
+        setRoom(updatedRoom);
+        setPlayers(updatedRoom.players);
+      }
+
+      setIsPaused(Boolean(nextIsPaused));
+
+      if (phase) {
+        setTimerPhase(phase);
+      }
+
+      if (typeof nextRemainingMs === "number") {
+        setRemainingMs(nextRemainingMs);
+      }
+    };
+
+    const onGameResumed = ({
+      room: updatedRoom,
+      isPaused: nextIsPaused,
+      phase,
+      remainingMs: nextRemainingMs,
+    }: {
+      room?: Room;
+      isPaused?: boolean;
+      phase?: "question" | "reveal";
+      remainingMs?: number;
+    }) => {
+      if (updatedRoom) {
+        setRoom(updatedRoom);
+        setPlayers(updatedRoom.players);
+      }
+
+      setIsPaused(Boolean(nextIsPaused));
+
+      if (phase) {
+        setTimerPhase(phase);
+      }
+
+      if (typeof nextRemainingMs === "number") {
+        setRemainingMs(nextRemainingMs);
+      }
     };
 
     socket.on("connect", onConnect);
@@ -188,6 +291,9 @@ export function useBeasty() {
     socket.on("scoreboard:updated", onScoreboardUpdated);
     socket.on("game:reveal", onGameReveal);
     socket.on("game:finished", onGameFinished);
+    socket.on("game:timer", onGameTimer);
+    socket.on("game:paused", onGamePaused);
+    socket.on("game:resumed", onGameResumed);
 
     return () => {
       socket.off("connect", onConnect);
@@ -198,6 +304,9 @@ export function useBeasty() {
       socket.off("scoreboard:updated", onScoreboardUpdated);
       socket.off("game:reveal", onGameReveal);
       socket.off("game:finished", onGameFinished);
+      socket.off("game:timer", onGameTimer);
+      socket.off("game:paused", onGamePaused);
+      socket.off("game:resumed", onGameResumed);
       socket.disconnect();
     };
   }, []);
@@ -238,6 +347,16 @@ export function useBeasty() {
       socket.emit("game:start", { code }, resolve);
     });
 
+  const pauseGame = (code: string) =>
+    new Promise((resolve) => {
+      socket.emit("game:pause", { code }, resolve);
+    });
+
+  const resumeGame = (code: string) =>
+    new Promise((resolve) => {
+      socket.emit("game:resume", { code }, resolve);
+    });
+
   const submitAnswer = (code: string, answerIndex: number, questionId: string) =>
     new Promise((resolve) => {
       socket.emit("answer:submit", { code, answerIndex, questionId }, resolve);
@@ -264,10 +383,15 @@ export function useBeasty() {
     revealStartedAt,
     revealDurationMs,
     finalResults,
+    isPaused,
+    remainingMs,
+    timerPhase,
     createRoom,
     joinRoom,
     updateRoomSettings,
     startGame,
+    pauseGame,
+    resumeGame,
     submitAnswer,
     requestRematch,
   };

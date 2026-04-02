@@ -20,6 +20,8 @@ export type Room = {
   players: Player[];
   currentQuestionIndex: number;
   settings: RoomSettings;
+  isPaused?: boolean;
+  remainingMs?: number | null;
 };
 
 export type Question = {

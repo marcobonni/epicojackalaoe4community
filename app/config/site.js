@@ -7,12 +7,13 @@ export const TWITCH_PARENT_DOMAINS = [
 ];
 
 export const TWITCH_STREAMER_PRIORITY = [
+  'EpicoJackal',
   'ScapoloCaldo667',
   'Taffuz_Gg',
   'IKasiya',
   'RaionOn',
   'FRADIBIS',
-  'EpicoJackal'
+  'massimi25ap'
 ];
 
 export const TWITCH_STREAMERS = TWITCH_STREAMER_PRIORITY.map((name) => ({

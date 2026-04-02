@@ -10,6 +10,7 @@ const DEFAULT_CATEGORY_IDS = [
   "buildings",
   "ages",
 ];
+
 type LandingMode = "create" | "join" | null;
 
 function getPlayerBadge(name: string) {
@@ -75,6 +76,8 @@ export default function BeastyPage() {
     joinRoom,
     updateRoomSettings,
     startGame,
+    pauseGame,
+    resumeGame,
     submitAnswer,
     reveal,
     startedAt,
@@ -88,6 +91,9 @@ export default function BeastyPage() {
     revealStartedAt,
     revealDurationMs,
     finalResults,
+    isPaused,
+    remainingMs,
+    timerPhase,
   } = useBeasty();
 
   const [name, setName] = useState("");
@@ -102,6 +108,7 @@ export default function BeastyPage() {
   const [totalQuestions, setTotalQuestions] = useState(10);
   const [savingSettings, setSavingSettings] = useState(false);
   const [landingMode, setLandingMode] = useState<LandingMode>(null);
+  const [togglingPause, setTogglingPause] = useState(false);
 
   const previousPhaseRef = useRef<string | null>(null);
 
@@ -196,7 +203,12 @@ export default function BeastyPage() {
   }, [room?.settings]);
 
   useEffect(() => {
-    if (!question || !startedAt) {
+    const shouldTickQuestion =
+      room?.state === "question" && question && startedAt && !isPaused;
+    const shouldTickReveal =
+      room?.state === "reveal" && revealStartedAt && revealDurationMs && !isPaused;
+
+    if (!shouldTickQuestion && !shouldTickReveal) {
       return;
     }
 
@@ -205,24 +217,23 @@ export default function BeastyPage() {
     }, 100);
 
     return () => clearInterval(interval);
-  }, [question, startedAt]);
-
-  useEffect(() => {
-    if (!revealStartedAt || !revealDurationMs) {
-      return;
-    }
-
-    const interval = setInterval(() => {
-      setTimerTick(Date.now());
-    }, 100);
-
-    return () => clearInterval(interval);
-  }, [revealStartedAt, revealDurationMs]);
+  }, [
+    room?.state,
+    question,
+    startedAt,
+    revealStartedAt,
+    revealDurationMs,
+    isPaused,
+  ]);
 
   useEffect(() => {
     setSelectedAnswer(null);
     setSubmittingAnswer(false);
   }, [question?.id, room?.state]);
+
+  useEffect(() => {
+    setTogglingPause(false);
+  }, [isPaused, room?.state]);
 
   useEffect(() => {
     const AudioCtx =
@@ -260,8 +271,8 @@ export default function BeastyPage() {
 
     let currentPhase = "home";
 
-    if (room?.state === "question") currentPhase = "question";
-    if (room?.state === "reveal") currentPhase = "reveal";
+    if (room?.state === "question") currentPhase = isPaused ? "paused" : "question";
+    if (room?.state === "reveal") currentPhase = isPaused ? "paused" : "reveal";
     if (room?.state === "finished" || gameFinished) currentPhase = "finished";
 
     if (previousPhaseRef.current !== currentPhase) {
@@ -269,6 +280,8 @@ export default function BeastyPage() {
         playTone(660, 120, "square");
       } else if (currentPhase === "reveal") {
         playTone(880, 140, "triangle");
+      } else if (currentPhase === "paused") {
+        playTone(440, 120, "sine");
       } else if (currentPhase === "finished") {
         playTone(523, 120, "sine");
         setTimeout(() => playTone(659, 120, "sine"), 140);
@@ -277,7 +290,7 @@ export default function BeastyPage() {
     }
 
     previousPhaseRef.current = currentPhase;
-  }, [room?.state, gameFinished]);
+  }, [room?.state, gameFinished, isPaused]);
 
   const handleCreateRoom = async () => {
     if (!name.trim()) return;
@@ -348,13 +361,38 @@ export default function BeastyPage() {
     }
   };
 
+  const handlePauseToggle = async () => {
+    if (!room || !isHost || togglingPause) return;
+
+    setActionError(null);
+    setTogglingPause(true);
+
+    const response = (await (isPaused
+      ? resumeGame(room.code)
+      : pauseGame(room.code))) as {
+      ok?: boolean;
+      error?: string;
+    };
+
+    if (!response?.ok) {
+      setActionError(
+        response?.error ??
+          (isPaused
+            ? "Impossibile riprendere la partita."
+            : "Impossibile mettere in pausa la partita.")
+      );
+      setTogglingPause(false);
+    }
+  };
+
   const handleSubmitAnswer = async (answerIndex: number) => {
     if (
       !room ||
       !question ||
       submittingAnswer ||
       selectedAnswer !== null ||
-      reveal
+      reveal ||
+      isPaused
     ) {
       return;
     }
@@ -376,6 +414,25 @@ export default function BeastyPage() {
     setSubmittingAnswer(false);
   };
 
+  const handleRematch = async () => {
+    if (!room || !isHost) return;
+
+    setActionError(null);
+
+    const response = (await requestRematch(room.code)) as {
+      ok?: boolean;
+      error?: string;
+    };
+
+    if (!response?.ok) {
+      setActionError(response?.error ?? "Impossibile tornare in lobby.");
+      return;
+    }
+
+    setSelectedAnswer(null);
+    setSubmittingAnswer(false);
+  };
+
   const toggleCategory = (categoryId: string) => {
     setSelectedCategories((prev) => {
       if (prev.includes(categoryId)) {
@@ -387,27 +444,45 @@ export default function BeastyPage() {
     });
   };
 
-  const remainingMs =
+  const computedQuestionRemainingMs =
     question && startedAt
       ? Math.max(0, question.durationMs - (timerTick - startedAt))
       : 0;
-  const timeLeft = Math.ceil(remainingMs / 1000);
-  const timerPercent =
-    question && question.durationMs > 0
-      ? Math.max(0, (remainingMs / question.durationMs) * 100)
+
+  const activeQuestionRemainingMs =
+    room?.state === "question"
+      ? typeof remainingMs === "number"
+        ? remainingMs
+        : computedQuestionRemainingMs
       : 0;
 
-  const revealRemainingMs =
+  const timeLeft = Math.ceil(activeQuestionRemainingMs / 1000);
+  const timerPercent =
+    question && question.durationMs > 0
+      ? Math.max(0, (activeQuestionRemainingMs / question.durationMs) * 100)
+      : 0;
+
+  const computedRevealRemainingMs =
     revealStartedAt && revealDurationMs
       ? Math.max(0, revealDurationMs - (timerTick - revealStartedAt))
       : 0;
-  const revealTimeLeft = Math.ceil(revealRemainingMs / 1000);
+
+  const activeRevealRemainingMs =
+    room?.state === "reveal"
+      ? typeof remainingMs === "number"
+        ? remainingMs
+        : computedRevealRemainingMs
+      : 0;
+
+  const revealTimeLeft = Math.ceil(activeRevealRemainingMs / 1000);
   const revealTimerPercent =
     revealDurationMs > 0
-      ? Math.max(0, (revealRemainingMs / revealDurationMs) * 100)
+      ? Math.max(0, (activeRevealRemainingMs / revealDurationMs) * 100)
       : 0;
 
   const multiplierBadge = `x${difficultyMultiplier}`;
+  const pauseLabel =
+    timerPhase === "reveal" ? "Round in pausa" : "Partita in pausa";
 
   if (!connected) {
     return (
@@ -574,15 +649,24 @@ export default function BeastyPage() {
             </div>
 
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-              <button
-                className="inline-flex items-center justify-center rounded-2xl border border-amber-400/40 bg-amber-500/90 px-5 py-3 font-semibold text-slate-950 transition hover:bg-amber-400"
-                onClick={() => {
-                  window.localStorage.removeItem("beasty-landing-mode");
-                  window.location.reload();
-                }}
-              >
-                Torna in lobby
-              </button>
+              {isHost ? (
+                <button
+                  className="inline-flex items-center justify-center rounded-2xl border border-amber-400/40 bg-amber-500/90 px-5 py-3 font-semibold text-slate-950 transition hover:bg-amber-400"
+                  onClick={handleRematch}
+                >
+                  Torna in lobby
+                </button>
+              ) : (
+                <button
+                  className="inline-flex items-center justify-center rounded-2xl border border-amber-400/40 bg-amber-500/90 px-5 py-3 font-semibold text-slate-950 transition hover:bg-amber-400"
+                  onClick={() => {
+                    window.localStorage.removeItem("beasty-landing-mode");
+                    window.location.reload();
+                  }}
+                >
+                  Esci
+                </button>
+              )}
             </div>
           </div>
         </div>
@@ -600,23 +684,63 @@ export default function BeastyPage() {
             description="Risposta corretta, scelte dei giocatori e punti ottenuti in questo round."
           />
 
+          {actionError ? (
+            <div className="mb-6 rounded-2xl border border-red-500/20 bg-red-500/10 px-4 py-3 text-sm text-red-200">
+              {actionError}
+            </div>
+          ) : null}
+
           <div className="mb-6 rounded-3xl border border-emerald-400/20 bg-slate-900/70 p-5 shadow-[0_0_40px_rgba(0,0,0,0.35)] backdrop-blur-sm">
-            <div className="flex items-center justify-between gap-4">
+            <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
               <div className="text-sm font-semibold uppercase tracking-[0.2em] text-emerald-300">
-                Prossima domanda tra {revealTimeLeft} secondi
+                {isPaused
+                  ? `${pauseLabel} · ${revealTimeLeft} secondi residui`
+                  : `Prossima domanda tra ${revealTimeLeft} secondi`}
               </div>
+
+              {isHost ? (
+                <button
+                  onClick={handlePauseToggle}
+                  disabled={togglingPause}
+                  className={`inline-flex items-center justify-center rounded-2xl px-4 py-2 text-sm font-semibold transition disabled:cursor-not-allowed disabled:opacity-60 ${
+                    isPaused
+                      ? "border border-emerald-400/40 bg-emerald-500/10 text-emerald-300 hover:bg-emerald-500/15"
+                      : "border border-amber-400/40 bg-amber-400/10 text-amber-200 hover:bg-amber-400/15"
+                  }`}
+                >
+                  {isPaused ? "Riprendi" : "Pausa"}
+                </button>
+              ) : null}
             </div>
 
             <div className="mt-4 h-3 w-full overflow-hidden rounded-full bg-slate-800">
               <div
-                className="h-full rounded-full bg-emerald-400 transition-all"
+                className={`h-full rounded-full transition-all ${
+                  isPaused ? "bg-amber-400" : "bg-emerald-400"
+                }`}
                 style={{ width: `${revealTimerPercent}%` }}
               />
             </div>
           </div>
 
           <div className="grid gap-6 lg:grid-cols-[1.2fr_1fr]">
-            <div className="rounded-3xl border border-emerald-400/20 bg-slate-900/70 p-6 shadow-[0_0_40px_rgba(0,0,0,0.35)] backdrop-blur-sm md:p-8">
+            <div className="relative rounded-3xl border border-emerald-400/20 bg-slate-900/70 p-6 shadow-[0_0_40px_rgba(0,0,0,0.35)] backdrop-blur-sm md:p-8">
+              {isPaused ? (
+                <div className="absolute inset-0 z-10 flex items-center justify-center rounded-3xl bg-slate-950/70 backdrop-blur-[2px]">
+                  <div className="rounded-3xl border border-amber-400/30 bg-slate-950/90 px-8 py-6 text-center shadow-[0_0_30px_rgba(245,158,11,0.12)]">
+                    <div className="text-sm font-semibold uppercase tracking-[0.3em] text-amber-300">
+                      {pauseLabel}
+                    </div>
+                    <div className="mt-3 text-3xl font-black text-white">
+                      {revealTimeLeft}s
+                    </div>
+                    <p className="mt-2 text-sm text-slate-300">
+                      In attesa che l&apos;host riprenda il quiz.
+                    </p>
+                  </div>
+                </div>
+              ) : null}
+
               <div className="rounded-2xl border border-slate-800 bg-slate-950/50 p-5">
                 <div className="flex flex-wrap items-center gap-3">
                   <p className="text-sm uppercase tracking-[0.2em] text-emerald-300/80">
@@ -778,8 +902,24 @@ export default function BeastyPage() {
                 </h2>
               </div>
 
-              <div className="rounded-2xl border border-amber-400/20 bg-amber-400/10 px-4 py-3 text-sm font-semibold text-amber-200">
-                Stanza {room.code}
+              <div className="flex flex-wrap items-center gap-3">
+                <div className="rounded-2xl border border-amber-400/20 bg-amber-400/10 px-4 py-3 text-sm font-semibold text-amber-200">
+                  Stanza {room.code}
+                </div>
+
+                {isHost ? (
+                  <button
+                    onClick={handlePauseToggle}
+                    disabled={togglingPause}
+                    className={`inline-flex items-center justify-center rounded-2xl px-4 py-3 text-sm font-semibold transition disabled:cursor-not-allowed disabled:opacity-60 ${
+                      isPaused
+                        ? "border border-emerald-400/40 bg-emerald-500/10 text-emerald-300 hover:bg-emerald-500/15"
+                        : "border border-amber-400/40 bg-amber-400/10 text-amber-200 hover:bg-amber-400/15"
+                    }`}
+                  >
+                    {isPaused ? "Riprendi" : "Pausa"}
+                  </button>
+                ) : null}
               </div>
             </div>
 
@@ -789,67 +929,95 @@ export default function BeastyPage() {
                   Round a punti doppi
                 </div>
               ) : null}
+
+              {isPaused ? (
+                <div className="inline-flex rounded-full border border-amber-400/30 bg-amber-400/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-amber-300">
+                  {pauseLabel}
+                </div>
+              ) : null}
             </div>
 
             <div className="mt-6 flex items-center justify-between gap-4">
               <div className="h-3 w-full overflow-hidden rounded-full bg-slate-800">
                 <div
-                  className="h-full rounded-full bg-amber-400 transition-all"
+                  className={`h-full rounded-full transition-all ${
+                    isPaused ? "bg-amber-400" : "bg-amber-400"
+                  }`}
                   style={{ width: `${timerPercent}%` }}
                 />
               </div>
 
-              <div className="min-w-[70px] rounded-2xl border border-amber-400/20 bg-amber-400/10 px-4 py-2 text-center text-lg font-bold text-amber-300">
+              <div className="min-w-[90px] rounded-2xl border border-amber-400/20 bg-amber-400/10 px-4 py-2 text-center text-lg font-bold text-amber-300">
                 {timeLeft}s
               </div>
             </div>
 
-            <div className="mt-8 grid gap-4 md:grid-cols-2">
-              {question.options.map((opt, i) => {
-                const markersForOption = answerMarkers.filter(
-                  (marker) => marker.answerIndex === i
-                );
-
-                return (
-                  <button
-                    key={i}
-                    className={`rounded-2xl border p-5 text-left text-base font-semibold transition disabled:cursor-not-allowed disabled:opacity-60 ${
-                      selectedAnswer === i
-                        ? "border-amber-400/60 bg-amber-400/10 text-amber-100"
-                        : "border-slate-700 bg-slate-950/60 text-slate-100 hover:border-amber-400/50 hover:bg-slate-800"
-                    }`}
-                    onClick={() => handleSubmitAnswer(i)}
-                    disabled={
-                      submittingAnswer ||
-                      selectedAnswer !== null ||
-                      timeLeft <= 0
-                    }
-                  >
-                    <div className="flex items-start gap-3">
-                      <span className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-amber-400/30 bg-amber-400/10 text-sm text-amber-300">
-                        {String.fromCharCode(65 + i)}
-                      </span>
-                      <div className="flex-1">
-                        <div>{opt}</div>
-
-                        {markersForOption.length > 0 ? (
-                          <div className="mt-4 flex flex-wrap gap-2">
-                            {markersForOption.map((marker) => (
-                              <div
-                                key={marker.playerId}
-                                title={marker.playerName}
-                                className="inline-flex h-8 min-w-8 items-center justify-center rounded-full border border-slate-600 bg-slate-800 px-2 text-[11px] font-bold text-slate-100"
-                              >
-                                {getPlayerBadge(marker.playerName)}
-                              </div>
-                            ))}
-                          </div>
-                        ) : null}
-                      </div>
+            <div className="relative mt-8">
+              {isPaused ? (
+                <div className="absolute inset-0 z-10 flex items-center justify-center rounded-3xl bg-slate-950/70 backdrop-blur-[2px]">
+                  <div className="rounded-3xl border border-amber-400/30 bg-slate-950/90 px-8 py-6 text-center shadow-[0_0_30px_rgba(245,158,11,0.12)]">
+                    <div className="text-sm font-semibold uppercase tracking-[0.3em] text-amber-300">
+                      {pauseLabel}
                     </div>
-                  </button>
-                );
-              })}
+                    <div className="mt-3 text-3xl font-black text-white">
+                      {timeLeft}s
+                    </div>
+                    <p className="mt-2 text-sm text-slate-300">
+                      Le risposte sono bloccate finché l&apos;host non riprende la
+                      partita.
+                    </p>
+                  </div>
+                </div>
+              ) : null}
+
+              <div className="grid gap-4 md:grid-cols-2">
+                {question.options.map((opt, i) => {
+                  const markersForOption = answerMarkers.filter(
+                    (marker) => marker.answerIndex === i
+                  );
+
+                  return (
+                    <button
+                      key={i}
+                      className={`rounded-2xl border p-5 text-left text-base font-semibold transition disabled:cursor-not-allowed disabled:opacity-60 ${
+                        selectedAnswer === i
+                          ? "border-amber-400/60 bg-amber-400/10 text-amber-100"
+                          : "border-slate-700 bg-slate-950/60 text-slate-100 hover:border-amber-400/50 hover:bg-slate-800"
+                      }`}
+                      onClick={() => handleSubmitAnswer(i)}
+                      disabled={
+                        submittingAnswer ||
+                        selectedAnswer !== null ||
+                        timeLeft <= 0 ||
+                        isPaused
+                      }
+                    >
+                      <div className="flex items-start gap-3">
+                        <span className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-amber-400/30 bg-amber-400/10 text-sm text-amber-300">
+                          {String.fromCharCode(65 + i)}
+                        </span>
+                        <div className="flex-1">
+                          <div>{opt}</div>
+
+                          {markersForOption.length > 0 ? (
+                            <div className="mt-4 flex flex-wrap gap-2">
+                              {markersForOption.map((marker) => (
+                                <div
+                                  key={marker.playerId}
+                                  title={marker.playerName}
+                                  className="inline-flex h-8 min-w-8 items-center justify-center rounded-full border border-slate-600 bg-slate-800 px-2 text-[11px] font-bold text-slate-100"
+                                >
+                                  {getPlayerBadge(marker.playerName)}
+                                </div>
+                              ))}
+                            </div>
+                          ) : null}
+                        </div>
+                      </div>
+                    </button>
+                  );
+                })}
+              </div>
             </div>
 
             <div className="mt-10">

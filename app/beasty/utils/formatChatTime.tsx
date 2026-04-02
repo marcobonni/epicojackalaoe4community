@@ -1,7 +1,5 @@
 export function formatChatTime(timestamp: number) {
-  const date = new Date(timestamp);
-
-  return date.toLocaleTimeString([], {
+  return new Date(timestamp).toLocaleTimeString("it-IT", {
     hour: "2-digit",
     minute: "2-digit",
   });

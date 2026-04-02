@@ -1,85 +1,132 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { formatChatTime } from "../utils/formatChatTime";
 
 type ChatMessage = {
   id: string;
   playerId: string;
   playerName: string;
-  message: string;
-  timestamp: number;
+  text: string;
+  createdAt: number;
 };
 
 export default function ChatPanel({
+  roomCode,
+  currentPlayerName,
   messages,
   onSend,
-  roomCode,
+  disabled = false,
 }: {
-  messages: ChatMessage[];
-  onSend: (msg: string) => void;
   roomCode?: string;
+  currentPlayerName?: string;
+  messages: ChatMessage[];
+  onSend: (text: string) => Promise<void>;
+  disabled?: boolean;
 }) {
-  const [input, setInput] = useState("");
+  const [text, setText] = useState("");
+  const [sending, setSending] = useState(false);
+  const messagesEndRef = useRef<HTMLDivElement | null>(null);
 
-  const handleSend = () => {
-    const trimmed = input.trim();
-    if (!trimmed) return;
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
 
-    onSend(trimmed);
-    setInput("");
+  const handleSend = async () => {
+    const cleaned = text.trim();
+    if (!cleaned || sending || disabled) return;
+
+    setSending(true);
+    await onSend(cleaned);
+    setSending(false);
+    setText("");
   };
 
   return (
-    <div className="rounded-3xl border border-amber-400/20 bg-slate-900/70 p-4 backdrop-blur-sm">
-      <div className="flex items-center justify-between mb-3">
-        <h3 className="text-sm font-semibold text-white">Chat stanza</h3>
-        {roomCode && (
-          <span className="text-xs text-slate-400">{roomCode}</span>
+    <div className="rounded-3xl border border-slate-800 bg-slate-950/50 p-4">
+      <div className="flex items-center justify-between gap-3">
+        <h3 className="text-lg font-bold text-white">Chat stanza</h3>
+        {roomCode ? (
+          <span className="rounded-full border border-slate-700 bg-slate-900 px-3 py-1 text-xs text-slate-300">
+            {roomCode}
+          </span>
+        ) : null}
+      </div>
+
+      <div className="mt-4 h-72 overflow-y-auto rounded-2xl border border-slate-800 bg-slate-900/60 p-3">
+        {messages.length === 0 ? (
+          <div className="text-sm text-slate-500">Nessun messaggio ancora.</div>
+        ) : (
+          <div className="space-y-3">
+            {messages.map((message) => {
+              const isOwn =
+                currentPlayerName &&
+                message.playerName.trim().toLowerCase() ===
+                  currentPlayerName.trim().toLowerCase();
+
+              return (
+                <div
+                  key={message.id}
+                  className={`rounded-2xl border p-3 ${
+                    isOwn
+                      ? "border-amber-400/20 bg-amber-400/5"
+                      : "border-slate-800 bg-slate-950/70"
+                  }`}
+                >
+                  <div className="flex items-center justify-between gap-3">
+                    <span
+                      className={`text-sm font-semibold ${
+                        isOwn ? "text-amber-300" : "text-white"
+                      }`}
+                    >
+                      {message.playerName}
+                    </span>
+                    <span className="text-xs text-slate-500">
+                      {formatChatTime(message.createdAt)}
+                    </span>
+                  </div>
+
+                  <div className="mt-1 whitespace-pre-wrap break-words text-sm text-slate-200">
+                    {message.text}
+                  </div>
+                </div>
+              );
+            })}
+            <div ref={messagesEndRef} />
+          </div>
         )}
       </div>
 
-      <div className="h-56 overflow-y-auto space-y-2 pr-1">
-        {messages.length === 0 && (
-          <div className="text-sm text-slate-500">
-            Nessun messaggio...
-          </div>
-        )}
-
-        {messages.map((msg) => (
-          <div
-            key={msg.id}
-            className="rounded-xl border border-slate-700 bg-slate-800/50 p-2"
-          >
-            <div className="flex justify-between text-xs text-slate-400">
-              <span className="font-semibold text-amber-300">
-                {msg.playerName}
-              </span>
-              <span>{formatChatTime(msg.timestamp)}</span>
-            </div>
-
-            <div className="text-sm text-white mt-1">
-              {msg.message}
-            </div>
-          </div>
-        ))}
-      </div>
-
-      <div className="mt-3 flex gap-2">
+      <div className="mt-4 flex gap-3">
         <input
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          placeholder="Scrivi un messaggio..."
+          value={text}
           maxLength={250}
-          className="flex-1 rounded-xl border border-slate-700 bg-slate-950 px-3 py-2 text-sm text-white outline-none"
+          disabled={disabled || sending}
+          onChange={(e) => setText(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" && !e.shiftKey) {
+              e.preventDefault();
+              void handleSend();
+            }
+          }}
+          placeholder={
+            disabled
+              ? "Chat temporaneamente bloccata"
+              : "Scrivi un messaggio..."
+          }
+          className="flex-1 rounded-2xl border border-slate-700 bg-slate-950/70 px-4 py-3 text-sm text-slate-100 outline-none transition focus:border-amber-400/60 focus:ring-2 focus:ring-amber-400/20 disabled:opacity-60"
         />
-
         <button
-          onClick={handleSend}
-          className="rounded-xl bg-amber-500 px-4 py-2 text-sm font-semibold text-black hover:bg-amber-400"
+          onClick={() => void handleSend()}
+          disabled={disabled || sending || !text.trim()}
+          className="rounded-2xl border border-amber-400/40 bg-amber-500/90 px-5 py-3 text-sm font-semibold text-slate-950 transition hover:bg-amber-400 disabled:cursor-not-allowed disabled:opacity-50"
         >
           Invia
         </button>
+      </div>
+
+      <div className="mt-2 text-xs text-slate-500">
+        Max 250 caratteri. Ultimi 100 messaggi salvati nella stanza.
       </div>
     </div>
   );

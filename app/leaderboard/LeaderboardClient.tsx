@@ -714,7 +714,7 @@ export default function LeaderboardClient({
 
                       <td className="px-4 py-4">
                         <a
-                          href={`https://aoe4world.com/players/${player.profile_id}`}
+                          href={`http://localhost:3000/player/${player.profile_id}`}
                           target="_blank"
                           rel="noreferrer"
                           className="inline-flex min-w-[88px] items-center justify-center rounded-xl border border-[#f0b90b]/25 bg-[#f0b90b]/10 px-4 py-2 text-sm font-semibold text-[#f7cf59] transition hover:-translate-y-0.5 hover:border-[#f0b90b]/40 hover:bg-[#f0b90b]/20 hover:text-[#ffe082]"

@@ -39,21 +39,78 @@ type RankedMode = {
   civilizations?: CivilizationStat[] | null;
 };
 
-type PlayerProfileResponse = {
+type RatingHistoryPoint = {
+  rating?: number | null;
+  games_count?: number | null;
+  wins_count?: number | null;
+  streak?: number | null;
+  orig_rating?: number | null;
+};
+
+type DetailedEloMode = EloMode & {
+  rank?: number | null;
+  streak?: number | null;
+  games_count?: number | null;
+  wins_count?: number | null;
+  losses_count?: number | null;
+  disputes_count?: number | null;
+  drops_count?: number | null;
+  last_game_at?: string | null;
+  win_rate?: number | null;
+  max_rating?: number | null;
+  max_rating_7d?: number | null;
+  max_rating_1m?: number | null;
+  rating_history?: Record<string, RatingHistoryPoint> | null;
+};
+
+type DetailedRankedMode = RankedMode & {
+  rank?: number | null;
+  rating?: number | null;
+  streak?: number | null;
+  games_count?: number | null;
+  wins_count?: number | null;
+  losses_count?: number | null;
+  disputes_count?: number | null;
+  drops_count?: number | null;
+  last_game_at?: string | null;
+  win_rate?: number | null;
+  season?: number | null;
+  previous_seasons?: PreviousSeason[] | null;
+};
+
+type PreviousSeason = {
+  season?: number | null;
+  rating?: number | null;
+  rank?: number | null;
+  rank_level?: string | null;
+  streak?: number | null;
+  games_count?: number | null;
+  wins_count?: number | null;
+  losses_count?: number | null;
+  disputes_count?: number | null;
+  drops_count?: number | null;
+  last_game_at?: string | null;
+  win_rate?: number | null;
+};
+
+export type PlayerProfileResponse = {
   profile_id?: number;
   name?: string;
+  steam_id?: string;
+  country?: string;
+  site_url?: string;
   avatars?: {
     small?: string | null;
     medium?: string | null;
     full?: string | null;
   } | null;
   modes?: {
-    rm_solo?: RankedMode | null;
-    rm_team?: RankedMode | null;
-    rm_1v1_elo?: EloMode | null;
-    rm_2v2_elo?: EloMode | null;
-    rm_3v3_elo?: EloMode | null;
-    rm_4v4_elo?: EloMode | null;
+    rm_solo?: DetailedRankedMode | null;
+    rm_team?: DetailedRankedMode | null;
+    rm_1v1_elo?: DetailedEloMode | null;
+    rm_2v2_elo?: DetailedEloMode | null;
+    rm_3v3_elo?: DetailedEloMode | null;
+    rm_4v4_elo?: DetailedEloMode | null;
   };
 };
 
@@ -76,6 +133,31 @@ export type ItalianLeaderboardPageResult = {
 
 const PAGE_SIZE = 50;
 const SOURCE_PAGE_COUNT = 10;
+
+export const civIcons: Record<string, string> = {
+  abbasid_dynasty: "/images/civs/ab.png",
+  ayyubids: "/images/civs/ay.png",
+  byzantines: "/images/civs/by.png",
+  chinese: "/images/civs/ch.png",
+  delhi_sultanate: "/images/civs/de.png",
+  english: "/images/civs/en.png",
+  french: "/images/civs/fr.png",
+  golden_horde: "/images/civs/gh.png",
+  holy_roman_empire: "/images/civs/hre.png",
+  house_of_lancaster: "/images/civs/hl.png",
+  japanese: "/images/civs/jap.png",
+  jeanne_darc: "/images/civs/jd.png",
+  knights_templar: "/images/civs/kt.png",
+  macedonian_dynasty: "/images/civs/mac.png",
+  malians: "/images/civs/ma.png",
+  mongols: "/images/civs/mo.png",
+  order_of_the_dragon: "/images/civs/ootd.png",
+  ottomans: "/images/civs/ot.png",
+  rus: "/images/civs/ru.png",
+  sengoku_daimyo: "/images/civs/sen.png",
+  tughlaq_dynasty: "/images/civs/tugh.png",
+  zhu_xis_legacy: "/images/civs/zhu.png",
+};
 
 function getSourcePages(count: number): number[] {
   return Array.from({ length: count }, (_, index) => index + 1);
@@ -130,6 +212,7 @@ function isNotNull<T>(value: T | null): value is T {
 }
 
 const profileCache = new Map<number, Promise<PlayerProfileData>>();
+const fullProfileCache = new Map<number, Promise<PlayerProfileResponse | null>>();
 
 async function fetchPlayerProfileData(
   profileId: number
@@ -308,4 +391,47 @@ export async function getPlayersByProfileIdsWithModeElos(
   );
 
   return players.filter(isNotNull);
+}
+
+export async function getPlayerProfileById(
+  profileId: number | string
+): Promise<PlayerProfileResponse | null> {
+  const normalizedId =
+    typeof profileId === "number" ? profileId : Number(String(profileId).trim());
+
+  if (!Number.isFinite(normalizedId)) {
+    return null;
+  }
+
+  const cached = fullProfileCache.get(normalizedId);
+  if (cached) {
+    return cached;
+  }
+
+  const promise = fetch(
+    `https://aoe4world.com/api/v0/players/${normalizedId}`,
+    {
+      next: { revalidate: 300 },
+    }
+  )
+    .then(async (res) => {
+      if (!res.ok) {
+        return null;
+      }
+
+      const data: PlayerProfileResponse = await res.json();
+
+      if (!data || typeof data !== "object" || !data.profile_id) {
+        return null;
+      }
+
+      return data;
+    })
+    .catch((error) => {
+      fullProfileCache.delete(normalizedId);
+      throw error;
+    });
+
+  fullProfileCache.set(normalizedId, promise);
+  return promise;
 }

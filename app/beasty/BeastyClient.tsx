@@ -94,6 +94,7 @@ export default function BeastyPage() {
     isPaused,
     remainingMs,
     timerPhase,
+    resumeCountdownAt,
   } = useBeasty();
 
   const [name, setName] = useState("");
@@ -111,6 +112,7 @@ export default function BeastyPage() {
   const [togglingPause, setTogglingPause] = useState(false);
 
   const previousPhaseRef = useRef<string | null>(null);
+  const previousResumeSecondRef = useRef<number | null>(null);
 
   const sortedPlayers = useMemo(
     () => [...players].sort((a, b) => b.score - a.score),
@@ -207,8 +209,9 @@ export default function BeastyPage() {
       room?.state === "question" && question && startedAt && !isPaused;
     const shouldTickReveal =
       room?.state === "reveal" && revealStartedAt && revealDurationMs && !isPaused;
+    const shouldTickResumeCountdown = Boolean(resumeCountdownAt);
 
-    if (!shouldTickQuestion && !shouldTickReveal) {
+    if (!shouldTickQuestion && !shouldTickReveal && !shouldTickResumeCountdown) {
       return;
     }
 
@@ -224,6 +227,7 @@ export default function BeastyPage() {
     revealStartedAt,
     revealDurationMs,
     isPaused,
+    resumeCountdownAt,
   ]);
 
   useEffect(() => {
@@ -233,7 +237,7 @@ export default function BeastyPage() {
 
   useEffect(() => {
     setTogglingPause(false);
-  }, [isPaused, room?.state]);
+  }, [isPaused, room?.state, resumeCountdownAt]);
 
   useEffect(() => {
     const AudioCtx =
@@ -291,6 +295,63 @@ export default function BeastyPage() {
 
     previousPhaseRef.current = currentPhase;
   }, [room?.state, gameFinished, isPaused]);
+
+  useEffect(() => {
+    const AudioCtx =
+      window.AudioContext ||
+      (window as typeof window & {
+        webkitAudioContext?: typeof AudioContext;
+      }).webkitAudioContext;
+
+    if (!AudioCtx) return;
+
+    const playTone = (
+      frequency: number,
+      duration: number,
+      type: OscillatorType = "sine",
+      gainValue = 0.04
+    ) => {
+      const audioContext = new AudioCtx();
+      const oscillator = audioContext.createOscillator();
+      const gain = audioContext.createGain();
+
+      oscillator.type = type;
+      oscillator.frequency.value = frequency;
+      gain.gain.value = gainValue;
+
+      oscillator.connect(gain);
+      gain.connect(audioContext.destination);
+
+      oscillator.start();
+      oscillator.stop(audioContext.currentTime + duration / 1000);
+
+      oscillator.onended = () => {
+        void audioContext.close();
+      };
+    };
+
+    if (!resumeCountdownAt) {
+      previousResumeSecondRef.current = null;
+      return;
+    }
+
+    const remainingCountdownMs = Math.max(0, resumeCountdownAt - timerTick);
+    const seconds = Math.ceil(remainingCountdownMs / 1000);
+
+    if (remainingCountdownMs <= 0) {
+      if (previousResumeSecondRef.current !== 0) {
+        playTone(900, 180, "triangle", 0.05);
+        setTimeout(() => playTone(1200, 180, "triangle", 0.05), 120);
+      }
+      previousResumeSecondRef.current = 0;
+      return;
+    }
+
+    if (previousResumeSecondRef.current !== seconds) {
+      playTone(520 + seconds * 80, 120, "square", 0.04);
+      previousResumeSecondRef.current = seconds;
+    }
+  }, [resumeCountdownAt, timerTick]);
 
   const handleCreateRoom = async () => {
     if (!name.trim()) return;
@@ -362,7 +423,7 @@ export default function BeastyPage() {
   };
 
   const handlePauseToggle = async () => {
-    if (!room || !isHost || togglingPause) return;
+    if (!room || !isHost || togglingPause || resumeCountdownAt) return;
 
     setActionError(null);
     setTogglingPause(true);
@@ -392,7 +453,8 @@ export default function BeastyPage() {
       submittingAnswer ||
       selectedAnswer !== null ||
       reveal ||
-      isPaused
+      isPaused ||
+      resumeCountdownAt
     ) {
       return;
     }
@@ -479,6 +541,14 @@ export default function BeastyPage() {
     revealDurationMs > 0
       ? Math.max(0, (activeRevealRemainingMs / revealDurationMs) * 100)
       : 0;
+
+  const resumeCountdownRemainingMs = resumeCountdownAt
+    ? Math.max(0, resumeCountdownAt - timerTick)
+    : 0;
+  const resumeCountdownSeconds = Math.ceil(resumeCountdownRemainingMs / 1000);
+  const isResumeCountdownActive = Boolean(
+    resumeCountdownAt && resumeCountdownRemainingMs > 0
+  );
 
   const multiplierBadge = `x${difficultyMultiplier}`;
   const pauseLabel =
@@ -693,7 +763,9 @@ export default function BeastyPage() {
           <div className="mb-6 rounded-3xl border border-emerald-400/20 bg-slate-900/70 p-5 shadow-[0_0_40px_rgba(0,0,0,0.35)] backdrop-blur-sm">
             <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
               <div className="text-sm font-semibold uppercase tracking-[0.2em] text-emerald-300">
-                {isPaused
+                {isResumeCountdownActive
+                  ? `Ripresa tra ${resumeCountdownSeconds}`
+                  : isPaused
                   ? `${pauseLabel} · ${revealTimeLeft} secondi residui`
                   : `Prossima domanda tra ${revealTimeLeft} secondi`}
               </div>
@@ -701,7 +773,7 @@ export default function BeastyPage() {
               {isHost ? (
                 <button
                   onClick={handlePauseToggle}
-                  disabled={togglingPause}
+                  disabled={togglingPause || isResumeCountdownActive}
                   className={`inline-flex items-center justify-center rounded-2xl px-4 py-2 text-sm font-semibold transition disabled:cursor-not-allowed disabled:opacity-60 ${
                     isPaused
                       ? "border border-emerald-400/40 bg-emerald-500/10 text-emerald-300 hover:bg-emerald-500/15"
@@ -737,6 +809,19 @@ export default function BeastyPage() {
                     <p className="mt-2 text-sm text-slate-300">
                       In attesa che l&apos;host riprenda il quiz.
                     </p>
+                  </div>
+                </div>
+              ) : null}
+
+              {isResumeCountdownActive ? (
+                <div className="absolute inset-0 z-20 flex items-center justify-center rounded-3xl bg-black/75 backdrop-blur-sm">
+                  <div className="text-center">
+                    <div className="text-sm font-semibold uppercase tracking-[0.3em] text-amber-300">
+                      Ripresa partita
+                    </div>
+                    <div className="mt-4 text-7xl font-black text-white">
+                      {resumeCountdownSeconds}
+                    </div>
                   </div>
                 </div>
               ) : null}
@@ -910,7 +995,7 @@ export default function BeastyPage() {
                 {isHost ? (
                   <button
                     onClick={handlePauseToggle}
-                    disabled={togglingPause}
+                    disabled={togglingPause || isResumeCountdownActive}
                     className={`inline-flex items-center justify-center rounded-2xl px-4 py-3 text-sm font-semibold transition disabled:cursor-not-allowed disabled:opacity-60 ${
                       isPaused
                         ? "border border-emerald-400/40 bg-emerald-500/10 text-emerald-300 hover:bg-emerald-500/15"
@@ -935,14 +1020,18 @@ export default function BeastyPage() {
                   {pauseLabel}
                 </div>
               ) : null}
+
+              {isResumeCountdownActive ? (
+                <div className="inline-flex rounded-full border border-cyan-400/30 bg-cyan-500/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-cyan-300">
+                  Ripresa tra {resumeCountdownSeconds}
+                </div>
+              ) : null}
             </div>
 
             <div className="mt-6 flex items-center justify-between gap-4">
               <div className="h-3 w-full overflow-hidden rounded-full bg-slate-800">
                 <div
-                  className={`h-full rounded-full transition-all ${
-                    isPaused ? "bg-amber-400" : "bg-amber-400"
-                  }`}
+                  className="h-full rounded-full bg-amber-400 transition-all"
                   style={{ width: `${timerPercent}%` }}
                 />
               </div>
@@ -970,6 +1059,19 @@ export default function BeastyPage() {
                 </div>
               ) : null}
 
+              {isResumeCountdownActive ? (
+                <div className="absolute inset-0 z-20 flex items-center justify-center rounded-3xl bg-black/75 backdrop-blur-sm">
+                  <div className="text-center">
+                    <div className="text-sm font-semibold uppercase tracking-[0.3em] text-amber-300">
+                      Ripresa partita
+                    </div>
+                    <div className="mt-4 text-7xl font-black text-white">
+                      {resumeCountdownSeconds}
+                    </div>
+                  </div>
+                </div>
+              ) : null}
+
               <div className="grid gap-4 md:grid-cols-2">
                 {question.options.map((opt, i) => {
                   const markersForOption = answerMarkers.filter(
@@ -989,7 +1091,8 @@ export default function BeastyPage() {
                         submittingAnswer ||
                         selectedAnswer !== null ||
                         timeLeft <= 0 ||
-                        isPaused
+                        isPaused ||
+                        isResumeCountdownActive
                       }
                     >
                       <div className="flex items-start gap-3">

@@ -64,6 +64,7 @@ export function useBeasty() {
   const [timerPhase, setTimerPhase] = useState<"question" | "reveal" | null>(
     null
   );
+  const [resumeCountdownAt, setResumeCountdownAt] = useState<number | null>(null);
 
   useEffect(() => {
     socket.connect();
@@ -76,7 +77,12 @@ export function useBeasty() {
       setConnected(false);
     };
 
-    const onRoomUpdated = (updatedRoom: Room & { isPaused?: boolean; remainingMs?: number | null }) => {
+    const onRoomUpdated = (
+      updatedRoom: Room & {
+        isPaused?: boolean;
+        remainingMs?: number | null;
+      }
+    ) => {
       setRoom(updatedRoom);
       setPlayers(updatedRoom.players);
       setIsPaused(Boolean(updatedRoom.isPaused));
@@ -124,6 +130,7 @@ export function useBeasty() {
           : nextQuestion.durationMs
       );
       setTimerPhase("question");
+      setResumeCountdownAt(null);
     };
 
     const onAnswersUpdated = ({
@@ -186,6 +193,7 @@ export function useBeasty() {
           : (nextRevealDurationMs ?? 0)
       );
       setTimerPhase("reveal");
+      setResumeCountdownAt(null);
     };
 
     const onGameFinished = ({
@@ -213,6 +221,7 @@ export function useBeasty() {
       setIsPaused(false);
       setRemainingMs(null);
       setTimerPhase(null);
+      setResumeCountdownAt(null);
     };
 
     const onGameTimer = ({
@@ -254,6 +263,22 @@ export function useBeasty() {
       if (typeof nextRemainingMs === "number") {
         setRemainingMs(nextRemainingMs);
       }
+
+      setResumeCountdownAt(null);
+    };
+
+    const onResumeCountdown = ({
+      phase,
+      resumeAt,
+    }: {
+      phase?: "question" | "reveal";
+      resumeAt: number;
+    }) => {
+      if (phase) {
+        setTimerPhase(phase);
+      }
+
+      setResumeCountdownAt(resumeAt);
     };
 
     const onGameResumed = ({
@@ -281,6 +306,8 @@ export function useBeasty() {
       if (typeof nextRemainingMs === "number") {
         setRemainingMs(nextRemainingMs);
       }
+
+      setResumeCountdownAt(null);
     };
 
     socket.on("connect", onConnect);
@@ -293,6 +320,7 @@ export function useBeasty() {
     socket.on("game:finished", onGameFinished);
     socket.on("game:timer", onGameTimer);
     socket.on("game:paused", onGamePaused);
+    socket.on("game:resume-countdown", onResumeCountdown);
     socket.on("game:resumed", onGameResumed);
 
     return () => {
@@ -306,6 +334,7 @@ export function useBeasty() {
       socket.off("game:finished", onGameFinished);
       socket.off("game:timer", onGameTimer);
       socket.off("game:paused", onGamePaused);
+      socket.off("game:resume-countdown", onResumeCountdown);
       socket.off("game:resumed", onGameResumed);
       socket.disconnect();
     };
@@ -386,6 +415,7 @@ export function useBeasty() {
     isPaused,
     remainingMs,
     timerPhase,
+    resumeCountdownAt,
     createRoom,
     joinRoom,
     updateRoomSettings,

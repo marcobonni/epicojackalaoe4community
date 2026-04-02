@@ -16,11 +16,12 @@ export type RoomSettings = {
 export type Room = {
   code: string;
   hostId: string;
-  state: RoomState;
   players: Player[];
+  state: "lobby" | "question" | "reveal" | "finished";
   currentQuestionIndex: number;
   settings: RoomSettings;
   isPaused?: boolean;
+  isResumeCountingDown?: boolean;
   remainingMs?: number | null;
 };
 

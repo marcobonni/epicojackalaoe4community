@@ -88,8 +88,21 @@ export const COACHES = [
     contactUrl: "https://discord.com/users/240210612582481922",
     profileUrl: "https://www.twitch.tv/epicojackal",
   },
+    {
+    name: "Daddu23",
+    badge: "AoE4 Coach",
+    role: "Coaching esistenziale",
+    description:
+      "Sessioni dedidate a capire chi sei e cosa vuoi diventare nel gioco",
+    specialty:
+      "Capire i fondamentali, trovare la civiltà che piace,tattiche in diverse situazioni",
+    price: "1.000.000 Rial Iraniano",
+    availability: "Sera e pomeriggi",
+    contactUrl: "https://discord.com/users/257545506081734658",
+    profileUrl: null,
+  },
 
-  {
+  { 
     name: "Taffuz",
     badge: "Top Ladder",
     role: "Coaching competitivo AoE4",
@@ -116,4 +129,5 @@ export const COACHES = [
     contactUrl: "https://discord.com/users/725895228531146794",
     profileUrl: "https://www.twitch.tv/IKasiya",
   },
+
 ];

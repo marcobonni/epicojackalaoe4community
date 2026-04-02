@@ -21,7 +21,8 @@ jobs:
             --arg commit "${{ github.event.head_commit.message }}" \
             --arg author "${{ github.event.head_commit.author.name }}" \
             '{
-              content: "✅ Nuovo update del sito\n\n📦 Repo: \($repo)\n🌿 Branch: \($branch)\n📝 Commit: \($commit)\n👤 Autore: \($author)\n🔗 https://aoe4community.vercel.app"
+              content: "<@1477743270665912350>\n\n✅ Nuovo update del sito\n\n📦 Repo: \($repo)\n🌿 Branch: \($branch)\n📝 Commit: \($commit)\n👤 Autore: \($author)\n🔗 https://aoe4community.vercel.app",
+              allowed_mentions: { parse: ["roles"] }
             }'
           )" \
           "${{ secrets.DISCORD_WEBHOOK }}"

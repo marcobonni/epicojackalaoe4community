@@ -1,7 +1,13 @@
 "use client";
 
+import { useState, useTransition } from "react";
 import Link from "next/link";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { Loader2, RefreshCw } from "lucide-react";
+import PlayerLookupForm from "@/app/components/home/PlayerLookupForm";
 import type { PlayerProfileResponse } from "@/app/lib/aoe4world";
+import PlayerAdvancedInsights from "@/app/player/PlayerAdvancedInsights";
+import PlayerSummaryDownloadButton from "@/app/player/PlayerSummaryDownloadButton";
 
 type CivilizationStat = {
   civilization: string;
@@ -27,10 +33,13 @@ type PerformanceRow = {
   key: string;
   label: string;
   rating: number | null;
+  maxRating: number | null;
   winRate: number | null;
   rank: number | null;
   streak: number | null;
   games: number | null;
+  wins: number | null;
+  losses: number | null;
   lastGameAt: string | null;
   history: Array<{ ts: number; rating: number }>;
 };
@@ -131,10 +140,18 @@ function getModeRows(player: PlayerProfileResponse): PerformanceRow[] {
       key,
       label,
       rating: typeof mode?.rating === "number" ? mode.rating : null,
+      maxRating:
+        typeof mode?.max_rating === "number"
+          ? mode.max_rating
+          : history.length > 0
+          ? Math.max(...history.map((point) => point.rating))
+          : null,
       winRate: typeof mode?.win_rate === "number" ? mode.win_rate : null,
       rank: typeof mode?.rank === "number" ? mode.rank : null,
       streak: typeof mode?.streak === "number" ? mode.streak : null,
       games: typeof mode?.games_count === "number" ? mode.games_count : null,
+      wins: typeof mode?.wins_count === "number" ? mode.wins_count : null,
+      losses: typeof mode?.losses_count === "number" ? mode.losses_count : null,
       lastGameAt: mode?.last_game_at ?? null,
       history,
     };
@@ -325,6 +342,102 @@ function getInitials(name: string) {
   return parts.map((part) => part[0]?.toUpperCase() ?? "").join("") || "?";
 }
 
+function formatSignedNumber(value?: number | null) {
+  if (typeof value !== "number" || Number.isNaN(value)) return "--";
+  return `${value > 0 ? "+" : ""}${formatNumber(value)}`;
+}
+
+function getModeColor(label: string) {
+  switch (label) {
+    case "1v1":
+      return {
+        solid: "rgb(245 158 11)",
+        fill: "rgba(245,158,11,0.18)",
+        className: "bg-amber-400",
+      };
+    case "2v2":
+      return {
+        solid: "rgb(59 130 246)",
+        fill: "rgba(59,130,246,0.18)",
+        className: "bg-blue-500",
+      };
+    case "3v3":
+      return {
+        solid: "rgb(34 197 94)",
+        fill: "rgba(34,197,94,0.18)",
+        className: "bg-emerald-500",
+      };
+    case "4v4":
+      return {
+        solid: "rgb(236 72 153)",
+        fill: "rgba(236,72,153,0.18)",
+        className: "bg-pink-500",
+      };
+    default:
+      return {
+        solid: "rgb(148 163 184)",
+        fill: "rgba(148,163,184,0.18)",
+        className: "bg-slate-400",
+      };
+  }
+}
+
+function getRecentRatingDeltas(history: Array<{ ts: number; rating: number }>) {
+  if (history.length < 2) return [];
+
+  const deltas = [];
+
+  for (let index = 1; index < history.length; index += 1) {
+    deltas.push({
+      ts: history[index].ts,
+      rating: history[index].rating,
+      delta: history[index].rating - history[index - 1].rating,
+    });
+  }
+
+  return deltas.slice(-12);
+}
+
+function polarToCartesian(
+  cx: number,
+  cy: number,
+  radius: number,
+  angleInDegrees: number
+) {
+  const angleInRadians = ((angleInDegrees - 90) * Math.PI) / 180;
+
+  return {
+    x: cx + radius * Math.cos(angleInRadians),
+    y: cy + radius * Math.sin(angleInRadians),
+  };
+}
+
+function describeArc(
+  cx: number,
+  cy: number,
+  radius: number,
+  startAngle: number,
+  endAngle: number
+) {
+  const start = polarToCartesian(cx, cy, radius, endAngle);
+  const end = polarToCartesian(cx, cy, radius, startAngle);
+  const largeArcFlag = endAngle - startAngle <= 180 ? "0" : "1";
+
+  return [
+    "M",
+    start.x,
+    start.y,
+    "A",
+    radius,
+    radius,
+    0,
+    largeArcFlag,
+    0,
+    end.x,
+    end.y,
+  ].join(" ");
+}
+
 function EloLineChart({
   data,
   title,
@@ -448,6 +561,734 @@ function EloLineChart({
               </g>
             );
           })}
+        </svg>
+      </div>
+    </div>
+  );
+}
+
+function MiniSparkline({
+  data,
+  title,
+  color,
+}: {
+  data: Array<{ ts: number; rating: number }>;
+  title: string;
+  color: string;
+}) {
+  if (data.length < 2) {
+    return (
+      <div className="mt-5 rounded-2xl border border-slate-800 bg-slate-900/70 px-4 py-3 text-xs text-slate-500">
+        Storico insufficiente per {title.toLowerCase()}.
+      </div>
+    );
+  }
+
+  const width = 240;
+  const height = 64;
+  const padding = 6;
+  const minY = Math.min(...data.map((point) => point.rating));
+  const maxY = Math.max(...data.map((point) => point.rating));
+  const yRange = Math.max(maxY - minY, 1);
+
+  const points = data.map((point, index) => {
+    const x =
+      padding + (index / Math.max(data.length - 1, 1)) * (width - padding * 2);
+    const y =
+      height -
+      padding -
+      ((point.rating - minY) / yRange) * (height - padding * 2);
+
+    return { x, y };
+  });
+
+  const lastPoint = points[points.length - 1];
+  const firstPoint = data[0];
+  const lastDataPoint = data[data.length - 1];
+
+  return (
+    <div className="mt-5 overflow-hidden rounded-2xl border border-slate-800 bg-slate-900/70 p-3">
+      <div className="mb-2 flex items-center justify-between gap-3 text-[11px] uppercase tracking-[0.18em] text-slate-500">
+        <span>{title}</span>
+        <span
+          className={
+            lastDataPoint.rating - firstPoint.rating >= 0
+              ? "text-emerald-300"
+              : "text-rose-300"
+          }
+        >
+          {formatSignedNumber(lastDataPoint.rating - firstPoint.rating)}
+        </span>
+      </div>
+
+      <svg viewBox={`0 0 ${width} ${height}`} className="h-16 w-full">
+        <polyline
+          fill="none"
+          points={points.map((point) => `${point.x},${point.y}`).join(" ")}
+          stroke={color}
+          strokeWidth="3"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+        <circle cx={lastPoint.x} cy={lastPoint.y} r="4" fill="white" />
+      </svg>
+    </div>
+  );
+}
+
+function ModeShareDonutChart({ rows }: { rows: PerformanceRow[] }) {
+  const validRows = rows.filter(
+    (row): row is PerformanceRow & { games: number } =>
+      typeof row.games === "number" && row.games > 0
+  );
+
+  if (validRows.length === 0) {
+    return (
+      <div className="rounded-[2rem] border border-slate-800 bg-slate-900 p-6 shadow-lg shadow-black/20">
+        <p className="text-sm font-semibold uppercase tracking-[0.2em] text-amber-300">
+          Distribuzione volume
+        </p>
+        <h3 className="mt-2 text-2xl font-semibold text-white">
+          Dove gioca di piu
+        </h3>
+        <div className="mt-6 rounded-2xl border border-slate-800 bg-slate-950/80 p-4 text-sm text-slate-400">
+          Nessun volume partite disponibile.
+        </div>
+      </div>
+    );
+  }
+
+  const totalGames = validRows.reduce((sum, row) => sum + row.games, 0);
+  const slices = validRows.map((row, index) => {
+    const share = row.games / totalGames;
+    const startAngle = validRows
+      .slice(0, index)
+      .reduce((sum, item) => sum + (item.games / totalGames) * 360, 0);
+    const sweep = Math.max(share * 360, 6);
+
+    return {
+      ...row,
+      share,
+      startAngle,
+      endAngle:
+        startAngle + (share >= 0.999 ? 359.99 : Math.min(sweep, 359.99)),
+      color: getModeColor(row.label),
+    };
+  });
+
+  return (
+    <div className="rounded-[2rem] border border-slate-800 bg-slate-900 p-6 shadow-lg shadow-black/20">
+      <p className="text-sm font-semibold uppercase tracking-[0.2em] text-amber-300">
+        Distribuzione volume
+      </p>
+      <h3 className="mt-2 text-2xl font-semibold text-white">
+        Dove gioca di piu
+      </h3>
+
+      <div className="mt-6 space-y-5">
+        <div className="overflow-hidden rounded-[1.5rem] border border-slate-800 bg-slate-950/80 p-4">
+          <svg viewBox="0 0 240 240" className="mx-auto w-full max-w-[240px]">
+            <circle
+              cx="120"
+              cy="120"
+              r="86"
+              fill="none"
+              stroke="rgb(30 41 59)"
+              strokeWidth="24"
+            />
+
+            {slices.map((slice) => (
+              <path
+                key={slice.label}
+                d={describeArc(120, 120, 86, slice.startAngle, slice.endAngle)}
+                fill="none"
+                stroke={slice.color.solid}
+                strokeWidth="24"
+                strokeLinecap="round"
+              />
+            ))}
+
+            <text
+              x="120"
+              y="114"
+              textAnchor="middle"
+              className="fill-slate-400 text-[12px] uppercase tracking-[0.2em]"
+            >
+              Totale
+            </text>
+            <text
+              x="120"
+              y="138"
+              textAnchor="middle"
+              className="fill-white text-[26px] font-bold"
+            >
+              {formatNumber(totalGames)}
+            </text>
+          </svg>
+        </div>
+
+        <div className="grid gap-3 sm:grid-cols-2">
+          {slices.map((slice) => (
+            <div
+              key={slice.label}
+              className="rounded-2xl border border-slate-800 bg-slate-950/80 p-4"
+            >
+              <div className="flex items-center justify-between gap-4">
+                <div className="flex items-center gap-3">
+                  <span
+                    className={`h-3 w-3 rounded-full ${slice.color.className}`}
+                  />
+                  <span className="text-sm font-semibold text-white">
+                    {slice.label}
+                  </span>
+                </div>
+
+                <div className="text-sm text-slate-300">
+                  {slice.share * 100 >= 10
+                    ? `${slice.share.toLocaleString("it-IT", {
+                        style: "percent",
+                        maximumFractionDigits: 0,
+                      })}`
+                    : `${slice.share.toLocaleString("it-IT", {
+                        style: "percent",
+                        maximumFractionDigits: 1,
+                      })}`}
+                </div>
+              </div>
+
+              <div className="mt-2 text-sm text-slate-400">
+                {formatNumber(slice.games)} partite nella modalita {slice.label}.
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function WinLossSplitChart({ rows }: { rows: PerformanceRow[] }) {
+  const validRows = rows.filter(
+    (row): row is PerformanceRow & { wins: number; losses: number } =>
+      typeof row.wins === "number" &&
+      typeof row.losses === "number" &&
+      row.wins + row.losses > 0
+  );
+
+  if (validRows.length === 0) {
+    return (
+      <div className="rounded-[2rem] border border-slate-800 bg-slate-900 p-6 shadow-lg shadow-black/20">
+        <p className="text-sm font-semibold uppercase tracking-[0.2em] text-amber-300">
+          Match outcome
+        </p>
+        <h3 className="mt-2 text-2xl font-semibold text-white">
+          Wins vs losses
+        </h3>
+        <div className="mt-6 rounded-2xl border border-slate-800 bg-slate-950/80 p-4 text-sm text-slate-400">
+          Nessun dato di vittorie e sconfitte disponibile.
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="rounded-[2rem] border border-slate-800 bg-slate-900 p-6 shadow-lg shadow-black/20">
+      <p className="text-sm font-semibold uppercase tracking-[0.2em] text-amber-300">
+        Match outcome
+      </p>
+      <h3 className="mt-2 text-2xl font-semibold text-white">Wins vs losses</h3>
+
+      <div className="mt-6 space-y-5">
+        {validRows.map((row) => {
+          const total = row.wins + row.losses;
+          const winsWidth = `${(row.wins / total) * 100}%`;
+          const lossesWidth = `${(row.losses / total) * 100}%`;
+
+          return (
+            <div key={row.key}>
+              <div className="mb-2 flex items-center justify-between gap-4 text-sm">
+                <span className="font-semibold text-white">{row.label}</span>
+                <span className="text-slate-300">
+                  {formatNumber(row.wins)}W / {formatNumber(row.losses)}L
+                </span>
+              </div>
+
+              <div className="flex h-4 overflow-hidden rounded-full border border-slate-800 bg-slate-950/80">
+                <div
+                  className="h-full bg-emerald-500"
+                  style={{ width: winsWidth }}
+                />
+                <div
+                  className="h-full bg-rose-500"
+                  style={{ width: lossesWidth }}
+                />
+              </div>
+
+              <div className="mt-2 flex items-center justify-between gap-3 text-xs text-slate-400">
+                <span>{formatPercent((row.wins / total) * 100)}</span>
+                <span>{formatNumber(total)} match tracciati</span>
+                <span>{formatPercent((row.losses / total) * 100)}</span>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+function ModeRatingRangeChart({ rows }: { rows: PerformanceRow[] }) {
+  const validRows = rows.filter(
+    (row): row is PerformanceRow & { rating: number; maxRating: number } =>
+      typeof row.rating === "number" &&
+      typeof row.maxRating === "number" &&
+      Number.isFinite(row.rating) &&
+      Number.isFinite(row.maxRating)
+  );
+
+  if (validRows.length === 0) {
+    return (
+      <div className="rounded-[2rem] border border-slate-800 bg-slate-900 p-6 shadow-lg shadow-black/20">
+        <p className="text-sm font-semibold uppercase tracking-[0.2em] text-amber-300">
+          Rating envelope
+        </p>
+        <h3 className="mt-2 text-2xl font-semibold text-white">
+          Current vs peak
+        </h3>
+        <div className="mt-6 rounded-2xl border border-slate-800 bg-slate-950/80 p-4 text-sm text-slate-400">
+          Nessun confronto rating disponibile.
+        </div>
+      </div>
+    );
+  }
+
+  const maxPeak = Math.max(...validRows.map((row) => row.maxRating), 1);
+
+  return (
+    <div className="rounded-[2rem] border border-slate-800 bg-slate-900 p-6 shadow-lg shadow-black/20">
+      <p className="text-sm font-semibold uppercase tracking-[0.2em] text-amber-300">
+        Rating envelope
+      </p>
+      <h3 className="mt-2 text-2xl font-semibold text-white">
+        Current vs peak
+      </h3>
+
+      <div className="mt-6 space-y-4">
+        {validRows.map((row) => {
+          const currentWidth = `${(row.rating / maxPeak) * 100}%`;
+          const peakWidth = `${(row.maxRating / maxPeak) * 100}%`;
+          const deltaToPeak = row.rating - row.maxRating;
+          const color = getModeColor(row.label);
+
+          return (
+            <div key={row.key}>
+              <div className="mb-2 flex items-center justify-between gap-4">
+                <div>
+                  <div className="text-sm font-semibold text-white">{row.label}</div>
+                  <div className="mt-1 text-xs text-slate-400">
+                    Gap dal peak {formatSignedNumber(deltaToPeak)}
+                  </div>
+                </div>
+
+                <div className="text-right text-sm text-slate-300">
+                  <div>Now {formatNumber(row.rating)}</div>
+                  <div className="text-xs text-slate-500">
+                    Peak {formatNumber(row.maxRating)}
+                  </div>
+                </div>
+              </div>
+
+              <div className="relative h-5 overflow-hidden rounded-full border border-slate-800 bg-slate-950/80">
+                <div
+                  className="absolute inset-y-0 left-0 rounded-full bg-white/10"
+                  style={{ width: peakWidth }}
+                />
+                <div
+                  className="absolute inset-y-0 left-0 rounded-full"
+                  style={{
+                    width: currentWidth,
+                    background: `linear-gradient(90deg, ${color.fill}, ${color.solid})`,
+                  }}
+                />
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+function RecentDeltaChart({
+  history,
+  title,
+}: {
+  history: Array<{ ts: number; rating: number }>;
+  title: string;
+}) {
+  const deltas = getRecentRatingDeltas(history);
+
+  if (deltas.length === 0) {
+    return (
+      <div className="rounded-[2rem] border border-slate-800 bg-slate-900 p-6 shadow-lg shadow-black/20">
+        <p className="text-sm font-semibold uppercase tracking-[0.2em] text-amber-300">
+          Momentum
+        </p>
+        <h3 className="mt-2 text-2xl font-semibold text-white">{title}</h3>
+        <div className="mt-6 rounded-2xl border border-slate-800 bg-slate-950/80 p-4 text-sm text-slate-400">
+          Servono almeno due punti di storico per mostrare i delta recenti.
+        </div>
+      </div>
+    );
+  }
+
+  const width = 900;
+  const height = 260;
+  const padding = 36;
+  const chartWidth = width - padding * 2;
+  const chartHeight = height - padding * 2;
+  const baseline = padding + chartHeight / 2;
+  const maxAbsDelta = Math.max(...deltas.map((item) => Math.abs(item.delta)), 1);
+  const barWidth = chartWidth / deltas.length - 10;
+
+  return (
+    <div className="rounded-[2rem] border border-slate-800 bg-slate-900 p-6 shadow-lg shadow-black/20">
+      <p className="text-sm font-semibold uppercase tracking-[0.2em] text-amber-300">
+        Momentum
+      </p>
+      <h3 className="mt-2 text-2xl font-semibold text-white">{title}</h3>
+
+      <div className="mt-6 overflow-hidden rounded-[1.5rem] border border-slate-800 bg-slate-950/80 p-4">
+        <svg viewBox={`0 0 ${width} ${height}`} className="h-72 w-full">
+          <line
+            x1={padding}
+            y1={baseline}
+            x2={width - padding}
+            y2={baseline}
+            className="stroke-slate-700"
+            strokeWidth="1.5"
+          />
+
+          {deltas.map((item, index) => {
+            const x = padding + index * (barWidth + 10);
+            const normalized = Math.abs(item.delta) / maxAbsDelta;
+            const barHeight = normalized * (chartHeight / 2 - 12);
+            const y = item.delta >= 0 ? baseline - barHeight : baseline;
+
+            return (
+              <g key={`${item.ts}-${index}`}>
+                <rect
+                  x={x}
+                  y={y}
+                  width={barWidth}
+                  height={Math.max(barHeight, 4)}
+                  rx="8"
+                  fill={item.delta >= 0 ? "rgb(34 197 94)" : "rgb(244 63 94)"}
+                />
+                <title>{`${formatShortDate(
+                  new Date(item.ts * 1000).toISOString()
+                )} | ${formatSignedNumber(item.delta)} ELO`}</title>
+
+                {index % 3 === 0 || index === deltas.length - 1 ? (
+                  <text
+                    x={x + barWidth / 2}
+                    y={height - 10}
+                    textAnchor="middle"
+                    className="fill-slate-500 text-[11px]"
+                  >
+                    {formatShortDate(new Date(item.ts * 1000).toISOString())}
+                  </text>
+                ) : null}
+              </g>
+            );
+          })}
+        </svg>
+      </div>
+    </div>
+  );
+}
+
+function SeasonActivityChart({ seasons }: { seasons: PreviousSeason[] }) {
+  const validSeasons = seasons.filter(
+    (
+      season
+    ): season is PreviousSeason & { season: number; games_count: number } =>
+      typeof season.season === "number" &&
+      typeof season.games_count === "number" &&
+      Number.isFinite(season.games_count)
+  );
+
+  if (validSeasons.length === 0) {
+    return (
+      <div className="rounded-[2rem] border border-slate-800 bg-slate-900 p-6 shadow-lg shadow-black/20">
+        <p className="text-sm font-semibold uppercase tracking-[0.2em] text-amber-300">
+          Season activity
+        </p>
+        <h3 className="mt-2 text-2xl font-semibold text-white">
+          Volume e winrate
+        </h3>
+        <div className="mt-6 rounded-2xl border border-slate-800 bg-slate-950/80 p-4 text-sm text-slate-400">
+          Nessuna season con volume partite disponibile.
+        </div>
+      </div>
+    );
+  }
+
+  const width = 900;
+  const height = 280;
+  const padding = 40;
+  const maxGames = Math.max(...validSeasons.map((season) => season.games_count), 1);
+  const barSlot = (width - padding * 2) / validSeasons.length;
+  const barWidth = Math.min(barSlot * 0.5, 54);
+  const validWinRateSeasons = validSeasons.filter(
+    (season): season is PreviousSeason & {
+      season: number;
+      games_count: number;
+      win_rate: number;
+    } => typeof season.win_rate === "number" && Number.isFinite(season.win_rate)
+  );
+  const winRatePolyline = validWinRateSeasons
+    .map((season) => {
+      const x =
+        padding +
+        validSeasons.findIndex((item) => item.season === season.season) * barSlot +
+        barSlot / 2;
+      const y =
+        height -
+        padding -
+        (season.win_rate / 100) * (height - padding * 2);
+
+      return `${x},${y}`;
+    })
+    .join(" ");
+
+  return (
+    <div className="rounded-[2rem] border border-slate-800 bg-slate-900 p-6 shadow-lg shadow-black/20">
+      <p className="text-sm font-semibold uppercase tracking-[0.2em] text-amber-300">
+        Season activity
+      </p>
+      <h3 className="mt-2 text-2xl font-semibold text-white">
+        Volume e winrate
+      </h3>
+
+      <div className="mt-6 overflow-hidden rounded-[1.5rem] border border-slate-800 bg-slate-950/80 p-4">
+        <svg viewBox={`0 0 ${width} ${height}`} className="h-72 w-full">
+          {[0, 0.25, 0.5, 0.75, 1].map((step) => {
+            const y = padding + step * (height - padding * 2);
+
+            return (
+              <line
+                key={step}
+                x1={padding}
+                y1={y}
+                x2={width - padding}
+                y2={y}
+                className="stroke-slate-800"
+                strokeWidth="1"
+              />
+            );
+          })}
+
+          {validSeasons.map((season, index) => {
+            const x = padding + index * barSlot + (barSlot - barWidth) / 2;
+            const barHeight =
+              (season.games_count / maxGames) * (height - padding * 2);
+            const y = height - padding - barHeight;
+
+            return (
+              <g key={season.season}>
+                <rect
+                  x={x}
+                  y={y}
+                  width={barWidth}
+                  height={Math.max(barHeight, 6)}
+                  rx="12"
+                  fill="rgba(245,158,11,0.75)"
+                />
+                <text
+                  x={x + barWidth / 2}
+                  y={height - 10}
+                  textAnchor="middle"
+                  className="fill-slate-400 text-[12px]"
+                >
+                  S{season.season}
+                </text>
+                <title>{`Season ${season.season} | ${season.games_count} match`}</title>
+              </g>
+            );
+          })}
+
+          {winRatePolyline ? (
+            <>
+              <polyline
+                fill="none"
+                points={winRatePolyline}
+                stroke="rgb(96 165 250)"
+                strokeWidth="4"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+              {validWinRateSeasons.map((season) => {
+                const index = validSeasons.findIndex(
+                  (item) => item.season === season.season
+                );
+                const x = padding + index * barSlot + barSlot / 2;
+                const y =
+                  height -
+                  padding -
+                  (season.win_rate / 100) * (height - padding * 2);
+
+                return (
+                  <g key={`${season.season}-wr`}>
+                    <circle cx={x} cy={y} r="5" fill="white" />
+                    <title>{`Season ${season.season} | WR ${formatPercent(
+                      season.win_rate
+                    )}`}</title>
+                  </g>
+                );
+              })}
+            </>
+          ) : null}
+        </svg>
+      </div>
+    </div>
+  );
+}
+
+function CivilizationScatterChart({ civs }: { civs: CivilizationStat[] }) {
+  const validCivs = civs.filter(
+    (
+      civ
+    ): civ is CivilizationStat & {
+      civilization: string;
+      games_count: number;
+      pick_rate: number;
+      win_rate: number;
+    } =>
+      typeof civ.civilization === "string" &&
+      typeof civ.games_count === "number" &&
+      typeof civ.pick_rate === "number" &&
+      typeof civ.win_rate === "number"
+  );
+
+  if (validCivs.length === 0) {
+    return (
+      <div className="rounded-[2rem] border border-slate-800 bg-slate-900 p-6 shadow-lg shadow-black/20">
+        <p className="text-sm font-semibold uppercase tracking-[0.2em] text-amber-300">
+          Civilization map
+        </p>
+        <h3 className="mt-2 text-2xl font-semibold text-white">
+          Pick rate vs winrate
+        </h3>
+        <div className="mt-6 rounded-2xl border border-slate-800 bg-slate-950/80 p-4 text-sm text-slate-400">
+          Servono pick rate e winrate validi per mostrare la mappa civ.
+        </div>
+      </div>
+    );
+  }
+
+  const width = 620;
+  const height = 360;
+  const padding = 52;
+  const maxGames = Math.max(...validCivs.map((civ) => civ.games_count), 1);
+
+  return (
+    <div className="rounded-[2rem] border border-slate-800 bg-slate-900 p-6 shadow-lg shadow-black/20">
+      <p className="text-sm font-semibold uppercase tracking-[0.2em] text-amber-300">
+        Civilization map
+      </p>
+      <h3 className="mt-2 text-2xl font-semibold text-white">
+        Pick rate vs winrate
+      </h3>
+
+      <div className="mt-6 overflow-hidden rounded-[1.5rem] border border-slate-800 bg-slate-950/80 p-4">
+        <svg viewBox={`0 0 ${width} ${height}`} className="w-full">
+          {[0, 25, 50, 75, 100].map((step) => {
+            const y =
+              height - padding - (step / 100) * (height - padding * 2);
+            const x = padding + (step / 100) * (width - padding * 2);
+
+            return (
+              <g key={step}>
+                <line
+                  x1={padding}
+                  y1={y}
+                  x2={width - padding}
+                  y2={y}
+                  className="stroke-slate-800"
+                  strokeWidth="1"
+                />
+                <line
+                  x1={x}
+                  y1={padding}
+                  x2={x}
+                  y2={height - padding}
+                  className="stroke-slate-900"
+                  strokeWidth="1"
+                />
+              </g>
+            );
+          })}
+
+          {validCivs.map((civ) => {
+            const x =
+              padding + (civ.pick_rate / 100) * (width - padding * 2);
+            const y =
+              height - padding - (civ.win_rate / 100) * (height - padding * 2);
+            const radius = 10 + (civ.games_count / maxGames) * 16;
+            const label = prettifyCivilizationName(civ.civilization)
+              .split(" ")
+              .map((part) => part[0])
+              .join("")
+              .slice(0, 3)
+              .toUpperCase();
+
+            return (
+              <g key={civ.civilization}>
+                <circle
+                  cx={x}
+                  cy={y}
+                  r={radius}
+                  fill="rgba(245,158,11,0.22)"
+                  stroke="rgb(245 158 11)"
+                  strokeWidth="2.5"
+                />
+                <text
+                  x={x}
+                  y={y + 4}
+                  textAnchor="middle"
+                  className="fill-white text-[10px] font-semibold"
+                >
+                  {label}
+                </text>
+                <title>
+                  {`${prettifyCivilizationName(civ.civilization)} | Pick ${formatPercent(
+                    civ.pick_rate
+                  )} | WR ${formatPercent(civ.win_rate)} | ${formatNumber(
+                    civ.games_count
+                  )} partite`}
+                </title>
+              </g>
+            );
+          })}
+
+          <text
+            x={width / 2}
+            y={height - 8}
+            textAnchor="middle"
+            className="fill-slate-400 text-[12px]"
+          >
+            Pick rate
+          </text>
+          <text
+            x={18}
+            y={height / 2}
+            transform={`rotate(-90 18 ${height / 2})`}
+            textAnchor="middle"
+            className="fill-slate-400 text-[12px]"
+          >
+            Winrate
+          </text>
         </svg>
       </div>
     </div>
@@ -788,6 +1629,11 @@ export default function PlayerDashboard({
   player,
   civIcons = {},
 }: PlayerDashboardProps) {
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const [isRefreshingPage, startRefreshTransition] = useTransition();
+  const [advancedRefreshKey, setAdvancedRefreshKey] = useState(0);
   const rows = getModeRows(player);
   const summary = getCurrentSoloSummary(player);
   const bestMode = getBestMode(rows);
@@ -797,6 +1643,23 @@ export default function PlayerDashboard({
   const teamVsSoloInsight = getTeamVsSoloInsight(rows);
   const seasons = getAllSeasons(player);
   const topCivs = getTopCivs(player);
+  const downloadRows = rows.map((row) => ({
+    label: row.label,
+    rating: row.rating,
+    maxRating: row.maxRating,
+    rank: row.rank,
+    winRate: row.winRate,
+    games: row.games,
+    wins: row.wins,
+    losses: row.losses,
+    streak: row.streak,
+  }));
+  const downloadTopCivs = topCivs.map((civ) => ({
+    name: prettifyCivilizationName(civ.civilization),
+    games: civ.games_count ?? null,
+    winRate: civ.win_rate ?? null,
+    pickRate: civ.pick_rate ?? null,
+  }));
 
   const insights = [
     bestMode
@@ -814,10 +1677,23 @@ export default function PlayerDashboard({
     teamVsSoloInsight,
   ].filter((value): value is string => Boolean(value));
 
+  function handleRefreshPage() {
+    setAdvancedRefreshKey((value) => value + 1);
+
+    const nextParams = new URLSearchParams(searchParams.toString());
+    nextParams.set("refresh", Date.now().toString());
+
+    startRefreshTransition(() => {
+      router.replace(`${pathname}?${nextParams.toString()}`, {
+        scroll: false,
+      });
+    });
+  }
+
   return (
     <section className="mx-auto max-w-7xl px-6 py-12 lg:px-8">
       <div className="space-y-8">
-        <div className="flex flex-wrap items-center justify-between gap-4">
+        <div className="grid gap-4 xl:grid-cols-[auto_minmax(0,1fr)] xl:items-start">
           <div className="flex flex-wrap gap-3">
             <Link
               href="/"
@@ -832,7 +1708,42 @@ export default function PlayerDashboard({
             >
               Vai alla leaderboard
             </Link>
+
+            <PlayerSummaryDownloadButton
+              playerName={player.name ?? "Giocatore"}
+              country={player.country ?? null}
+              rankLevel={summary.rankLevel}
+              currentRank={summary.currentRank}
+              currentRating={summary.currentRating}
+              totalGames={summary.totalGames}
+              streak={summary.streak}
+              lastGameAt={summary.lastGameAt}
+              peakRating={peak?.rating ?? null}
+              rows={downloadRows}
+              topCivs={downloadTopCivs}
+            />
+
+            <button
+              type="button"
+              onClick={handleRefreshPage}
+              disabled={isRefreshingPage}
+              className="inline-flex items-center gap-2 rounded-2xl border border-slate-700 bg-slate-900/80 px-5 py-3 text-sm font-semibold text-slate-100 transition hover:-translate-y-0.5 hover:border-slate-500 disabled:cursor-not-allowed disabled:opacity-70"
+            >
+              {isRefreshingPage ? (
+                <>
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                  Aggiorno pagina...
+                </>
+              ) : (
+                <>
+                  <RefreshCw className="h-4 w-4" />
+                  Aggiorna pagina
+                </>
+              )}
+            </button>
           </div>
+
+          <PlayerLookupForm variant="compact" />
         </div>
 
         <div className="rounded-[2rem] border border-amber-500/20 bg-[radial-gradient(circle_at_top,rgba(245,158,11,0.12),transparent_35%),#0f172a] p-8 shadow-2xl shadow-black/30">
@@ -966,6 +1877,28 @@ export default function PlayerDashboard({
                   </div>
                 </div>
 
+                <div className="mt-4 flex flex-wrap gap-2 text-xs">
+                  <span className="rounded-full border border-slate-700 bg-slate-900 px-3 py-1 text-slate-300">
+                    Peak {formatNumber(row.maxRating)}
+                  </span>
+                  {row.wins !== null ? (
+                    <span className="rounded-full border border-emerald-500/20 bg-emerald-500/10 px-3 py-1 text-emerald-200">
+                      {formatNumber(row.wins)}W
+                    </span>
+                  ) : null}
+                  {row.losses !== null ? (
+                    <span className="rounded-full border border-rose-500/20 bg-rose-500/10 px-3 py-1 text-rose-200">
+                      {formatNumber(row.losses)}L
+                    </span>
+                  ) : null}
+                </div>
+
+                <MiniSparkline
+                  data={row.history}
+                  title={`Trend ${row.label}`}
+                  color={getModeColor(row.label).solid}
+                />
+
                 <p className="mt-4 text-sm text-slate-400">
                   Ultima partita: {formatDate(row.lastGameAt)}
                 </p>
@@ -974,7 +1907,16 @@ export default function PlayerDashboard({
           </div>
         </div>
 
-        <EloLineChart data={soloHistory} title="Storico 1v1" />
+        <div className="grid gap-6 xl:grid-cols-3">
+          <ModeShareDonutChart rows={rows} />
+          <WinLossSplitChart rows={rows} />
+          <ModeRatingRangeChart rows={rows} />
+        </div>
+
+        <div className="grid gap-6 xl:grid-cols-2">
+          <EloLineChart data={soloHistory} title="Storico 1v1" />
+          <RecentDeltaChart history={soloHistory} title="Delta recenti 1v1" />
+        </div>
 
         <div className="grid gap-6 xl:grid-cols-2">
           <ComparisonBarChart
@@ -999,9 +1941,20 @@ export default function PlayerDashboard({
           />
         </div>
 
-        <SeasonsRatingChart seasons={seasons} />
+        <div className="grid gap-6 xl:grid-cols-2">
+          <SeasonsRatingChart seasons={seasons} />
+          <SeasonActivityChart seasons={seasons} />
+        </div>
 
-        <CivilizationRadarChart civs={topCivs} />
+        <div className="grid gap-6 xl:grid-cols-2">
+          <CivilizationRadarChart civs={topCivs} />
+          <CivilizationScatterChart civs={topCivs} />
+        </div>
+
+        <PlayerAdvancedInsights
+          player={player}
+          refreshKey={advancedRefreshKey}
+        />
 
         <div className="grid gap-6 lg:grid-cols-2">
           <div className="rounded-[2rem] border border-slate-800 bg-slate-900 p-6 shadow-lg shadow-black/20">

@@ -6,6 +6,7 @@ import CoachingSection from "./components/home/CoachingSection";
 import EventsSection from "./components/home/EventsSection";
 import JoinSection from "./components/home/JoinSection";
 import FooterSection from "./components/home/FooterSection";
+import PlayerLookupForm from "./components/home/PlayerLookupForm";
 
 import {
   SERVER_CONFIG,
@@ -82,6 +83,8 @@ const secondaryStreamers = enrichedStreamers
         primaryStreamer={primaryStreamer}
         secondaryStreamers={secondaryStreamers}
       />
+
+      <PlayerLookupForm />
 
       <FeaturesSection />
 

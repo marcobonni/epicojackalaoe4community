@@ -7,6 +7,9 @@ type PlayerPageProps = {
   params: Promise<{
     id: string;
   }>;
+  searchParams?: Promise<{
+    refresh?: string;
+  }>;
 };
 
 export async function generateMetadata({
@@ -28,9 +31,15 @@ export async function generateMetadata({
   };
 }
 
-export default async function PlayerPage({ params }: PlayerPageProps) {
+export default async function PlayerPage({
+  params,
+  searchParams,
+}: PlayerPageProps) {
   const { id } = await params;
-  const player = await getPlayerProfileById(id);
+  const resolvedSearchParams = searchParams ? await searchParams : {};
+  const player = await getPlayerProfileById(id, {
+    forceFresh: Boolean(resolvedSearchParams?.refresh),
+  });
 
   if (!player) {
     notFound();

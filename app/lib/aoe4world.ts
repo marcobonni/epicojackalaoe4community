@@ -213,6 +213,9 @@ function isNotNull<T>(value: T | null): value is T {
 
 const profileCache = new Map<number, Promise<PlayerProfileData>>();
 const fullProfileCache = new Map<number, Promise<PlayerProfileResponse | null>>();
+type GetPlayerProfileByIdOptions = {
+  forceFresh?: boolean;
+};
 
 async function fetchPlayerProfileData(
   profileId: number
@@ -394,7 +397,8 @@ export async function getPlayersByProfileIdsWithModeElos(
 }
 
 export async function getPlayerProfileById(
-  profileId: number | string
+  profileId: number | string,
+  options: GetPlayerProfileByIdOptions = {}
 ): Promise<PlayerProfileResponse | null> {
   const normalizedId =
     typeof profileId === "number" ? profileId : Number(String(profileId).trim());
@@ -403,16 +407,19 @@ export async function getPlayerProfileById(
     return null;
   }
 
-  const cached = fullProfileCache.get(normalizedId);
+  const shouldUseCache = !options.forceFresh;
+  const cached = shouldUseCache ? fullProfileCache.get(normalizedId) : null;
   if (cached) {
     return cached;
   }
 
   const promise = fetch(
     `https://aoe4world.com/api/v0/players/${normalizedId}`,
-    {
-      next: { revalidate: 300 },
-    }
+    options.forceFresh
+      ? { cache: "no-store" }
+      : {
+          next: { revalidate: 300 },
+        }
   )
     .then(async (res) => {
       if (!res.ok) {
@@ -428,10 +435,14 @@ export async function getPlayerProfileById(
       return data;
     })
     .catch((error) => {
-      fullProfileCache.delete(normalizedId);
+      if (shouldUseCache) {
+        fullProfileCache.delete(normalizedId);
+      }
       throw error;
     });
 
-  fullProfileCache.set(normalizedId, promise);
+  if (shouldUseCache) {
+    fullProfileCache.set(normalizedId, promise);
+  }
   return promise;
 }

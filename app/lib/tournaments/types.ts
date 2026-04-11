@@ -150,6 +150,7 @@ export interface TournamentSummary {
   pending_registrations?: number;
   match_count?: number;
   pending_registration_entries?: TournamentRegistration[];
+  participant_entries?: TournamentRegistration[];
   my_registration_status?: RegistrationStatus | null;
   my_registration_source?: "signup" | "manual" | null;
   my_registration_seed?: number | null;
@@ -419,6 +420,13 @@ export const matchStatusLabels: Record<MatchStatus, string> = {
   completed: "Completata",
   forfeited: "Forfeit",
   cancelled: "Annullata",
+};
+
+export const registrationStatusLabels: Record<RegistrationStatus, string> = {
+  pending: "Pending",
+  registered: "Registrato",
+  rejected: "Respinto",
+  withdrawn: "Ritirato",
 };
 
 export const tournamentFormatLabels: Record<TournamentFormat, string> = {

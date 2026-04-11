@@ -138,6 +138,38 @@ export async function addManualParticipantAction(formData: FormData) {
   refreshTournamentViews(slug);
 }
 
+export async function updateParticipantAction(formData: FormData) {
+  const session = await getRequiredAdminSession();
+  const slug = optionalString(formData, "slug");
+
+  await postTournamentApi("/admin/update-participant", {
+    accessToken: session.accessToken,
+    admin: true,
+    body: {
+      registration_id: requiredString(formData, "registrationId"),
+      status: requiredString(formData, "status"),
+      seed: optionalString(formData, "seed"),
+    },
+  });
+
+  refreshTournamentViews(slug);
+}
+
+export async function removeParticipantAction(formData: FormData) {
+  const session = await getRequiredAdminSession();
+  const slug = optionalString(formData, "slug");
+
+  await postTournamentApi("/admin/remove-participant", {
+    accessToken: session.accessToken,
+    admin: true,
+    body: {
+      registration_id: requiredString(formData, "registrationId"),
+    },
+  });
+
+  refreshTournamentViews(slug);
+}
+
 export async function updateTournamentStatusAction(formData: FormData) {
   const session = await getRequiredAdminSession();
   const tournamentId = requiredString(formData, "tournamentId");

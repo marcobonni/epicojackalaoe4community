@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 import LoadingLink from "@/app/components/LoadingLink";
+import DiscordAuthButton from "@/app/components/auth/DiscordAuthButton";
 import EmailPasswordLoginForm from "@/app/components/auth/EmailPasswordLoginForm";
 import PasswordRecoveryRequestForm from "@/app/components/auth/PasswordRecoveryRequestForm";
 import { getOptionalSession } from "@/app/lib/session";
@@ -63,16 +64,16 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
           Login email e password, semplice e allineato al backend torneo.
         </h1>
         <p className="mt-4 max-w-2xl text-base leading-7 text-slate-300">
-          Il portale usa sessioni Supabase standard, senza Google. L&apos;utente
-          si registra con email, password, nome Steam e nome Discord, conferma
-          l&apos;email e poi entra direttamente nella dashboard.
+          Il portale usa sessioni Supabase standard con email/password oppure
+          accesso Discord. L&apos;utente puo confermare l&apos;email classica o
+          entrare con OAuth Discord e poi gestire tornei e risultati dalla dashboard.
         </p>
 
         <div className="mt-8 grid gap-4 sm:grid-cols-3">
           {[
             {
-              title: "Email verification",
-              text: "L'accesso viene abilitato dopo la conferma dell'indirizzo email.",
+              title: "Discord login",
+              text: "Accesso rapido con Discord, purché il provider restituisca una email valida.",
             },
             {
               title: "Dashboard player",
@@ -118,6 +119,13 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
             <div className="space-y-5">
               <EmailPasswordLoginForm />
 
+              <div className="rounded-2xl border border-slate-800 bg-slate-900/70 p-4">
+                <p className="text-sm font-semibold text-white">Oppure continua con OAuth</p>
+                <div className="mt-3">
+                  <DiscordAuthButton next="/dashboard" variant="login" />
+                </div>
+              </div>
+
               <details className="group rounded-2xl border border-slate-800 bg-slate-900/70 p-4">
                 <summary className="cursor-pointer list-none text-sm font-semibold text-white marker:hidden">
                   <span className="flex items-center justify-between gap-4">
@@ -156,10 +164,11 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
           </div>
 
           <div className="rounded-2xl border border-slate-800 bg-slate-900/70 p-4 text-sm leading-6 text-slate-300">
-            Callback locale per conferma email:
+            Configura in Supabase `URL Configuration` il callback
             <span className="mt-2 block rounded-xl bg-slate-950 px-3 py-2 font-mono text-xs text-amber-200">
-              http://localhost:3000/auth/callback
+              /auth/callback
             </span>
+            sia per il dominio live sia per `localhost`.
           </div>
         </div>
       </section>

@@ -3,6 +3,8 @@ import {
   approveRegistrationAction,
   createTournamentAction,
   generateBracketAction,
+  removeParticipantAction,
+  updateParticipantAction,
   updateTournamentStatusAction,
 } from "@/app/actions/tournaments";
 import StatusBadge from "@/app/components/portal/StatusBadge";
@@ -10,11 +12,13 @@ import { getRequiredAdminSession } from "@/app/lib/session";
 import { getAdminTournaments } from "@/app/lib/tournaments/store";
 import {
   participantModeOptions,
+  registrationStatusLabels,
   resultConfirmationOptions,
   schedulingModeOptions,
   seedingModeOptions,
   signupModeOptions,
   tieBreakerOptions,
+  type RegistrationStatus,
   tournamentFormatLabels,
   tournamentFormatOptions,
   visibilityOptions,
@@ -23,6 +27,24 @@ import {
 export const metadata = {
   title: "Admin tornei | AoE4 Community Italia",
 };
+
+const participantStatusOptions: RegistrationStatus[] = [
+  "pending",
+  "registered",
+  "rejected",
+  "withdrawn",
+];
+
+function getRegistrationTone(status: RegistrationStatus) {
+  const palette: Record<RegistrationStatus, string> = {
+    pending: "border-amber-400/30 bg-amber-400/10 text-amber-100",
+    registered: "border-emerald-500/30 bg-emerald-500/10 text-emerald-100",
+    rejected: "border-rose-500/30 bg-rose-500/10 text-rose-100",
+    withdrawn: "border-slate-600 bg-slate-900 text-slate-300",
+  };
+
+  return palette[status];
+}
 
 function SelectField<T extends string>({
   id,
@@ -499,7 +521,7 @@ export default async function AdminPage() {
                   </form>
                 </div>
 
-                <div className="mt-8 grid gap-6 xl:grid-cols-2">
+                <div className="mt-8 grid gap-6 xl:grid-cols-3">
                   <div className="rounded-3xl border border-slate-800 bg-slate-900/70 p-5">
                     <h4 className="text-lg font-semibold text-white">
                       Aggiungi player manualmente
@@ -564,6 +586,170 @@ export default async function AdminPage() {
                         </p>
                       )}
                     </div>
+                  </div>
+
+                  <div className="rounded-3xl border border-slate-800 bg-slate-900/70 p-5">
+                    <h4 className="text-lg font-semibold text-white">
+                      Controllo roster
+                    </h4>
+                    <div className="mt-4 space-y-3 text-sm leading-6 text-slate-300">
+                      <div className="rounded-2xl border border-slate-800 bg-slate-950/70 px-4 py-3">
+                        Puoi cambiare stato, seed e rimuovere ogni partecipante del torneo.
+                      </div>
+                      <div className="rounded-2xl border border-slate-800 bg-slate-950/70 px-4 py-3">
+                        Per sicurezza, rimozione e cambi roster vengono bloccati quando il bracket e gia stato generato.
+                      </div>
+                      <div className="rounded-2xl border border-slate-800 bg-slate-950/70 px-4 py-3">
+                        Gli utenti reali restano collegati al loro profilo Supabase; i player manuali restano gestibili da qui.
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="mt-8 rounded-[2rem] border border-slate-800 bg-slate-900/60 p-6">
+                  <div className="flex flex-wrap items-center justify-between gap-4">
+                    <div>
+                      <h4 className="text-xl font-semibold text-white">
+                        Partecipanti del torneo
+                      </h4>
+                      <p className="mt-2 text-sm leading-6 text-slate-400">
+                        Vista completa del roster: pending, registrati, respinti e ritirati.
+                      </p>
+                    </div>
+
+                    <div className="rounded-full border border-slate-700 bg-slate-950/80 px-4 py-2 text-sm text-slate-300">
+                      Totale roster: {tournament.participant_entries?.length ?? 0}
+                    </div>
+                  </div>
+
+                  <div className="mt-6 space-y-4">
+                    {tournament.participant_entries?.length ? (
+                      tournament.participant_entries.map((entry) => (
+                        <div
+                          key={entry.id}
+                          className="rounded-3xl border border-slate-800 bg-slate-950/75 p-5"
+                        >
+                          <div className="flex flex-wrap items-start justify-between gap-4">
+                            <div>
+                              <div className="flex flex-wrap items-center gap-3">
+                                <p className="text-lg font-semibold text-white">
+                                  {entry.profile?.display_name ?? "Player"}
+                                </p>
+                                <span
+                                  className={`inline-flex rounded-full border px-3 py-1 text-xs font-semibold ${getRegistrationTone(
+                                    entry.status
+                                  )}`}
+                                >
+                                  {registrationStatusLabels[entry.status]}
+                                </span>
+                                <span className="rounded-full border border-slate-700 px-3 py-1 text-xs font-semibold text-slate-300">
+                                  {entry.source === "manual" ? "Manuale" : "Signup"}
+                                </span>
+                              </div>
+
+                              <div className="mt-2 space-y-1 text-sm text-slate-400">
+                                <p>{entry.profile?.email ?? "Nessuna email collegata"}</p>
+                                <p>
+                                  Steam: {entry.profile?.steam_name ?? "n/d"} | Discord:{" "}
+                                  {entry.profile?.discord_name ?? "n/d"}
+                                </p>
+                              </div>
+                            </div>
+
+                            <div className="rounded-2xl border border-slate-800 bg-slate-900/70 px-4 py-3 text-sm text-slate-300">
+                              Seed attuale:{" "}
+                              <span className="font-semibold text-white">
+                                {entry.seed ?? "Non assegnato"}
+                              </span>
+                            </div>
+                          </div>
+
+                          <div className="mt-5 grid gap-4 xl:grid-cols-[1.1fr_0.7fr_auto]">
+                            <form
+                              action={updateParticipantAction}
+                              className="grid gap-3 md:grid-cols-[1fr_140px_auto]"
+                            >
+                              <input type="hidden" name="slug" value={tournament.slug} />
+                              <input
+                                type="hidden"
+                                name="registrationId"
+                                value={entry.id}
+                              />
+                              <select
+                                name="status"
+                                defaultValue={entry.status}
+                                className="rounded-2xl border border-slate-700 bg-slate-900 px-4 py-3 text-sm text-white outline-none transition focus:border-amber-300"
+                              >
+                                {participantStatusOptions.map((status) => (
+                                  <option key={status} value={status}>
+                                    {registrationStatusLabels[status]}
+                                  </option>
+                                ))}
+                              </select>
+                              <input
+                                type="number"
+                                name="seed"
+                                min={1}
+                                defaultValue={entry.seed ?? ""}
+                                placeholder="Seed"
+                                className="rounded-2xl border border-slate-700 bg-slate-900 px-4 py-3 text-sm text-white outline-none transition focus:border-amber-300"
+                              />
+                              <button
+                                type="submit"
+                                className="rounded-2xl border border-amber-400/40 px-4 py-3 text-sm font-semibold text-amber-100 transition hover:border-amber-300 hover:text-white"
+                              >
+                                Aggiorna partecipante
+                              </button>
+                            </form>
+
+                            {entry.status === "pending" ? (
+                              <form action={approveRegistrationAction}>
+                                <input
+                                  type="hidden"
+                                  name="tournamentId"
+                                  value={tournament.id}
+                                />
+                                <input type="hidden" name="slug" value={tournament.slug} />
+                                <input
+                                  type="hidden"
+                                  name="registrationId"
+                                  value={entry.id}
+                                />
+                                <button
+                                  type="submit"
+                                  className="w-full rounded-2xl bg-emerald-500 px-4 py-3 text-sm font-semibold text-white transition hover:bg-emerald-400"
+                                >
+                                  Approva subito
+                                </button>
+                              </form>
+                            ) : (
+                              <div className="rounded-2xl border border-slate-800 bg-slate-900/70 px-4 py-3 text-sm text-slate-400">
+                                Usa lo stato per riportarlo in pending, rejected o withdrawn.
+                              </div>
+                            )}
+
+                            <form action={removeParticipantAction}>
+                              <input type="hidden" name="slug" value={tournament.slug} />
+                              <input
+                                type="hidden"
+                                name="registrationId"
+                                value={entry.id}
+                              />
+                              <button
+                                type="submit"
+                                className="rounded-2xl border border-rose-500/40 px-4 py-3 text-sm font-semibold text-rose-100 transition hover:border-rose-400 hover:text-white"
+                              >
+                                Rimuovi dal torneo
+                              </button>
+                            </form>
+                          </div>
+                        </div>
+                      ))
+                    ) : (
+                      <div className="rounded-3xl border border-dashed border-slate-700 bg-slate-950/60 p-6 text-sm leading-7 text-slate-400">
+                        Nessun partecipante presente su questo torneo.
+                      </div>
+                    )}
                   </div>
                 </div>
               </article>

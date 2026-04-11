@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { getRequiredAdminSession, getRequiredSession } from "@/app/lib/session";
+import { createSupabaseAdminClient } from "@/app/lib/supabase/admin";
 import { postTournamentApi } from "@/app/lib/tournaments/store";
 
 function refreshTournamentViews(slug?: string | null) {
@@ -39,9 +40,70 @@ function booleanValue(formData: FormData, key: string) {
   return formData.get(key) === "on" || formData.get(key) === "true";
 }
 
+function slugifyFilePart(value: string) {
+  return value
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+    .slice(0, 80);
+}
+
+async function uploadTournamentBanner(
+  formData: FormData,
+  fallbackSlug: string
+) {
+  const fileEntry = formData.get("bannerFile");
+
+  if (!(fileEntry instanceof File) || fileEntry.size === 0) {
+    return null;
+  }
+
+  if (!fileEntry.type.startsWith("image/")) {
+    throw new Error("Il banner del torneo deve essere un'immagine valida.");
+  }
+
+  if (fileEntry.size > 5 * 1024 * 1024) {
+    throw new Error("Il banner del torneo non puo superare 5 MB.");
+  }
+
+  const bucketName =
+    process.env.NEXT_PUBLIC_TOURNAMENT_BANNER_BUCKET || "tournament-banners";
+  const supabase = createSupabaseAdminClient();
+  const extension =
+    fileEntry.name.split(".").pop()?.toLowerCase().replace(/[^a-z0-9]/g, "") ||
+    "jpg";
+  const safeSlug = slugifyFilePart(fallbackSlug) || "tournament-banner";
+  const filePath = `tournaments/${safeSlug}-${Date.now()}.${extension}`;
+  const fileBuffer = Buffer.from(await fileEntry.arrayBuffer());
+  const { error: uploadError } = await supabase.storage
+    .from(bucketName)
+    .upload(filePath, fileBuffer, {
+      contentType: fileEntry.type,
+      cacheControl: "3600",
+      upsert: false,
+    });
+
+  if (uploadError) {
+    throw new Error(
+      `Upload banner fallito. Controlla il bucket Supabase "${bucketName}" e la configurazione server-side.`
+    );
+  }
+
+  const { data } = supabase.storage.from(bucketName).getPublicUrl(filePath);
+  return data.publicUrl || null;
+}
+
 export async function createTournamentAction(formData: FormData) {
   const session = await getRequiredAdminSession();
   const manualRoster = `${formData.get("manualRoster") ?? ""}`.trim();
+  const title = requiredString(formData, "name");
+  const requestedSlug = optionalString(formData, "slug");
+  const bannerUrl = await uploadTournamentBanner(
+    formData,
+    requestedSlug || title
+  );
 
   const payload = await postTournamentApi<{
     ok: boolean;
@@ -52,9 +114,10 @@ export async function createTournamentAction(formData: FormData) {
     accessToken: session.accessToken,
     admin: true,
     body: {
-      title: requiredString(formData, "name"),
-      slug: optionalString(formData, "slug"),
+      title,
+      slug: requestedSlug,
       description: optionalString(formData, "description"),
+      banner_url: bannerUrl,
       format: requiredString(formData, "format"),
       participant_mode: requiredString(formData, "participantMode"),
       signup_mode: requiredString(formData, "signupMode"),

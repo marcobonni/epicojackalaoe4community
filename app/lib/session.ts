@@ -14,15 +14,6 @@ export type PortalSession = {
   accessToken: string | null;
 };
 
-function getAdminEmails() {
-  return new Set(
-    (process.env.ADMIN_EMAILS ?? "")
-      .split(",")
-      .map((email) => email.trim().toLowerCase())
-      .filter(Boolean)
-  );
-}
-
 function toPortalSession(params: {
   user: {
     id: string;
@@ -34,6 +25,7 @@ function toPortalSession(params: {
     };
   };
   accessToken: string | null;
+  profileRole?: string | null;
 }): PortalSession | null {
   const email = params.user.email?.trim().toLowerCase();
 
@@ -41,7 +33,7 @@ function toPortalSession(params: {
     return null;
   }
 
-  const role = getAdminEmails().has(email) ? "admin" : "user";
+  const role = params.profileRole === "admin" ? "admin" : "user";
 
   return {
     user: {
@@ -79,9 +71,16 @@ export async function getOptionalSession() {
     return null;
   }
 
+  const { data: profileData } = await supabase
+    .from("profiles")
+    .select("role")
+    .eq("id", userData.user.id)
+    .maybeSingle();
+
   return toPortalSession({
     user: userData.user,
     accessToken: sessionData.session?.access_token ?? null,
+    profileRole: profileData?.role ?? null,
   });
 }
 

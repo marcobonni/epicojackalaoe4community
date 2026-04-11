@@ -6,6 +6,7 @@ import {
   resolveDisputedMatchAction,
   submitMatchResultAction,
 } from "@/app/actions/tournaments";
+import PendingSubmitButton from "@/app/components/portal/PendingSubmitButton";
 import StatusBadge from "@/app/components/portal/StatusBadge";
 import { getOptionalSession } from "@/app/lib/session";
 import {
@@ -13,11 +14,18 @@ import {
   getParticipantDisplayName,
 } from "@/app/lib/tournaments/store";
 import {
+  formatSupportsStandings,
   getMatchPerspective,
+  getTournamentStandings,
   getTournamentSummaryForUser,
   getParticipantSeedLabel,
 } from "@/app/lib/tournaments/queries";
-import { tournamentFormatLabels } from "@/app/lib/tournaments/types";
+import {
+  resultConfirmationOptions,
+  schedulingModeOptions,
+  tieBreakerOptions,
+  tournamentFormatLabels,
+} from "@/app/lib/tournaments/types";
 
 type TournamentDetailPageProps = {
   params: Promise<{
@@ -61,16 +69,49 @@ export default async function TournamentDetailPage({
   }
 
   const personalSummary = getTournamentSummaryForUser(payload, session?.user.id);
+  const nextPersonalMatch = personalSummary.nextMatch;
+  const standings = formatSupportsStandings(tournament.format)
+    ? getTournamentStandings(tournament, payload.participants, payload.matches)
+    : [];
   const roundNumbers = buildRounds(payload.matches.map((match) => match.round_number));
   const rounds = roundNumbers.map((roundNumber) => ({
     roundNumber,
     matches: payload.matches.filter((match) => match.round_number === roundNumber),
   }));
+  const canAutoReportMatch =
+    Boolean(session) &&
+    Boolean(nextPersonalMatch) &&
+    (nextPersonalMatch?.status === "ready" ||
+      nextPersonalMatch?.status === "disputed" ||
+      (nextPersonalMatch?.status === "awaiting_confirmation" &&
+        tournament.result_confirmation_mode === "auto_on_same_report" &&
+        nextPersonalMatch?.reported_by_id !== session?.user.id));
+  const resultModeLabel =
+    resultConfirmationOptions.find(
+      (option) => option.value === tournament.result_confirmation_mode
+    )?.label ?? tournament.result_confirmation_mode.replaceAll("_", " ");
+  const schedulingModeLabel =
+    schedulingModeOptions.find(
+      (option) => option.value === tournament.scheduling_mode
+    )?.label ?? tournament.scheduling_mode.replaceAll("_", " ");
+  const tieBreakerLabel =
+    tieBreakerOptions.find((option) => option.value === tournament.tie_breaker)?.label ??
+    tournament.tie_breaker.replaceAll("_", " ");
 
   return (
     <div className="space-y-8">
       <section className="grid gap-6 lg:grid-cols-[1.15fr_0.85fr]">
         <div className="rounded-[2rem] border border-amber-400/20 bg-slate-950/75 p-8 shadow-2xl shadow-black/30">
+          {tournament.banner_url ? (
+            <div className="mb-6 overflow-hidden rounded-[1.75rem] border border-slate-800">
+              <img
+                src={tournament.banner_url}
+                alt={`Banner ${tournament.title}`}
+                className="h-64 w-full object-cover"
+              />
+            </div>
+          ) : null}
+
           <div className="flex flex-wrap items-start justify-between gap-4">
             <div>
               <p className="text-sm uppercase tracking-[0.3em] text-amber-300">
@@ -114,6 +155,29 @@ export default async function TournamentDetailPage({
               <p className="mt-3 text-base font-semibold text-white">
                 {tournament.signup_mode.replaceAll("_", " ")}
               </p>
+            </div>
+          </div>
+
+          <div className="mt-4 grid gap-4 sm:grid-cols-3">
+            <div className="rounded-3xl border border-slate-800 bg-slate-900/80 p-5">
+              <p className="text-xs uppercase tracking-[0.26em] text-slate-500">
+                Conferma risultati
+              </p>
+              <p className="mt-3 text-base font-semibold text-white">{resultModeLabel}</p>
+            </div>
+
+            <div className="rounded-3xl border border-slate-800 bg-slate-900/80 p-5">
+              <p className="text-xs uppercase tracking-[0.26em] text-slate-500">
+                Scheduling
+              </p>
+              <p className="mt-3 text-base font-semibold text-white">{schedulingModeLabel}</p>
+            </div>
+
+            <div className="rounded-3xl border border-slate-800 bg-slate-900/80 p-5">
+              <p className="text-xs uppercase tracking-[0.26em] text-slate-500">
+                Tie-breaker
+              </p>
+              <p className="mt-3 text-base font-semibold text-white">{tieBreakerLabel}</p>
             </div>
           </div>
         </div>
@@ -192,9 +256,7 @@ export default async function TournamentDetailPage({
             <StatusBadge kind="match" status={personalSummary.nextMatch.status} />
           </div>
 
-          {(personalSummary.nextMatch.status === "ready" ||
-            personalSummary.nextMatch.status === "disputed") &&
-          session ? (
+          {canAutoReportMatch ? (
             <form
               action={submitMatchResultAction}
               className="mt-6 grid gap-4 lg:grid-cols-[1fr_1fr_1.4fr_auto]"
@@ -223,30 +285,42 @@ export default async function TournamentDetailPage({
               <input
                 name="evidenceNote"
                 type="text"
-                placeholder="Screenshot, replay o nota prova"
+                required={tournament.evidence_mode === "required"}
+                placeholder={
+                  tournament.evidence_mode === "required"
+                    ? "Inserisci prova obbligatoria: screenshot, replay o link"
+                    : "Screenshot, replay o nota prova"
+                }
                 className="rounded-2xl border border-slate-700 bg-slate-900 px-4 py-3 text-sm text-white outline-none transition focus:border-amber-300"
               />
-              <button
-                type="submit"
+              <PendingSubmitButton
+                idleLabel={
+                  personalSummary.nextMatch.status === "awaiting_confirmation"
+                    ? "Invia il tuo report"
+                    : "Invia risultato"
+                }
+                pendingLabel={
+                  personalSummary.nextMatch.status === "awaiting_confirmation"
+                    ? "Confronto report in corso..."
+                    : "Invio risultato..."
+                }
                 className="rounded-2xl bg-amber-400 px-5 py-3 text-sm font-semibold text-slate-950 transition hover:bg-amber-300"
-              >
-                Invia risultato
-              </button>
+              />
             </form>
           ) : null}
 
           {personalSummary.nextMatch.status === "awaiting_confirmation" &&
-          personalSummary.nextMatch.reported_by_id !== session?.user.id ? (
+          personalSummary.nextMatch.reported_by_id !== session?.user.id &&
+          tournament.result_confirmation_mode === "dual_confirmation" ? (
             <div className="mt-6 grid gap-4 lg:grid-cols-[auto_1fr]">
               <form action={confirmMatchResultAction}>
                 <input type="hidden" name="slug" value={tournament.slug} />
                 <input type="hidden" name="matchId" value={personalSummary.nextMatch.id} />
-                <button
-                  type="submit"
+                <PendingSubmitButton
+                  idleLabel="Conferma risultato"
+                  pendingLabel="Conferma in corso..."
                   className="rounded-2xl bg-emerald-500 px-5 py-3 text-sm font-semibold text-white transition hover:bg-emerald-400"
-                >
-                  Conferma risultato
-                </button>
+                />
               </form>
 
               <form action={disputeMatchResultAction} className="grid gap-3 lg:grid-cols-[1fr_auto]">
@@ -258,12 +332,11 @@ export default async function TournamentDetailPage({
                   placeholder="Spiega brevemente il problema"
                   className="rounded-2xl border border-slate-700 bg-slate-900 px-4 py-3 text-sm text-white outline-none transition focus:border-rose-300"
                 />
-                <button
-                  type="submit"
+                <PendingSubmitButton
+                  idleLabel="Contesta"
+                  pendingLabel="Invio contestazione..."
                   className="rounded-2xl border border-rose-500/40 bg-rose-500/10 px-5 py-3 text-sm font-semibold text-rose-100 transition hover:bg-rose-500/20"
-                >
-                  Contesta
-                </button>
+                />
               </form>
             </div>
           ) : null}
@@ -282,15 +355,14 @@ export default async function TournamentDetailPage({
           </div>
 
           {session?.user.role === "admin" && payload.matches.length === 0 ? (
-            <form action={generateBracketAction}>
-              <input type="hidden" name="tournamentId" value={tournament.id} />
-              <input type="hidden" name="slug" value={tournament.slug} />
-              <button
-                type="submit"
+              <form action={generateBracketAction}>
+                <input type="hidden" name="tournamentId" value={tournament.id} />
+                <input type="hidden" name="slug" value={tournament.slug} />
+                <PendingSubmitButton
+                idleLabel="Genera struttura torneo"
+                pendingLabel="Generazione struttura..."
                 className="rounded-full bg-amber-400 px-4 py-2 text-sm font-semibold text-slate-950 transition hover:bg-amber-300"
-              >
-                Genera bracket
-              </button>
+              />
             </form>
           ) : null}
         </div>
@@ -417,12 +489,11 @@ export default async function TournamentDetailPage({
                               className="w-full rounded-2xl border border-slate-700 bg-slate-900 px-4 py-3 text-sm text-white outline-none transition focus:border-amber-300"
                             />
 
-                            <button
-                              type="submit"
+                            <PendingSubmitButton
+                              idleLabel="Risolvi da admin"
+                              pendingLabel="Risoluzione match..."
                               className="w-full rounded-2xl border border-amber-400/40 bg-amber-400/10 px-4 py-3 text-sm font-semibold text-amber-100 transition hover:bg-amber-400/20"
-                            >
-                              Risolvi da admin
-                            </button>
+                            />
                           </form>
                         ) : null}
                       </article>
@@ -435,11 +506,66 @@ export default async function TournamentDetailPage({
         ) : (
           <div className="mt-8 rounded-3xl border border-dashed border-slate-700 bg-slate-900/50 p-8 text-center">
             <p className="text-base text-slate-300">
-              Il bracket non e ancora stato generato.
+              La struttura del torneo non e ancora stata generata.
             </p>
           </div>
         )}
       </section>
+
+      {standings.length > 0 ? (
+        <section className="rounded-[2rem] border border-slate-800 bg-slate-950/75 p-7 shadow-2xl shadow-black/20">
+          <div className="flex flex-wrap items-center justify-between gap-4">
+            <div>
+              <h2 className="text-2xl font-semibold text-white">Classifica live</h2>
+              <p className="mt-2 text-sm leading-6 text-slate-400">
+                Ordinata usando il tie-breaker selezionato dall&apos;admin: {tieBreakerLabel}.
+              </p>
+            </div>
+
+            <div className="rounded-full border border-slate-700 bg-slate-950/80 px-4 py-2 text-sm text-slate-300">
+              Formato: {tournamentFormatLabels[tournament.format]}
+            </div>
+          </div>
+
+          <div className="mt-6 overflow-x-auto">
+            <table className="min-w-full border-separate border-spacing-y-3 text-left text-sm text-slate-200">
+              <thead>
+                <tr className="text-xs uppercase tracking-[0.22em] text-slate-500">
+                  <th className="px-4">#</th>
+                  <th className="px-4">Partecipante</th>
+                  <th className="px-4">W-L</th>
+                  <th className="px-4">Mappe</th>
+                  <th className="px-4">Buchholz</th>
+                  <th className="px-4">Seed</th>
+                </tr>
+              </thead>
+              <tbody>
+                {standings.map((standing, index) => (
+                  <tr
+                    key={standing.participantId}
+                    className="rounded-2xl border border-slate-800 bg-slate-900/70"
+                  >
+                    <td className="rounded-l-2xl px-4 py-3 font-semibold text-white">
+                      {index + 1}
+                    </td>
+                    <td className="px-4 py-3">{standing.displayName}</td>
+                    <td className="px-4 py-3">
+                      {standing.matchWins}-{standing.matchLosses}
+                    </td>
+                    <td className="px-4 py-3">
+                      {standing.mapWins}-{standing.mapLosses}
+                    </td>
+                    <td className="px-4 py-3">{standing.buchholz}</td>
+                    <td className="rounded-r-2xl px-4 py-3">
+                      {standing.seed ?? "TBD"}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </section>
+      ) : null}
 
       <section className="grid gap-6 lg:grid-cols-[0.9fr_1.1fr]">
         <div className="rounded-[2rem] border border-slate-800 bg-slate-950/75 p-7 shadow-2xl shadow-black/20">

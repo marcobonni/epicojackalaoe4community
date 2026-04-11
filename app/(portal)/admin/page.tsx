@@ -7,6 +7,7 @@ import {
   updateParticipantAction,
   updateTournamentStatusAction,
 } from "@/app/actions/tournaments";
+import PendingSubmitButton from "@/app/components/portal/PendingSubmitButton";
 import StatusBadge from "@/app/components/portal/StatusBadge";
 import { getRequiredAdminSession } from "@/app/lib/session";
 import { getAdminTournaments } from "@/app/lib/tournaments/store";
@@ -161,6 +162,23 @@ export default async function AdminPage() {
                 placeholder="Torneo community con bracket finale e conferma risultati a due step."
                 className="w-full rounded-2xl border border-slate-700 bg-slate-900 px-4 py-3 text-sm text-white outline-none transition focus:border-amber-300"
               />
+            </label>
+
+            <label htmlFor="bannerFile" className="block">
+              <span className="mb-2 block text-sm font-medium text-slate-200">
+                Banner torneo
+              </span>
+              <input
+                id="bannerFile"
+                name="bannerFile"
+                type="file"
+                accept="image/png,image/jpeg,image/webp,image/gif"
+                className="w-full rounded-2xl border border-dashed border-slate-700 bg-slate-900 px-4 py-3 text-sm text-slate-200 outline-none transition file:mr-4 file:rounded-full file:border-0 file:bg-amber-400 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-slate-950 hover:border-amber-300"
+              />
+              <span className="mt-2 block text-xs leading-6 text-slate-500">
+                Carica un&apos;immagine orizzontale per la card e la pagina torneo. Formati supportati:
+                PNG, JPG, WEBP o GIF, massimo 5 MB.
+              </span>
             </label>
 
             <div className="grid gap-5 md:grid-cols-2">
@@ -382,12 +400,11 @@ export default async function AdminPage() {
               </label>
             </div>
 
-            <button
-              type="submit"
+            <PendingSubmitButton
+              idleLabel="Crea torneo"
+              pendingLabel="Creazione torneo in corso..."
               className="rounded-2xl bg-amber-400 px-5 py-4 text-sm font-semibold text-slate-950 transition hover:bg-amber-300"
-            >
-              Crea torneo
-            </button>
+            />
           </div>
         </form>
 
@@ -433,6 +450,16 @@ export default async function AdminPage() {
                 key={tournament.id}
                 className="rounded-[2rem] border border-slate-800 bg-slate-950/75 p-7 shadow-2xl shadow-black/20"
               >
+                {tournament.banner_url ? (
+                  <div className="mb-6 overflow-hidden rounded-[1.75rem] border border-slate-800">
+                    <img
+                      src={tournament.banner_url}
+                      alt={`Banner ${tournament.title}`}
+                      className="h-48 w-full object-cover"
+                    />
+                  </div>
+                ) : null}
+
                 <div className="flex flex-wrap items-center justify-between gap-4">
                   <div>
                     <p className="text-sm uppercase tracking-[0.28em] text-amber-300">
@@ -476,11 +503,15 @@ export default async function AdminPage() {
 
                   <div className="rounded-3xl border border-slate-800 bg-slate-900/70 p-5">
                     <p className="text-xs uppercase tracking-[0.26em] text-slate-500">
-                      Regole
+                      Configurazione
                     </p>
-                    <p className="mt-3 text-base font-semibold text-white">
-                      {tournament.participant_mode} • BO{tournament.best_of}
-                    </p>
+                    <div className="mt-3 space-y-1 text-sm text-slate-200">
+                      <p className="font-semibold text-white">
+                        {tournament.participant_mode} • BO{tournament.best_of}
+                      </p>
+                      <p>Signup: {tournament.signup_mode.replaceAll("_", " ")}</p>
+                      <p>Seeding: {tournament.seeding_mode.replaceAll("_", " ")}</p>
+                    </div>
                   </div>
                 </div>
 
@@ -489,35 +520,54 @@ export default async function AdminPage() {
                     <input type="hidden" name="tournamentId" value={tournament.id} />
                     <input type="hidden" name="slug" value={tournament.slug} />
                     <input type="hidden" name="status" value="registration_open" />
-                    <button
-                      type="submit"
+                    <PendingSubmitButton
+                      idleLabel="Apri iscrizioni"
+                      pendingLabel="Apertura iscrizioni..."
                       className="rounded-full border border-slate-700 px-4 py-2 text-sm font-semibold text-slate-100 transition hover:border-amber-300 hover:text-amber-200"
-                    >
-                      Apri iscrizioni
-                    </button>
+                    />
+                  </form>
+
+                  <form action={updateTournamentStatusAction}>
+                    <input type="hidden" name="tournamentId" value={tournament.id} />
+                    <input type="hidden" name="slug" value={tournament.slug} />
+                    <input type="hidden" name="status" value="check_in" />
+                    <PendingSubmitButton
+                      idleLabel="Avvia check-in"
+                      pendingLabel="Avvio check-in..."
+                      className="rounded-full border border-slate-700 px-4 py-2 text-sm font-semibold text-slate-100 transition hover:border-amber-300 hover:text-amber-200"
+                    />
+                  </form>
+
+                  <form action={updateTournamentStatusAction}>
+                    <input type="hidden" name="tournamentId" value={tournament.id} />
+                    <input type="hidden" name="slug" value={tournament.slug} />
+                    <input type="hidden" name="status" value="seeding" />
+                    <PendingSubmitButton
+                      idleLabel="Passa al seeding"
+                      pendingLabel="Aggiornamento seeding..."
+                      className="rounded-full border border-slate-700 px-4 py-2 text-sm font-semibold text-slate-100 transition hover:border-amber-300 hover:text-amber-200"
+                    />
                   </form>
 
                   <form action={updateTournamentStatusAction}>
                     <input type="hidden" name="tournamentId" value={tournament.id} />
                     <input type="hidden" name="slug" value={tournament.slug} />
                     <input type="hidden" name="status" value="paused" />
-                    <button
-                      type="submit"
+                    <PendingSubmitButton
+                      idleLabel="Metti in pausa"
+                      pendingLabel="Messa in pausa..."
                       className="rounded-full border border-slate-700 px-4 py-2 text-sm font-semibold text-slate-100 transition hover:border-amber-300 hover:text-amber-200"
-                    >
-                      Metti in pausa
-                    </button>
+                    />
                   </form>
 
                   <form action={generateBracketAction}>
                     <input type="hidden" name="tournamentId" value={tournament.id} />
                     <input type="hidden" name="slug" value={tournament.slug} />
-                    <button
-                      type="submit"
+                    <PendingSubmitButton
+                      idleLabel="Genera fase / struttura"
+                      pendingLabel="Generazione struttura..."
                       className="rounded-full bg-amber-400 px-4 py-2 text-sm font-semibold text-slate-950 transition hover:bg-amber-300"
-                    >
-                      Genera bracket
-                    </button>
+                    />
                   </form>
                 </div>
 
@@ -541,12 +591,11 @@ export default async function AdminPage() {
                         placeholder="Email opzionale"
                         className="w-full rounded-2xl border border-slate-700 bg-slate-900 px-4 py-3 text-sm text-white outline-none transition focus:border-amber-300"
                       />
-                      <button
-                        type="submit"
+                      <PendingSubmitButton
+                        idleLabel="Inserisci nel roster"
+                        pendingLabel="Inserimento nel roster..."
                         className="w-full rounded-2xl border border-slate-700 px-4 py-3 text-sm font-semibold text-slate-100 transition hover:border-amber-300 hover:text-amber-200"
-                      >
-                        Inserisci nel roster
-                      </button>
+                      />
                     </form>
                   </div>
 
@@ -571,12 +620,11 @@ export default async function AdminPage() {
                               <input type="hidden" name="tournamentId" value={tournament.id} />
                               <input type="hidden" name="slug" value={tournament.slug} />
                               <input type="hidden" name="registrationId" value={entry.id} />
-                              <button
-                                type="submit"
+                              <PendingSubmitButton
+                                idleLabel="Approva iscrizione"
+                                pendingLabel="Approvazione in corso..."
                                 className="rounded-full bg-emerald-500 px-4 py-2 text-sm font-semibold text-white transition hover:bg-emerald-400"
-                              >
-                                Approva iscrizione
-                              </button>
+                              />
                             </form>
                           </div>
                         ))
@@ -694,12 +742,11 @@ export default async function AdminPage() {
                                 placeholder="Seed"
                                 className="rounded-2xl border border-slate-700 bg-slate-900 px-4 py-3 text-sm text-white outline-none transition focus:border-amber-300"
                               />
-                              <button
-                                type="submit"
+                              <PendingSubmitButton
+                                idleLabel="Aggiorna partecipante"
+                                pendingLabel="Aggiornamento partecipante..."
                                 className="rounded-2xl border border-amber-400/40 px-4 py-3 text-sm font-semibold text-amber-100 transition hover:border-amber-300 hover:text-white"
-                              >
-                                Aggiorna partecipante
-                              </button>
+                              />
                             </form>
 
                             {entry.status === "pending" ? (
@@ -715,12 +762,11 @@ export default async function AdminPage() {
                                   name="registrationId"
                                   value={entry.id}
                                 />
-                                <button
-                                  type="submit"
+                                <PendingSubmitButton
+                                  idleLabel="Approva subito"
+                                  pendingLabel="Approvazione in corso..."
                                   className="w-full rounded-2xl bg-emerald-500 px-4 py-3 text-sm font-semibold text-white transition hover:bg-emerald-400"
-                                >
-                                  Approva subito
-                                </button>
+                                />
                               </form>
                             ) : (
                               <div className="rounded-2xl border border-slate-800 bg-slate-900/70 px-4 py-3 text-sm text-slate-400">
@@ -735,12 +781,11 @@ export default async function AdminPage() {
                                 name="registrationId"
                                 value={entry.id}
                               />
-                              <button
-                                type="submit"
+                              <PendingSubmitButton
+                                idleLabel="Rimuovi dal torneo"
+                                pendingLabel="Rimozione in corso..."
                                 className="rounded-2xl border border-rose-500/40 px-4 py-3 text-sm font-semibold text-rose-100 transition hover:border-rose-400 hover:text-white"
-                              >
-                                Rimuovi dal torneo
-                              </button>
+                              />
                             </form>
                           </div>
                         </div>

@@ -4,8 +4,10 @@ export type TournamentFormat =
   | "single_elimination"
   | "double_elimination"
   | "round_robin"
+  | "championship"
   | "swiss"
   | "groups_playoff"
+  | "international_style"
   | "league_season"
   | "ladder"
   | "king_of_the_hill"
@@ -73,6 +75,7 @@ export interface TournamentProfile {
   id: string;
   email: string | null;
   display_name: string;
+  role?: "user" | "admin" | null;
   discord_name: string | null;
   steam_name: string | null;
   avatar_url: string | null;
@@ -124,6 +127,7 @@ export interface TournamentSummary {
   title: string;
   slug: string;
   description: string;
+  banner_url?: string | null;
   status: TournamentStatus;
   format: TournamentFormat;
   signup_mode: SignupMode;
@@ -190,47 +194,59 @@ export const tournamentFormatOptions: SelectOption<TournamentFormat>[] = [
     value: "single_elimination",
     label: "Single elimination",
     description:
-      "Bracket classico a eliminazione diretta, pienamente automatizzato in questa prima integrazione.",
+      "Bracket classico a eliminazione diretta con avanzamento automatico del vincitore.",
   },
   {
     value: "double_elimination",
     label: "Double elimination",
-    description: "Tabellone winners e losers bracket.",
+    description: "Progressione a doppia vita: resti in corsa finche non accumuli due sconfitte.",
   },
   {
     value: "round_robin",
     label: "Round robin",
-    description: "Tutti contro tutti, ideale per gruppi piccoli.",
+    description: "Tutti contro tutti con classifica live e tie-break automatici.",
+  },
+  {
+    value: "championship",
+    label: "Campionato",
+    description:
+      "Stagione a classifica completa in stile campionato, pensata per girone unico e ranking finale.",
   },
   {
     value: "swiss",
     label: "Swiss",
-    description: "Accoppiamenti per score, utile con molti giocatori.",
+    description: "Round progressivi per score con nuovi abbinamenti a ogni turno.",
   },
   {
     value: "groups_playoff",
     label: "Groups + playoff",
-    description: "Gironi iniziali con fase finale a eliminazione.",
+    description: "Gironi iniziali con qualificazione automatica al playoff finale.",
+  },
+  {
+    value: "international_style",
+    label: "International style",
+    description:
+      "Due gironi iniziali e playoff finale a doppia eliminazione in stile TI.",
   },
   {
     value: "league_season",
     label: "League season",
-    description: "Stagione a punti e classifica persistente.",
+    description: "Calendario andata/ritorno con classifica completa.",
   },
   {
     value: "ladder",
     label: "Ladder",
-    description: "Sistema sfide continue.",
+    description: "Round di challenge adiacenti che aggiornano la classifica seed dopo seed.",
   },
   {
     value: "king_of_the_hill",
     label: "King of the hill",
-    description: "Il vincitore resta in cima finche non perde.",
+    description: "Il vincitore continua a difendere il trono contro il prossimo sfidante.",
   },
   {
     value: "gsl_group",
     label: "GSL group",
-    description: "Formato gruppi stile esports.",
+    description: "Gruppi in stile opener, winners, elimination e decider match.",
   },
 ];
 
@@ -271,17 +287,17 @@ export const participantModeOptions: SelectOption<ParticipantMode>[] = [
   {
     value: "2v2",
     label: "2v2",
-    description: "Team da due giocatori.",
+    description: "Ogni slot torneo rappresenta una coppia o il suo capitano.",
   },
   {
     value: "team",
     label: "Team based",
-    description: "Roster o clan con piu giocatori.",
+    description: "Ogni registrazione rappresenta un team, clan o roster unico.",
   },
   {
     value: "solo_with_subs",
     label: "Solo con sostituti",
-    description: "Giocatori singoli con possibili backup.",
+    description: "Ogni slot resta singolo, ma puoi gestire sostituti dal roster admin.",
   },
 ];
 
@@ -299,17 +315,17 @@ export const seedingModeOptions: SelectOption<SeedingMode>[] = [
   {
     value: "ranking_based",
     label: "Ranking based",
-    description: "Seed da classifica o elo.",
+    description: "Ordina in base ai risultati storici gia presenti nel sistema.",
   },
   {
     value: "previous_season",
     label: "Previous season",
-    description: "Seed dai risultati della stagione precedente.",
+    description: "Usa il torneo completato piu recente come base prioritaria del seed.",
   },
   {
     value: "protected",
     label: "Protected",
-    description: "Evita accoppiamenti iniziali indesiderati.",
+    description: "Mantiene separati i seed alti nelle fasi iniziali e nei gruppi.",
   },
 ];
 
@@ -335,17 +351,17 @@ export const schedulingModeOptions: SelectOption<SchedulingMode>[] = [
   {
     value: "free",
     label: "Scheduling libero",
-    description: "I giocatori si organizzano da soli.",
+    description: "Tutti i match della fase generata si aprono subito.",
   },
   {
     value: "deadline",
     label: "Deadline round",
-    description: "Ogni round ha una scadenza.",
+    description: "Le fasi successive si sbloccano round dopo round.",
   },
   {
     value: "fixed_slots",
     label: "Slot fissi",
-    description: "Orari prestabiliti per i match.",
+    description: "Anche qui i round si aprono in sequenza, pensati per slot prestabiliti.",
   },
 ];
 
@@ -391,7 +407,7 @@ export const resultConfirmationOptions: SelectOption<ResultConfirmationMode>[] =
   {
     value: "auto_on_same_report",
     label: "Auto report uguale",
-    description: "Pensato per chiudere il match quando i report coincidono.",
+    description: "Se entrambi i player inviano lo stesso score, il match si chiude da solo.",
   },
   {
     value: "admin_only",
@@ -433,8 +449,10 @@ export const tournamentFormatLabels: Record<TournamentFormat, string> = {
   single_elimination: "Single elimination",
   double_elimination: "Double elimination",
   round_robin: "Round robin",
+  championship: "Campionato",
   swiss: "Swiss",
   groups_playoff: "Groups + playoff",
+  international_style: "International style",
   league_season: "League season",
   ladder: "Ladder",
   king_of_the_hill: "King of the hill",

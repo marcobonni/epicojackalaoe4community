@@ -1,5 +1,7 @@
 "use client";
 
+import { useTransition } from "react";
+
 export default function PortalError({
   error,
   reset,
@@ -7,6 +9,8 @@ export default function PortalError({
   error: Error & { digest?: string };
   reset: () => void;
 }) {
+  const [isPending, startTransition] = useTransition();
+
   return (
     <div className="rounded-[2rem] border border-rose-500/25 bg-slate-950/80 p-8 shadow-2xl shadow-black/30">
       <p className="text-sm uppercase tracking-[0.3em] text-rose-200">
@@ -26,10 +30,13 @@ export default function PortalError({
 
       <button
         type="button"
-        onClick={reset}
-        className="mt-6 rounded-2xl bg-amber-400 px-5 py-3 text-sm font-semibold text-slate-950 transition hover:bg-amber-300"
+        onClick={() => startTransition(() => reset())}
+        disabled={isPending}
+        className={`mt-6 rounded-2xl bg-amber-400 px-5 py-3 text-sm font-semibold text-slate-950 transition hover:bg-amber-300 ${
+          isPending ? "cursor-not-allowed opacity-75 saturate-75" : ""
+        }`}
       >
-        Riprova
+        {isPending ? "Riprovo..." : "Riprova"}
       </button>
     </div>
   );

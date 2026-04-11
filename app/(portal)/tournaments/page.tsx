@@ -1,6 +1,7 @@
 import { getOptionalSession } from "@/app/lib/session";
 import { requestTournamentJoinAction } from "@/app/actions/tournaments";
 import LoadingLink from "@/app/components/LoadingLink";
+import PendingSubmitButton from "@/app/components/portal/PendingSubmitButton";
 import StatusBadge from "@/app/components/portal/StatusBadge";
 import { listTournaments } from "@/app/lib/tournaments/store";
 import {
@@ -68,12 +69,28 @@ export default async function TournamentsPage() {
               tournament.signup_mode !== "manual_roster" &&
               tournament.signup_mode !== "invite_only" &&
               (tournament.participant_count ?? 0) < tournament.max_participants;
+            const joinLabel =
+              tournament.signup_mode === "approval"
+                ? "Invia richiesta"
+                : tournament.signup_mode === "hybrid"
+                  ? "Entra / richiedi slot"
+                  : "Iscriviti";
 
             return (
               <article
                 key={tournament.id}
                 className="rounded-[2rem] border border-slate-800 bg-slate-950/75 p-7 shadow-2xl shadow-black/20"
               >
+                {tournament.banner_url ? (
+                  <div className="mb-6 overflow-hidden rounded-[1.75rem] border border-slate-800">
+                    <img
+                      src={tournament.banner_url}
+                      alt={`Banner ${tournament.title}`}
+                      className="h-48 w-full object-cover"
+                    />
+                  </div>
+                ) : null}
+
                 <div className="flex flex-wrap items-start justify-between gap-4">
                   <div>
                     <p className="text-sm uppercase tracking-[0.28em] text-amber-300">
@@ -135,12 +152,11 @@ export default async function TournamentsPage() {
                     <form action={requestTournamentJoinAction}>
                       <input type="hidden" name="tournamentId" value={tournament.id} />
                       <input type="hidden" name="slug" value={tournament.slug} />
-                      <button
-                        type="submit"
+                      <PendingSubmitButton
+                        idleLabel={joinLabel}
+                        pendingLabel="Iscrizione in corso..."
                         className="rounded-full border border-slate-700 px-4 py-2 text-sm font-semibold text-slate-100 transition hover:border-amber-300 hover:text-amber-200"
-                      >
-                        Iscriviti
-                      </button>
+                      />
                     </form>
                   ) : null}
                 </div>

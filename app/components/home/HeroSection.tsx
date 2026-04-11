@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import Image from "next/image";
 import { SERVER_CONFIG, HERO_STATS } from "@/app/config/site";
 import LoadingLink from "@/app/components/LoadingLink";
 
@@ -52,10 +53,12 @@ export default function HeroSection() {
         ref={backgroundRef}
         className="absolute inset-0 will-change-transform"
       >
-        <img
+        <Image
           src="/images/hero_top.png"
           alt="Age of Empires background"
-          className="h-full w-full object-cover object-center"
+          fill
+          priority
+          className="object-cover object-center"
         />
       </div>
 
@@ -135,6 +138,20 @@ export default function HeroSection() {
                 className="rounded-2xl bg-slate-800 px-6 py-3 text-base font-semibold text-white shadow-lg transition hover:-translate-y-0.5 text-center flex items-center justify-center"
               >
                 Matchmaking <NewBadge />
+              </LoadingLink>
+
+              <LoadingLink
+                href="/tournaments"
+                className="rounded-2xl bg-amber-500 px-6 py-3 text-base font-semibold text-slate-950 shadow-lg transition hover:-translate-y-0.5 text-center"
+              >
+                Tornei
+              </LoadingLink>
+
+              <LoadingLink
+                href="/login"
+                className="rounded-2xl border border-slate-600 bg-slate-950/70 px-6 py-3 text-base font-semibold text-white shadow-lg transition hover:-translate-y-0.5 text-center"
+              >
+                Area player/admin
               </LoadingLink>
             </div>
           </div>

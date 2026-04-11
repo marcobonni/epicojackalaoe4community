@@ -1,0 +1,100 @@
+"use client";
+
+import { FormEvent, useState, useTransition } from "react";
+import { createSupabaseBrowserClient } from "@/app/lib/supabase/client";
+
+export default function PasswordRecoveryRequestForm() {
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const [recoveryEmail, setRecoveryEmail] = useState<string | null>(null);
+  const [isPending, startTransition] = useTransition();
+
+  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setErrorMessage(null);
+    setSuccessMessage(null);
+
+    const form = event.currentTarget;
+    const formData = new FormData(form);
+    const email = String(formData.get("email") ?? "").trim().toLowerCase();
+
+    startTransition(async () => {
+      try {
+        const supabase = createSupabaseBrowserClient();
+        const redirectTo = `${window.location.origin}/auth/callback?next=${encodeURIComponent(
+          "/reset-password"
+        )}`;
+
+        const { error } = await supabase.auth.resetPasswordForEmail(email, {
+          redirectTo,
+        });
+
+        if (error) {
+          setErrorMessage(error.message);
+          return;
+        }
+
+        setSuccessMessage(
+          "Ti abbiamo inviato una mail con il link per reimpostare la password."
+        );
+        setRecoveryEmail(email);
+        form.reset();
+      } catch (error) {
+        setErrorMessage(
+          error instanceof Error
+            ? error.message
+            : "Invio del link di recupero non riuscito. Riprova."
+        );
+      }
+    });
+  }
+
+  return (
+    <form onSubmit={handleSubmit} className="space-y-4">
+      <label htmlFor="recovery-email" className="block">
+        <span className="mb-2 block text-sm font-medium text-slate-200">
+          Email account
+        </span>
+        <input
+          id="recovery-email"
+          name="email"
+          type="email"
+          autoComplete="email"
+          required
+          className="w-full rounded-2xl border border-slate-700 bg-slate-900 px-4 py-3 text-sm text-white outline-none transition focus:border-amber-300"
+        />
+      </label>
+
+      {errorMessage ? (
+        <div className="rounded-2xl border border-rose-500/30 bg-rose-500/10 p-4 text-sm leading-6 text-rose-100">
+          {errorMessage}
+        </div>
+      ) : null}
+
+      {successMessage ? (
+        <div className="rounded-3xl border border-emerald-500/30 bg-emerald-500/10 p-5 text-sm leading-6 text-emerald-100">
+          <p className="text-base font-semibold text-white">Link di recupero inviato</p>
+          <p className="mt-2">{successMessage}</p>
+          {recoveryEmail ? (
+            <p className="mt-3 rounded-2xl border border-emerald-400/20 bg-slate-950/40 px-4 py-3 font-mono text-xs text-emerald-100">
+              {recoveryEmail}
+            </p>
+          ) : null}
+          <div className="mt-4 space-y-2 text-sm">
+            <p>1. Apri la tua casella email.</p>
+            <p>2. Cerca il messaggio con il link di recupero password.</p>
+            <p>3. Apri il link e imposta la nuova password.</p>
+          </div>
+        </div>
+      ) : null}
+
+      <button
+        type="submit"
+        disabled={isPending}
+        className="flex w-full items-center justify-center rounded-2xl border border-slate-700 px-4 py-4 text-sm font-semibold text-slate-100 transition hover:border-amber-300 hover:text-amber-200 disabled:cursor-not-allowed disabled:opacity-70"
+      >
+        {isPending ? "Invio link in corso..." : "Invia link di recupero"}
+      </button>
+    </form>
+  );
+}

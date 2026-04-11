@@ -1,21 +1,10 @@
 import type { Metadata, Viewport } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { NavigationLoaderProvider } from "@/app/components/NavigationLoaderProvider";
 import NavigationLoaderReset from "@/app/components/NavigationLoaderReset";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Analytics } from "@vercel/analytics/next";
 import Script from "next/script";
-
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
 
 export const metadata: Metadata = {
    title: "Aoe4 Community Italia - Classifica, Quiz e Matchmaking",
@@ -40,7 +29,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="it">
       <head>
         {/* Google AdSense */}
         <script
@@ -64,9 +53,7 @@ export default function RootLayout({
         </Script>
       </head>
 
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
+      <body className="antialiased">
         <NavigationLoaderProvider>
           <NavigationLoaderReset />
           {children}

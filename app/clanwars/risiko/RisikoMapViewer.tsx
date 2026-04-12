@@ -514,70 +514,84 @@ export function RisikoMapViewer({
                 return (
                   <g
                     key={territory.id}
-                    onClick={() => setSelectedTerritoryId(territory.id)}
+                    onPointerDown={(event) => {
+                      event.stopPropagation();
+                    }}
+                    onClick={(event) => {
+                      event.stopPropagation();
+                      setSelectedTerritoryId(territory.id);
+                    }}
                     onMouseEnter={() => setHovered(territory)}
                     onMouseLeave={() => setHovered((current) => (current?.id === territory.id ? null : current))}
-                    style={{
-                      transformBox: "fill-box",
-                      transformOrigin: "center",
-                      transform:
-                        hovered?.id === territory.id
-                          ? "translateY(-4px) scale(1.03)"
-                          : "translateY(0px) scale(1)",
-                      transition: "transform 180ms ease-in-out",
-                    }}
+                    style={{ cursor: "pointer" }}
                   >
-                    <path
-                      d={hexPath(territory.x, territory.y, HEX_SIZE)}
-                      fill={hovered?.id === territory.id ? owner.solidColor : owner.color}
-                      stroke={
-                        selectedTerritoryId === territory.id || validAttackTargets.some((target) => target.id === territory.id)
-                          ? "rgba(255, 221, 145, 0.95)"
-                          : "rgba(247,230,198,0.58)"
-                      }
-                      strokeWidth={
-                        selectedTerritoryId === territory.id || validAttackTargets.some((target) => target.id === territory.id)
-                          ? "5"
-                          : hovered?.id === territory.id
-                            ? "4.5"
-                            : "3"
-                      }
-                      filter="url(#hexShadow)"
+                    <g
                       style={{
-                        filter: `drop-shadow(0 0 ${hovered?.id === territory.id ? 26 : 14}px ${owner.glow})`,
-                        transition:
-                          "stroke-width 180ms ease-in-out, filter 180ms ease-in-out, fill 180ms ease-in-out",
-                      }}
-                    />
-
-                    <text
-                      x={territory.x}
-                      y={territory.y - 8}
-                      textAnchor="middle"
-                      fontSize="11"
-                      fontWeight="700"
-                      fill="#fff4de"
-                      filter="url(#labelShadow)"
-                      style={{
-                        letterSpacing: "0.04em",
-                        transition: "transform 180ms ease-in-out, opacity 180ms ease-in-out",
+                        transformBox: "fill-box",
+                        transformOrigin: "center",
+                        transform:
+                          hovered?.id === territory.id
+                            ? "translateY(-4px) scale(1.03)"
+                            : "translateY(0px) scale(1)",
+                        transition: "transform 180ms ease-in-out",
                       }}
                     >
-                      {territory.shortName}
-                    </text>
+                      <path
+                        d={hexPath(territory.x, territory.y, HEX_SIZE)}
+                        fill={hovered?.id === territory.id ? owner.solidColor : owner.color}
+                        stroke={
+                          selectedTerritoryId === territory.id || validAttackTargets.some((target) => target.id === territory.id)
+                            ? "rgba(255, 221, 145, 0.95)"
+                            : "rgba(247,230,198,0.58)"
+                        }
+                        strokeWidth={
+                          selectedTerritoryId === territory.id || validAttackTargets.some((target) => target.id === territory.id)
+                            ? "5"
+                            : hovered?.id === territory.id
+                              ? "4.5"
+                              : "3"
+                        }
+                        filter="url(#hexShadow)"
+                        style={{
+                          filter: `drop-shadow(0 0 ${hovered?.id === territory.id ? 26 : 14}px ${owner.glow})`,
+                          transition:
+                            "stroke-width 180ms ease-in-out, filter 180ms ease-in-out, fill 180ms ease-in-out",
+                        }}
+                      />
 
-                    <text
-                      x={territory.x}
-                      y={territory.y + 16}
-                      textAnchor="middle"
-                      fontSize="16"
-                      fontWeight="700"
-                      fill="#fff4de"
-                      filter="url(#labelShadow)"
-                      style={{ transition: "transform 180ms ease-in-out, opacity 180ms ease-in-out" }}
-                    >
-                      {territory.points}
-                    </text>
+                      <text
+                        x={territory.x}
+                        y={territory.y - 8}
+                        textAnchor="middle"
+                        fontSize="11"
+                        fontWeight="700"
+                        fill="#fff4de"
+                        filter="url(#labelShadow)"
+                        style={{
+                          letterSpacing: "0.04em",
+                          transition: "transform 180ms ease-in-out, opacity 180ms ease-in-out",
+                          pointerEvents: "none",
+                        }}
+                      >
+                        {territory.shortName}
+                      </text>
+
+                      <text
+                        x={territory.x}
+                        y={territory.y + 16}
+                        textAnchor="middle"
+                        fontSize="16"
+                        fontWeight="700"
+                        fill="#fff4de"
+                        filter="url(#labelShadow)"
+                        style={{
+                          transition: "transform 180ms ease-in-out, opacity 180ms ease-in-out",
+                          pointerEvents: "none",
+                        }}
+                      >
+                        {territory.points}
+                      </text>
+                    </g>
                   </g>
                 );
               })}

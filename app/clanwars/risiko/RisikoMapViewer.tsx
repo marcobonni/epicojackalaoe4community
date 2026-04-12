@@ -1,8 +1,10 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Minus, Plus, RotateCcw } from "lucide-react";
 import type { PortalSession } from "@/app/lib/session";
+import { createSupabaseBrowserClient } from "@/app/lib/supabase/client";
 import { cancelAttackAction, proclaimAttackAction, resolveAttackAction } from "./actions";
 import {
   type ClanWarAttack,
@@ -91,15 +93,18 @@ export function RisikoMapViewer({
   attacks = [],
   session = null,
 }: RisikoMapViewerProps) {
+  const router = useRouter();
   const containerRef = useRef<HTMLDivElement | null>(null);
   const pointersRef = useRef<Map<number, { x: number; y: number }>>(new Map());
   const panOriginRef = useRef<{ x: number; y: number } | null>(null);
   const pinchOriginRef = useRef<{ distance: number; scale: number } | null>(null);
+  const attemptedBrowserHydrationRef = useRef(false);
   const [scale, setScale] = useState(INITIAL_SCALE);
   const [offset, setOffset] = useState(INITIAL_OFFSET);
   const [hovered, setHovered] = useState<Territory | null>(null);
   const [selectedTerritoryId, setSelectedTerritoryId] = useState<string | null>(null);
   const [now, setNow] = useState(() => Date.now());
+  const [effectiveSession, setEffectiveSession] = useState<PortalSession | null>(session);
   const visibleTerritories = hovered
     ? [
         ...territories.filter((territory) => territory.id !== hovered.id),
@@ -127,10 +132,10 @@ export function RisikoMapViewer({
   const territoryById = new Map(territories.map((territory) => [territory.id, territory]));
   const selectedTerritory = selectedTerritoryId ? territoryById.get(selectedTerritoryId) ?? null : null;
   const canProclaimAttack =
-    session?.user.roles.includes("capoclan") === true && Boolean(session.user.clanId);
-  const isAdmin = session?.user.roles.includes("admin") === true;
+    effectiveSession?.user.roles.includes("capoclan") === true && Boolean(effectiveSession.user.clanId);
+  const isAdmin = effectiveSession?.user.roles.includes("admin") === true;
   const validAttackTargets = useMemo(() => {
-    if (!selectedTerritory || !canProclaimAttack || selectedTerritory.owner !== session?.user.clanId) {
+    if (!selectedTerritory || !canProclaimAttack || selectedTerritory.owner !== effectiveSession?.user.clanId) {
       return [];
     }
 
@@ -138,7 +143,7 @@ export function RisikoMapViewer({
       .map((neighborId) => territoryById.get(neighborId))
       .filter((territory): territory is Territory => Boolean(territory))
       .filter((territory) => territory.owner !== selectedTerritory.owner);
-  }, [canProclaimAttack, selectedTerritory, session?.user.clanId, territoryById]);
+  }, [canProclaimAttack, selectedTerritory, effectiveSession?.user.clanId, territoryById]);
   const activeAttackTerritoryIds = new Set(
     attacks.flatMap((attack) => [attack.fromTerritoryId, attack.targetTerritoryId])
   );
@@ -204,6 +209,106 @@ export function RisikoMapViewer({
     node.addEventListener("wheel", handleWheel, { passive: false });
     return () => node.removeEventListener("wheel", handleWheel);
   }, []);
+
+  useEffect(() => {
+    setEffectiveSession(session);
+  }, [session]);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    async function hydrateSessionFromBrowser() {
+      if (session || attemptedBrowserHydrationRef.current) {
+        return;
+      }
+
+      attemptedBrowserHydrationRef.current = true;
+
+      try {
+        const supabase = createSupabaseBrowserClient();
+        const { data: userData } = await supabase.auth.getUser();
+        const user = userData.user;
+
+        if (!user?.email) {
+          return;
+        }
+
+        const { data: profileData } = await supabase
+          .from("profiles")
+          .select("role, roles, clan_faction_id")
+          .eq("id", user.id)
+          .maybeSingle();
+
+        const rawRoles = Array.from(
+          new Set(
+            ((profileData?.roles ?? []) as string[])
+              .filter((role: string): role is "admin" | "capoclan" | "user" =>
+                role === "admin" || role === "capoclan" || role === "user"
+              )
+              .concat(
+                profileData?.role === "admin" ||
+                  profileData?.role === "capoclan" ||
+                  profileData?.role === "user"
+                  ? [profileData.role]
+                  : []
+              )
+          )
+        );
+
+        if (!rawRoles.includes("user")) {
+          rawRoles.unshift("user");
+        }
+
+        const clanId = profileData?.clan_faction_id ?? null;
+        let clanName: string | null = null;
+
+        if (clanId) {
+          const { data: factionData } = await supabase
+            .from("clanwar_factions")
+            .select("name")
+            .eq("id", clanId)
+            .maybeSingle();
+
+          clanName = factionData?.name ?? null;
+        }
+
+        if (cancelled) {
+          return;
+        }
+
+        setEffectiveSession({
+          user: {
+            id: user.id,
+            email: user.email.trim().toLowerCase(),
+            name:
+              user.user_metadata?.full_name ??
+              user.user_metadata?.name ??
+              user.email.split("@")[0],
+            image: user.user_metadata?.avatar_url ?? null,
+            role: rawRoles.includes("admin")
+              ? "admin"
+              : rawRoles.includes("capoclan")
+                ? "capoclan"
+                : "user",
+            roles: rawRoles,
+            clanId,
+            clanName,
+          },
+          accessToken: null,
+        });
+
+        router.refresh();
+      } catch {
+        // Keep the server-rendered anonymous state if browser hydration fails.
+      }
+    }
+
+    hydrateSessionFromBrowser();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [router, session]);
 
   useEffect(() => {
     const interval = window.setInterval(() => {
@@ -558,10 +663,10 @@ export function RisikoMapViewer({
           <p className="text-xs uppercase tracking-[0.3em] text-[#bda376]">Comando attacco</p>
           <div className="mt-4 space-y-3 text-sm text-[#d7c7af]">
             <p>
-              Ruolo: <span className="font-semibold text-[#fbf4e7]">{session?.user.role ?? "ospite"}</span>
+              Ruolo: <span className="font-semibold text-[#fbf4e7]">{effectiveSession?.user.role ?? "ospite"}</span>
             </p>
             <p>
-              Clan: <span className="font-semibold text-[#fbf4e7]">{session?.user.clanName ?? "nessuno"}</span>
+              Clan: <span className="font-semibold text-[#fbf4e7]">{effectiveSession?.user.clanName ?? "nessuno"}</span>
             </p>
             <p className="text-[#bda376]">
               Solo i capoclan possono proclamare un attacco da un proprio territorio verso un confinante nemico. Il timer
@@ -581,7 +686,7 @@ export function RisikoMapViewer({
               </div>
             )}
 
-            {selectedTerritory && canProclaimAttack && selectedTerritory.owner === session?.user.clanId ? (
+            {selectedTerritory && canProclaimAttack && selectedTerritory.owner === effectiveSession?.user.clanId ? (
               validAttackTargets.length > 0 ? (
                 validAttackTargets.map((target) => {
                   const routeBusy = activeAttackTerritoryIds.has(selectedTerritory.id) || activeAttackTerritoryIds.has(target.id);
@@ -688,7 +793,7 @@ export function RisikoMapViewer({
                   </p>
                   <p className="mt-2 text-sm text-[#fbf4e7]">Timer: {attack.countdown}</p>
                   <div className="mt-3 flex flex-wrap gap-2">
-                    {(isAdmin || (session?.user.roles.includes("capoclan") && session.user.clanId === attack.attackerFactionId)) ? (
+                    {(isAdmin || (effectiveSession?.user.roles.includes("capoclan") && effectiveSession.user.clanId === attack.attackerFactionId)) ? (
                       <form action={cancelAttackAction}>
                         <input type="hidden" name="attackId" value={attack.id} />
                         <button

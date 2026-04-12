@@ -30,6 +30,14 @@ export default function PortalShell({ session, children }: PortalShellProps) {
               Tornei
             </LoadingLink>
 
+            <LoadingLink
+              href="/clanwars/risiko"
+              prefetch={false}
+              className="rounded-full border border-slate-700 px-4 py-2 text-sm font-semibold text-slate-200 transition hover:border-amber-300 hover:text-amber-200"
+            >
+              Mappa Clan Wars
+            </LoadingLink>
+
             {session?.user ? (
               <>
                 <LoadingLink

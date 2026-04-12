@@ -43,6 +43,13 @@ export default async function DashboardPage() {
               Sfoglia tornei
             </LoadingLink>
 
+            <LoadingLink
+              href="/clanwars/risiko"
+              className="block rounded-2xl border border-slate-700 px-4 py-3 text-center text-sm font-semibold text-slate-100 transition hover:border-amber-300 hover:text-amber-200"
+            >
+              Apri mappa Clan Wars
+            </LoadingLink>
+
             {session.user.role === "admin" ? (
               <LoadingLink
                 href="/admin"

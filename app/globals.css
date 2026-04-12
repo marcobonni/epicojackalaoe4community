@@ -144,3 +144,26 @@ body {
     opacity: 1;
   }
 }
+
+@keyframes clanwar-arrow-flow {
+  from {
+    stroke-dashoffset: 52;
+  }
+
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes clanwar-arrow-pulse {
+  0%,
+  100% {
+    opacity: 0.5;
+    transform: scale(0.94);
+  }
+
+  50% {
+    opacity: 0.82;
+    transform: scale(1);
+  }
+}

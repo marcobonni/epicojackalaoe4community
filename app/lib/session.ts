@@ -6,7 +6,10 @@ export type PortalUser = {
   email: string;
   name: string;
   image: string | null;
-  role: "admin" | "user";
+  role: "admin" | "capoclan" | "user";
+  roles: ("admin" | "capoclan" | "user")[];
+  clanId: string | null;
+  clanName: string | null;
 };
 
 export type PortalSession = {
@@ -26,6 +29,9 @@ function toPortalSession(params: {
   };
   accessToken: string | null;
   profileRole?: string | null;
+  profileRoles?: string[] | null;
+  clanId?: string | null;
+  clanName?: string | null;
 }): PortalSession | null {
   const email = params.user.email?.trim().toLowerCase();
 
@@ -33,7 +39,29 @@ function toPortalSession(params: {
     return null;
   }
 
-  const role = params.profileRole === "admin" ? "admin" : "user";
+  const normalizedRoles = Array.from(
+    new Set(
+      (params.profileRoles ?? [])
+        .filter((role): role is "admin" | "capoclan" | "user" =>
+          role === "admin" || role === "capoclan" || role === "user"
+        )
+        .concat(
+          params.profileRole === "admin" || params.profileRole === "capoclan" || params.profileRole === "user"
+            ? [params.profileRole]
+            : []
+        )
+    )
+  );
+
+  if (!normalizedRoles.includes("user")) {
+    normalizedRoles.unshift("user");
+  }
+
+  const role = normalizedRoles.includes("admin")
+    ? "admin"
+    : normalizedRoles.includes("capoclan")
+      ? "capoclan"
+      : "user";
 
   return {
     user: {
@@ -45,6 +73,9 @@ function toPortalSession(params: {
         email.split("@")[0],
       image: params.user.user_metadata?.avatar_url ?? null,
       role,
+      roles: normalizedRoles,
+      clanId: params.clanId ?? null,
+      clanName: params.clanName ?? null,
     },
     accessToken: params.accessToken,
   };
@@ -73,14 +104,30 @@ export async function getOptionalSession() {
 
   const { data: profileData } = await supabase
     .from("profiles")
-    .select("role")
+    .select("role, roles, clan_faction_id")
     .eq("id", userData.user.id)
     .maybeSingle();
+
+  const clanId = profileData?.clan_faction_id ?? null;
+  let clanName: string | null = null;
+
+  if (clanId) {
+    const { data: clanData } = await supabase
+      .from("clanwar_factions")
+      .select("name")
+      .eq("id", clanId)
+      .maybeSingle();
+
+    clanName = clanData?.name ?? null;
+  }
 
   return toPortalSession({
     user: userData.user,
     accessToken: sessionData.session?.access_token ?? null,
     profileRole: profileData?.role ?? null,
+    profileRoles: profileData?.roles ?? null,
+    clanId,
+    clanName,
   });
 }
 

@@ -6,6 +6,7 @@ import { createSupabaseAdminClient } from "@/app/lib/supabase/admin";
 import { territories } from "./mapData";
 
 const ATTACK_DURATION_HOURS = 72;
+const MAX_CONCURRENT_ATTACKS_PER_FACTION_PAIR = 3;
 
 async function syncExpiredAttacks() {
   const supabase = createSupabaseAdminClient();
@@ -85,25 +86,53 @@ export async function proclaimAttackAction(formData: FormData) {
 
   const { data: existingAttack, error: existingAttackError } = await supabase
     .from("clanwar_attacks")
-    .select("id")
+    .select("id, attacker_faction_id, defender_faction_id, from_territory_id, target_territory_id")
     .eq("status", "active")
     .or(
       [
-        `from_territory_id.eq.${fromTerritory.id}`,
         `target_territory_id.eq.${fromTerritory.id}`,
-        `from_territory_id.eq.${targetTerritory.id}`,
         `target_territory_id.eq.${targetTerritory.id}`,
+        `and(from_territory_id.eq.${fromTerritory.id},target_territory_id.eq.${targetTerritory.id})`,
       ].join(",")
     )
-    .limit(1)
-    .maybeSingle();
+    .limit(10);
 
   if (existingAttackError) {
     throw new Error(existingAttackError.message);
   }
 
-  if (existingAttack) {
-    throw new Error("Uno dei due territori e gia coinvolto in un attacco attivo.");
+  const exactRouteAlreadyActive = (existingAttack ?? []).some(
+    (attack) =>
+      attack.from_territory_id === fromTerritory.id &&
+      attack.target_territory_id === targetTerritory.id
+  );
+  const defendingRouteBusy = (existingAttack ?? []).some(
+    (attack) =>
+      attack.target_territory_id === targetTerritory.id ||
+      attack.target_territory_id === fromTerritory.id
+  );
+
+  if (exactRouteAlreadyActive) {
+    throw new Error("Questo attacco e gia attivo.");
+  }
+
+  if (defendingRouteBusy) {
+    throw new Error("Il territorio bersaglio e gia coinvolto in un attacco attivo.");
+  }
+
+  const { count: pairAttackCount, error: pairAttackCountError } = await supabase
+    .from("clanwar_attacks")
+    .select("id", { count: "exact", head: true })
+    .eq("status", "active")
+    .eq("attacker_faction_id", session.user.clanId)
+    .eq("defender_faction_id", targetOwner);
+
+  if (pairAttackCountError) {
+    throw new Error(pairAttackCountError.message);
+  }
+
+  if ((pairAttackCount ?? 0) >= MAX_CONCURRENT_ATTACKS_PER_FACTION_PAIR) {
+    throw new Error("Il tuo clan ha gia 3 attacchi attivi contro questo clan. Devi colpire anche altri fronti.");
   }
 
   const proclaimedAt = new Date();

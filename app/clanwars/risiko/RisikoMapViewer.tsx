@@ -25,6 +25,7 @@ const BASE_SCALE = 2.21;
 const MAX_SCALE = 5.6;
 const INITIAL_SCALE = BASE_SCALE;
 const INITIAL_OFFSET = { x: -870, y: -690 };
+const MAX_CONCURRENT_ATTACKS_PER_FACTION_PAIR = 3;
 
 function clamp(value: number, min: number, max: number) {
   return Math.min(max, Math.max(min, value));
@@ -158,6 +159,11 @@ export function RisikoMapViewer({
   const activeAttackTerritoryIds = new Set(
     attacks.flatMap((attack) => [attack.fromTerritoryId, attack.targetTerritoryId])
   );
+  const activeAttackCountsByFactionPair = attacks.reduce<Record<string, number>>((accumulator, attack) => {
+    const key = `${attack.attackerFactionId}->${attack.defenderFactionId}`;
+    accumulator[key] = (accumulator[key] ?? 0) + 1;
+    return accumulator;
+  }, {});
   const attackRoutes = attacks
     .map((attack) => {
       const from = territoryById.get(attack.fromTerritoryId);
@@ -631,17 +637,6 @@ export function RisikoMapViewer({
                       animation: "clanwar-arrow-pulse 1.2s ease-in-out infinite",
                     }}
                   />
-                  <text
-                    x={(route.from.x + route.to.x) / 2}
-                    y={(route.from.y + route.to.y) / 2 - 14}
-                    textAnchor="middle"
-                    fontSize="10"
-                    fontWeight="700"
-                    fill="#fff4de"
-                    filter="url(#labelShadow)"
-                  >
-                    {route.countdown}
-                  </text>
                 </g>
               ))}
 
@@ -670,6 +665,79 @@ export function RisikoMapViewer({
               ))}
             </g>
           </svg>
+        </div>
+
+        <div className="mt-4 rounded-[2rem] border border-[#f0dfbf]/10 bg-[#1b140f] p-6">
+          <p className="text-xs uppercase tracking-[0.3em] text-[#bda376]">Match pending</p>
+          <div className="mt-4 space-y-3">
+            {attackRoutes.length > 0 ? (
+              attackRoutes.map((attack) => (
+                <div
+                  key={`pending-under-map-${attack.id}`}
+                  className="rounded-[1.35rem] border border-[#f6e7c8]/10 bg-[#17110d]/80 px-4 py-4"
+                >
+                  <div className="flex flex-wrap items-start justify-between gap-4">
+                    <div>
+                      <p className="font-semibold text-[#f7ecd8]">
+                        {attack.from.name} → {attack.to.name}
+                      </p>
+                      <p className="mt-1 text-xs uppercase tracking-[0.2em] text-[#a58e69]">
+                        {clans[attack.attackerFactionId].name} vs {clans[attack.defenderFactionId].name}
+                      </p>
+                    </div>
+
+                    <div className="text-left sm:text-right">
+                      <p className="text-sm font-semibold text-[#fbf4e7]">{attack.countdown}</p>
+                      <p className="mt-1 text-xs uppercase tracking-[0.2em] text-[#a58e69]">Scadenza attacco</p>
+                    </div>
+                  </div>
+
+                  <div className="mt-3 flex flex-wrap gap-2">
+                    {(isAdmin || (effectiveSession?.user.roles.includes("capoclan") && effectiveSession.user.clanId === attack.attackerFactionId)) ? (
+                      <form action={cancelAttackAction}>
+                        <input type="hidden" name="attackId" value={attack.id} />
+                        <button
+                          type="submit"
+                          className="inline-flex rounded-full border border-white/10 bg-white/10 px-3 py-2 text-xs font-semibold text-[#f7ecd8] transition hover:border-[#f0dfbf]/30 hover:bg-white/15"
+                        >
+                          Annulla attacco
+                        </button>
+                      </form>
+                    ) : null}
+
+                    {isAdmin ? (
+                      <>
+                        <form action={resolveAttackAction}>
+                          <input type="hidden" name="attackId" value={attack.id} />
+                          <input type="hidden" name="outcome" value="attacker_win" />
+                          <button
+                            type="submit"
+                            className="inline-flex rounded-full border border-emerald-400/20 bg-emerald-400 px-3 py-2 text-xs font-semibold text-[#120d09] transition hover:bg-emerald-300"
+                          >
+                            Vince attaccante
+                          </button>
+                        </form>
+                        <form action={resolveAttackAction}>
+                          <input type="hidden" name="attackId" value={attack.id} />
+                          <input type="hidden" name="outcome" value="defender_hold" />
+                          <button
+                            type="submit"
+                            className="inline-flex rounded-full border border-amber-300/20 bg-amber-300 px-3 py-2 text-xs font-semibold text-[#120d09] transition hover:bg-[#f6d38f]"
+                          >
+                            Difesa riuscita
+                          </button>
+                        </form>
+                      </>
+                    ) : null}
+                  </div>
+                </div>
+              ))
+            ) : (
+              <div className="rounded-[1.3rem] border border-[#f0dfbf]/8 bg-[#120d09] px-4 py-4 text-sm text-[#d7c7af]">
+                Nessun match pending al momento.
+              </div>
+            )}
+          </div>
         </div>
       </div>
 
@@ -742,7 +810,11 @@ export function RisikoMapViewer({
             {selectedTerritory && canProclaimAttack && selectedTerritory.owner === effectiveSession?.user.clanId ? (
               validAttackTargets.length > 0 ? (
                 validAttackTargets.map((target) => {
-                  const routeBusy = activeAttackTerritoryIds.has(selectedTerritory.id) || activeAttackTerritoryIds.has(target.id);
+                  const routeBusy = activeAttackTerritoryIds.has(target.id);
+                  const pairKey = `${effectiveSession?.user.clanId ?? ""}->${target.owner}`;
+                  const pairLimitReached =
+                    (activeAttackCountsByFactionPair[pairKey] ?? 0) >= MAX_CONCURRENT_ATTACKS_PER_FACTION_PAIR;
+                  const disabled = routeBusy || pairLimitReached;
 
                   return (
                     <form
@@ -758,12 +830,21 @@ export function RisikoMapViewer({
                       <p className="mt-1 text-xs uppercase tracking-[0.2em] text-[#a58e69]">
                         Difensore {clans[target.owner].name}
                       </p>
+                      {pairLimitReached ? (
+                        <p className="mt-2 text-xs text-[#d8ba79]">
+                          Hai gia 3 attacchi attivi contro questo clan. Devi aprire altri fronti.
+                        </p>
+                      ) : null}
                       <button
                         type="submit"
-                        disabled={routeBusy}
+                        disabled={disabled}
                         className="mt-3 inline-flex rounded-full border border-amber-300/20 bg-amber-300 px-4 py-2 text-sm font-semibold text-[#120d09] transition hover:bg-[#f6d38f] disabled:cursor-not-allowed disabled:border-white/10 disabled:bg-white/10 disabled:text-[#a58e69]"
                       >
-                        {routeBusy ? "Territorio gia coinvolto" : "Proclama attacco"}
+                        {routeBusy
+                          ? "Territorio bersaglio gia coinvolto"
+                          : pairLimitReached
+                            ? "Limite attacchi raggiunto"
+                            : "Proclama attacco"}
                       </button>
                     </form>
                   );

@@ -1,4 +1,5 @@
 import { redirect } from "next/navigation";
+import { createSupabaseAdminClient } from "@/app/lib/supabase/admin";
 import { createSupabaseServerClient } from "@/app/lib/supabase/server";
 
 export type PortalUser = {
@@ -109,23 +110,62 @@ export async function getOptionalSession() {
     return null;
   }
 
-  const { data: profileData } = await supabase
-    .from("profiles")
-    .select("role, roles, clan_faction_id")
-    .eq("id", userData.user.id)
-    .maybeSingle();
+  let profileData:
+    | {
+        role: string | null;
+        roles: string[] | null;
+        clan_faction_id: string | null;
+      }
+    | null = null;
+  let profileErrorMessage: string | null = null;
+
+  try {
+    const adminSupabase = createSupabaseAdminClient();
+    const { data, error } = await adminSupabase
+      .from("profiles")
+      .select("role, roles, clan_faction_id")
+      .eq("id", userData.user.id)
+      .maybeSingle();
+
+    profileData = data;
+    profileErrorMessage = error?.message ?? null;
+  } catch (error) {
+    profileErrorMessage = error instanceof Error ? error.message : "Unknown admin profile lookup error";
+  }
+
+  if (!profileData) {
+    const { data, error } = await supabase
+      .from("profiles")
+      .select("role, roles, clan_faction_id")
+      .eq("id", userData.user.id)
+      .maybeSingle();
+
+    profileData = data;
+    profileErrorMessage = profileErrorMessage ?? error?.message ?? null;
+  }
 
   const clanId = profileData?.clan_faction_id ?? null;
   let clanName: string | null = null;
 
   if (clanId) {
-    const { data: clanData } = await supabase
-      .from("clanwar_factions")
-      .select("name")
-      .eq("id", clanId)
-      .maybeSingle();
+    try {
+      const adminSupabase = createSupabaseAdminClient();
+      const { data: clanData } = await adminSupabase
+        .from("clanwar_factions")
+        .select("name")
+        .eq("id", clanId)
+        .maybeSingle();
 
-    clanName = clanData?.name ?? null;
+      clanName = clanData?.name ?? null;
+    } catch {
+      const { data: clanData } = await supabase
+        .from("clanwar_factions")
+        .select("name")
+        .eq("id", clanId)
+        .maybeSingle();
+
+      clanName = clanData?.name ?? null;
+    }
   }
 
   console.log("[clanwars-session][server] profile state", {
@@ -134,6 +174,7 @@ export async function getOptionalSession() {
     profileRoles: profileData?.roles ?? null,
     clanId,
     clanName,
+    profileErrorMessage,
   });
 
   return toPortalSession({

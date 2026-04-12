@@ -98,6 +98,13 @@ export async function getOptionalSession() {
     supabase.auth.getSession(),
   ]);
 
+  console.log("[clanwars-session][server] auth state", {
+    hasUser: Boolean(userData.user),
+    userId: userData.user?.id ?? null,
+    email: userData.user?.email ?? null,
+    hasAccessToken: Boolean(sessionData.session?.access_token),
+  });
+
   if (!userData.user) {
     return null;
   }
@@ -120,6 +127,14 @@ export async function getOptionalSession() {
 
     clanName = clanData?.name ?? null;
   }
+
+  console.log("[clanwars-session][server] profile state", {
+    userId: userData.user.id,
+    profileRole: profileData?.role ?? null,
+    profileRoles: profileData?.roles ?? null,
+    clanId,
+    clanName,
+  });
 
   return toPortalSession({
     user: userData.user,

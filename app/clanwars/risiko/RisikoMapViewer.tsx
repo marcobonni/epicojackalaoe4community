@@ -215,6 +215,14 @@ export function RisikoMapViewer({
   }, [session]);
 
   useEffect(() => {
+    console.log("[clanwars-session][client] server session prop", session);
+  }, [session]);
+
+  useEffect(() => {
+    console.log("[clanwars-session][client] effective session", effectiveSession);
+  }, [effectiveSession]);
+
+  useEffect(() => {
     let cancelled = false;
 
     async function hydrateSessionFromBrowser() {
@@ -229,6 +237,12 @@ export function RisikoMapViewer({
         const { data: userData } = await supabase.auth.getUser();
         const user = userData.user;
 
+        console.log("[clanwars-session][client] browser auth user", {
+          hasUser: Boolean(user),
+          userId: user?.id ?? null,
+          email: user?.email ?? null,
+        });
+
         if (!user?.email) {
           return;
         }
@@ -238,6 +252,8 @@ export function RisikoMapViewer({
           .select("role, roles, clan_faction_id")
           .eq("id", user.id)
           .maybeSingle();
+
+        console.log("[clanwars-session][client] browser profile row", profileData);
 
         const rawRoles = Array.from(
           new Set(
@@ -298,8 +314,8 @@ export function RisikoMapViewer({
         });
 
         router.refresh();
-      } catch {
-        // Keep the server-rendered anonymous state if browser hydration fails.
+      } catch (error) {
+        console.log("[clanwars-session][client] browser hydration failed", error);
       }
     }
 

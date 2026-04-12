@@ -85,6 +85,17 @@ function formatCountdown(expiresAt: string, now: number) {
   return `${hours}h ${minutes.toString().padStart(2, "0")}m ${seconds.toString().padStart(2, "0")}s`;
 }
 
+function formatRoleLabel(role: "admin" | "capoclan" | "user") {
+  switch (role) {
+    case "admin":
+      return "admin";
+    case "capoclan":
+      return "capoclan";
+    default:
+      return "user";
+  }
+}
+
 export function RisikoMapViewer({
   clans = defaultClans,
   territories = defaultTerritories,
@@ -679,10 +690,22 @@ export function RisikoMapViewer({
           <p className="text-xs uppercase tracking-[0.3em] text-[#bda376]">Comando attacco</p>
           <div className="mt-4 space-y-3 text-sm text-[#d7c7af]">
             <p>
-              Ruolo: <span className="font-semibold text-[#fbf4e7]">{effectiveSession?.user.role ?? "ospite"}</span>
+              Ruolo principale: <span className="font-semibold text-[#fbf4e7]">{effectiveSession?.user.role ?? "ospite"}</span>
+            </p>
+            <p>
+              Ruoli:{" "}
+              <span className="font-semibold text-[#fbf4e7]">
+                {effectiveSession
+                  ? effectiveSession.user.roles.map((role) => formatRoleLabel(role)).join(" • ")
+                  : "ospite"}
+              </span>
             </p>
             <p>
               Clan: <span className="font-semibold text-[#fbf4e7]">{effectiveSession?.user.clanName ?? "nessuno"}</span>
+            </p>
+            <p>
+              Può attaccare:{" "}
+              <span className="font-semibold text-[#fbf4e7]">{canProclaimAttack ? "sì" : "no"}</span>
             </p>
             <p className="text-[#bda376]">
               Solo i capoclan possono proclamare un attacco da un proprio territorio verso un confinante nemico. Il timer

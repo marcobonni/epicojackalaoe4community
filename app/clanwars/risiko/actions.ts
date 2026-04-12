@@ -27,6 +27,19 @@ async function syncExpiredAttacks() {
   return supabase;
 }
 
+async function getCurrentTerritoryOwners(supabase: ReturnType<typeof createSupabaseAdminClient>, territoryIds: string[]) {
+  const { data, error } = await supabase
+    .from("clanwar_territory_control")
+    .select("territory_id, faction_id")
+    .in("territory_id", territoryIds);
+
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  return new Map((data ?? []).map((row) => [row.territory_id, row.faction_id]));
+}
+
 export async function proclaimAttackAction(formData: FormData) {
   const session = await getRequiredSession();
 
@@ -53,11 +66,16 @@ export async function proclaimAttackAction(formData: FormData) {
     throw new Error("Attacco non valido: territorio non trovato.");
   }
 
-  if (fromTerritory.owner !== session.user.clanId) {
+  const supabase = await syncExpiredAttacks();
+  const territoryOwners = await getCurrentTerritoryOwners(supabase, [fromTerritory.id, targetTerritory.id]);
+  const fromOwner = territoryOwners.get(fromTerritory.id) ?? fromTerritory.owner;
+  const targetOwner = territoryOwners.get(targetTerritory.id) ?? targetTerritory.owner;
+
+  if (fromOwner !== session.user.clanId) {
     throw new Error("Puoi attaccare solo partendo da un territorio del tuo clan.");
   }
 
-  if (targetTerritory.owner === session.user.clanId) {
+  if (targetOwner === session.user.clanId) {
     throw new Error("Non puoi attaccare un territorio del tuo stesso clan.");
   }
 
@@ -65,7 +83,6 @@ export async function proclaimAttackAction(formData: FormData) {
     throw new Error("Puoi attaccare solo territori confinanti.");
   }
 
-  const supabase = await syncExpiredAttacks();
   const { data: existingAttack, error: existingAttackError } = await supabase
     .from("clanwar_attacks")
     .select("id")
@@ -96,7 +113,7 @@ export async function proclaimAttackAction(formData: FormData) {
     from_territory_id: fromTerritory.id,
     target_territory_id: targetTerritory.id,
     attacker_faction_id: session.user.clanId,
-    defender_faction_id: targetTerritory.owner,
+    defender_faction_id: targetOwner,
     attacker_user_id: session.user.id,
     proclaimed_at: proclaimedAt.toISOString(),
     expires_at: expiresAt.toISOString(),

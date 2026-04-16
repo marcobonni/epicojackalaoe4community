@@ -1,6 +1,6 @@
 import LoadingLink from "@/app/components/LoadingLink";
 import StatusBadge from "@/app/components/portal/StatusBadge";
-import { getRequiredSession } from "@/app/lib/session";
+import { getRequiredSession, hasRole } from "@/app/lib/session";
 import { getMyTournaments } from "@/app/lib/tournaments/store";
 import { tournamentFormatLabels } from "@/app/lib/tournaments/types";
 
@@ -50,7 +50,7 @@ export default async function DashboardPage() {
               Apri mappa Clan Wars
             </LoadingLink>
 
-            {session.user.role === "admin" ? (
+            {hasRole(session, "admin") ? (
               <LoadingLink
                 href="/admin"
                 className="block rounded-2xl border border-slate-700 px-4 py-3 text-center text-sm font-semibold text-slate-100 transition hover:border-amber-300 hover:text-amber-200"

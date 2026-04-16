@@ -5,31 +5,39 @@ import NavigationLoaderReset from "@/app/components/NavigationLoaderReset";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Analytics } from "@vercel/analytics/next";
 import Script from "next/script";
+import { LanguageProvider } from "@/app/components/LanguageProvider";
+import LanguageSwitcher from "@/app/components/LanguageSwitcher";
+import { getTranslations } from "@/app/lib/i18n";
 
-export const metadata: Metadata = {
-   title: "Aoe4 Community Italia - Classifica, Quiz e Matchmaking",
-  description:
-    "La community italiana di Age of Empires 4. Classifica aggiornata, quiz competitivi e matchmaking bilanciato per giocatori italiani.",
-  icons: {
-    icon: "/logo_mettere.png",
-  },
-    verification: {
-    google: "aSa09l_RJ8JF_3m-hu_bBLHrcW7_GrqSn40Ou-LPh2o",
+export async function generateMetadata(): Promise<Metadata> {
+  const { messages } = await getTranslations();
+
+  return {
+    title: messages.metadata.siteTitle,
+    description: messages.metadata.siteDescription,
+    icons: {
+      icon: "/logo_mettere.png",
     },
-};
+    verification: {
+      google: "aSa09l_RJ8JF_3m-hu_bBLHrcW7_GrqSn40Ou-LPh2o",
+    },
+  };
+}
 
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const { locale, messages } = await getTranslations();
+
   return (
-    <html lang="it">
+    <html lang={locale}>
       <head>
         {/* Google AdSense */}
         <script
@@ -54,10 +62,13 @@ export default function RootLayout({
       </head>
 
       <body className="antialiased">
-        <NavigationLoaderProvider>
-          <NavigationLoaderReset />
-          {children}
-        </NavigationLoaderProvider>
+        <LanguageProvider locale={locale} messages={messages}>
+          <NavigationLoaderProvider>
+            <NavigationLoaderReset />
+            <LanguageSwitcher />
+            {children}
+          </NavigationLoaderProvider>
+        </LanguageProvider>
 
         <SpeedInsights />
         <Analytics />

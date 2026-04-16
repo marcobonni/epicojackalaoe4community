@@ -8,7 +8,7 @@ import {
 } from "@/app/actions/tournaments";
 import PendingSubmitButton from "@/app/components/portal/PendingSubmitButton";
 import StatusBadge from "@/app/components/portal/StatusBadge";
-import { getOptionalSession } from "@/app/lib/session";
+import { getOptionalSession, hasRole } from "@/app/lib/session";
 import {
   getTournamentBySlug,
   getParticipantDisplayName,
@@ -64,7 +64,7 @@ export default async function TournamentDetailPage({
 
   const tournament = payload.tournament;
 
-  if (tournament.visibility === "hidden" && session?.user.role !== "admin") {
+  if (tournament.visibility === "hidden" && !hasRole(session, "admin")) {
     notFound();
   }
 
@@ -354,7 +354,7 @@ export default async function TournamentDetailPage({
             </h2>
           </div>
 
-          {session?.user.role === "admin" && payload.matches.length === 0 ? (
+          {hasRole(session, "admin") && payload.matches.length === 0 ? (
               <form action={generateBracketAction}>
                 <input type="hidden" name="tournamentId" value={tournament.id} />
                 <input type="hidden" name="slug" value={tournament.slug} />
@@ -431,7 +431,7 @@ export default async function TournamentDetailPage({
                           </p>
                         ) : null}
 
-                        {session?.user.role === "admin" &&
+                        {hasRole(session, "admin") &&
                         (match.status === "disputed" ||
                           match.status === "awaiting_confirmation" ||
                           match.status === "admin_review" ||

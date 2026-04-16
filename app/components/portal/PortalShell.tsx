@@ -1,13 +1,20 @@
 import LoadingLink from "@/app/components/LoadingLink";
 import SignOutButton from "@/app/components/auth/SignOutButton";
-import type { PortalSession } from "@/app/lib/session";
+import { getTranslations } from "@/app/lib/i18n";
+import { hasRole, type PortalSession } from "@/app/lib/session";
 
 type PortalShellProps = {
   session: PortalSession | null;
   children: React.ReactNode;
 };
 
-export default function PortalShell({ session, children }: PortalShellProps) {
+export default async function PortalShell({
+  session,
+  children,
+}: PortalShellProps) {
+  const { messages } = await getTranslations();
+  const shell = messages.portalShell;
+
   return (
     <div className="min-h-screen bg-[radial-gradient(circle_at_top,rgba(245,158,11,0.16),transparent_30%),linear-gradient(180deg,#020617_0%,#0f172a_48%,#111827_100%)] text-slate-100">
       <header className="border-b border-slate-800/80 bg-slate-950/70 backdrop-blur">
@@ -16,9 +23,7 @@ export default function PortalShell({ session, children }: PortalShellProps) {
             <LoadingLink href="/" className="text-sm uppercase tracking-[0.35em] text-amber-300">
               EpicoJackal AoE4
             </LoadingLink>
-            <p className="mt-2 text-sm text-slate-400">
-              Portale tornei con login, bracket automatico e gestione risultati.
-            </p>
+            <p className="mt-2 text-sm text-slate-400">{shell.tagline}</p>
           </div>
 
           <div className="flex flex-wrap items-center gap-3">
@@ -27,7 +32,7 @@ export default function PortalShell({ session, children }: PortalShellProps) {
               prefetch={false}
               className="rounded-full border border-slate-700 px-4 py-2 text-sm font-semibold text-slate-200 transition hover:border-amber-300 hover:text-amber-200"
             >
-              Tornei
+              {shell.tournaments}
             </LoadingLink>
 
             <LoadingLink
@@ -35,7 +40,7 @@ export default function PortalShell({ session, children }: PortalShellProps) {
               prefetch={false}
               className="rounded-full border border-slate-700 px-4 py-2 text-sm font-semibold text-slate-200 transition hover:border-amber-300 hover:text-amber-200"
             >
-              Mappa Clan Wars
+              {shell.clanWars}
             </LoadingLink>
 
             {session?.user ? (
@@ -45,16 +50,16 @@ export default function PortalShell({ session, children }: PortalShellProps) {
                   prefetch={false}
                   className="rounded-full border border-slate-700 px-4 py-2 text-sm font-semibold text-slate-200 transition hover:border-amber-300 hover:text-amber-200"
                 >
-                  Dashboard
+                  {shell.dashboard}
                 </LoadingLink>
 
-                {session.user.role === "admin" ? (
+                {hasRole(session, "admin") ? (
                   <LoadingLink
                     href="/admin"
                     prefetch={false}
                     className="rounded-full bg-amber-400 px-4 py-2 text-sm font-semibold text-slate-950 transition hover:bg-amber-300"
                   >
-                    Admin
+                    {shell.admin}
                   </LoadingLink>
                 ) : null}
 
@@ -71,7 +76,7 @@ export default function PortalShell({ session, children }: PortalShellProps) {
                   prefetch={false}
                   className="rounded-full border border-slate-700 px-4 py-2 text-sm font-semibold text-slate-200 transition hover:border-amber-300 hover:text-amber-200"
                 >
-                  Registrati
+                  {shell.register}
                 </LoadingLink>
 
                 <LoadingLink
@@ -79,7 +84,7 @@ export default function PortalShell({ session, children }: PortalShellProps) {
                   prefetch={false}
                   className="rounded-full bg-amber-400 px-4 py-2 text-sm font-semibold text-slate-950 transition hover:bg-amber-300"
                 >
-                  Login
+                  {shell.login}
                 </LoadingLink>
               </>
             )}

@@ -18,6 +18,13 @@ export type PortalSession = {
   accessToken: string | null;
 };
 
+export function hasRole(
+  session: PortalSession | null | undefined,
+  role: "admin" | "capoclan" | "user"
+) {
+  return session?.user.roles.includes(role) === true;
+}
+
 function toPortalSession(params: {
   user: {
     id: string;
@@ -200,7 +207,7 @@ export async function getRequiredSession() {
 export async function getRequiredAdminSession() {
   const session = await getRequiredSession();
 
-  if (session.user.role !== "admin") {
+  if (!hasRole(session, "admin")) {
     redirect("/dashboard");
   }
 

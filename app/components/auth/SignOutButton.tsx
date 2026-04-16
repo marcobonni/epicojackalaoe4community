@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { useTransition } from "react";
 import { createSupabaseBrowserClient } from "@/app/lib/supabase/client";
 import { useNavigationLoader } from "@/app/components/NavigationLoaderProvider";
+import { useTranslations } from "@/app/components/LanguageProvider";
 
 type SignOutButtonProps = {
   className?: string;
@@ -13,6 +14,7 @@ export default function SignOutButton({ className }: SignOutButtonProps) {
   const router = useRouter();
   const { startLoading } = useNavigationLoader();
   const [isPending, startTransition] = useTransition();
+  const messages = useTranslations();
 
   async function handleSignOut() {
     startTransition(async () => {
@@ -29,14 +31,12 @@ export default function SignOutButton({ className }: SignOutButtonProps) {
       type="button"
       onClick={handleSignOut}
       disabled={isPending}
-      className={
-        `${
-          className ??
-          "rounded-full border border-slate-700 px-4 py-2 text-sm font-semibold text-slate-100 transition hover:border-amber-300 hover:text-amber-200"
-        } ${isPending ? "cursor-not-allowed opacity-75 saturate-75" : ""}`
-      }
+      className={`${
+        className ??
+        "rounded-full border border-slate-700 px-4 py-2 text-sm font-semibold text-slate-100 transition hover:border-amber-300 hover:text-amber-200"
+      } ${isPending ? "cursor-not-allowed opacity-75 saturate-75" : ""}`}
     >
-      {isPending ? "Logout in corso..." : "Logout"}
+      {isPending ? messages.auth.signOutPending : messages.auth.signOut}
     </button>
   );
 }

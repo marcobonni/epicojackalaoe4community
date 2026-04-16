@@ -1,6 +1,7 @@
 "use client";
 
 import { FormEvent, useState, useTransition } from "react";
+import { useTranslations } from "@/app/components/LanguageProvider";
 import { createSupabaseBrowserClient } from "@/app/lib/supabase/client";
 
 export default function PasswordRecoveryRequestForm() {
@@ -8,6 +9,7 @@ export default function PasswordRecoveryRequestForm() {
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [recoveryEmail, setRecoveryEmail] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
+  const messages = useTranslations();
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -34,16 +36,12 @@ export default function PasswordRecoveryRequestForm() {
           return;
         }
 
-        setSuccessMessage(
-          "Ti abbiamo inviato una mail con il link per reimpostare la password."
-        );
+        setSuccessMessage(messages.auth.recoverySuccess);
         setRecoveryEmail(email);
         form.reset();
       } catch (error) {
         setErrorMessage(
-          error instanceof Error
-            ? error.message
-            : "Invio del link di recupero non riuscito. Riprova."
+          error instanceof Error ? error.message : messages.auth.recoveryGenericError
         );
       }
     });
@@ -53,7 +51,7 @@ export default function PasswordRecoveryRequestForm() {
     <form onSubmit={handleSubmit} className="space-y-4">
       <label htmlFor="recovery-email" className="block">
         <span className="mb-2 block text-sm font-medium text-slate-200">
-          Email account
+          {messages.auth.accountEmail}
         </span>
         <input
           id="recovery-email"
@@ -73,7 +71,9 @@ export default function PasswordRecoveryRequestForm() {
 
       {successMessage ? (
         <div className="rounded-3xl border border-emerald-500/30 bg-emerald-500/10 p-5 text-sm leading-6 text-emerald-100">
-          <p className="text-base font-semibold text-white">Link di recupero inviato</p>
+          <p className="text-base font-semibold text-white">
+            {messages.auth.recoverySuccessTitle}
+          </p>
           <p className="mt-2">{successMessage}</p>
           {recoveryEmail ? (
             <p className="mt-3 rounded-2xl border border-emerald-400/20 bg-slate-950/40 px-4 py-3 font-mono text-xs text-emerald-100">
@@ -81,9 +81,11 @@ export default function PasswordRecoveryRequestForm() {
             </p>
           ) : null}
           <div className="mt-4 space-y-2 text-sm">
-            <p>1. Apri la tua casella email.</p>
-            <p>2. Cerca il messaggio con il link di recupero password.</p>
-            <p>3. Apri il link e imposta la nuova password.</p>
+            {messages.auth.recoverySteps.map((step, index) => (
+              <p key={step}>
+                {index + 1}. {step}
+              </p>
+            ))}
           </div>
         </div>
       ) : null}
@@ -93,7 +95,7 @@ export default function PasswordRecoveryRequestForm() {
         disabled={isPending}
         className="flex w-full items-center justify-center rounded-2xl border border-slate-700 px-4 py-4 text-sm font-semibold text-slate-100 transition hover:border-amber-300 hover:text-amber-200 disabled:cursor-not-allowed disabled:opacity-70"
       >
-        {isPending ? "Invio link in corso..." : "Invia link di recupero"}
+        {isPending ? messages.auth.recoveryPending : messages.auth.recoverySubmit}
       </button>
     </form>
   );

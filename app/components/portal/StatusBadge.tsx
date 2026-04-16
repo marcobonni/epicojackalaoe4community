@@ -1,10 +1,8 @@
+"use client";
+
+import { useTranslations } from "@/app/components/LanguageProvider";
 import { getMatchStatusTone } from "@/app/lib/tournaments/engine";
-import {
-  matchStatusLabels,
-  tournamentStatusLabels,
-  type MatchStatus,
-  type TournamentStatus,
-} from "@/app/lib/tournaments/types";
+import type { MatchStatus, TournamentStatus } from "@/app/lib/tournaments/types";
 
 type StatusBadgeProps =
   | {
@@ -17,6 +15,8 @@ type StatusBadgeProps =
     };
 
 export default function StatusBadge(props: StatusBadgeProps) {
+  const messages = useTranslations();
+
   if (props.kind === "match") {
     return (
       <span
@@ -24,7 +24,7 @@ export default function StatusBadge(props: StatusBadgeProps) {
           props.status
         )}`}
       >
-        {matchStatusLabels[props.status]}
+        {messages.tournamentsPage.matchStatuses[props.status]}
       </span>
     );
   }
@@ -44,7 +44,7 @@ export default function StatusBadge(props: StatusBadgeProps) {
     <span
       className={`inline-flex rounded-full border px-3 py-1 text-xs font-semibold ${palette[props.status]}`}
     >
-      {tournamentStatusLabels[props.status]}
+      {messages.tournamentsPage.tournamentStatuses[props.status]}
     </span>
   );
 }

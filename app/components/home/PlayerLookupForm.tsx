@@ -12,6 +12,7 @@ import {
 import { useRouter } from "next/navigation";
 import { Loader2, Search } from "lucide-react";
 import { useNavigationLoader } from "@/app/components/NavigationLoaderProvider";
+import { useTranslations } from "@/app/components/LanguageProvider";
 
 const API_BASE = "https://aoe4world.com/api/v0";
 const AUTOCOMPLETE_MIN_CHARS = 2;
@@ -69,13 +70,10 @@ function normalizeSearchResults(payload: unknown): ResolvedPlayer[] {
         toNullableNumber(candidate.id),
       name: candidate.name ?? candidate.nickname ?? candidate.alias ?? null,
     }))
-    .filter(
-      (candidate): candidate is ResolvedPlayer => candidate.profileId !== null
-    );
+    .filter((candidate): candidate is ResolvedPlayer => candidate.profileId !== null);
 
   return Array.from(
-    new Map(normalized.map((candidate) => [candidate.profileId, candidate]))
-      .values()
+    new Map(normalized.map((candidate) => [candidate.profileId, candidate])).values()
   );
 }
 
@@ -85,9 +83,7 @@ function pickBestSearchResult(
 ): ResolvedPlayer | null {
   if (candidates.length === 0) return null;
 
-  const trimmed = query.trim();
-  const loweredQuery = trimmed.toLowerCase();
-
+  const loweredQuery = query.trim().toLowerCase();
   const exactMatch = candidates.find(
     (candidate) => candidate.name?.toLowerCase() === loweredQuery
   );
@@ -103,12 +99,13 @@ function pickBestSearchResult(
 
 async function fetchPlayerSearchResults(
   query: string,
+  errorMessages: PlayerLookupFormErrors,
   signal?: AbortSignal
 ): Promise<ResolvedPlayer[]> {
   const trimmed = query.trim();
 
   if (!trimmed) {
-    throw new Error("Inserisci un nome Steam per cercare il giocatore.");
+    throw new Error(errorMessages.emptySearch);
   }
 
   const response = await fetch(
@@ -117,7 +114,7 @@ async function fetchPlayerSearchResults(
   );
 
   if (!response.ok) {
-    throw new Error("La ricerca del giocatore non e disponibile al momento.");
+    throw new Error(errorMessages.searchUnavailable);
   }
 
   const payload = await response.json();
@@ -126,31 +123,42 @@ async function fetchPlayerSearchResults(
 
 async function resolvePlayerProfileId(
   query: string,
+  errorMessages: PlayerLookupFormErrors,
   cachedCandidates?: ResolvedPlayer[]
 ) {
   const candidates =
     cachedCandidates && cachedCandidates.length > 0
       ? cachedCandidates
-      : await fetchPlayerSearchResults(query);
+      : await fetchPlayerSearchResults(query, errorMessages);
 
   if (candidates.length === 0) {
-    throw new Error("Nessun giocatore trovato con questo nome Steam.");
+    throw new Error(errorMessages.noPlayer);
   }
 
   const bestCandidate = pickBestSearchResult(query, candidates);
 
   if (!bestCandidate) {
-    throw new Error("Nessun giocatore trovato con questo nome Steam.");
+    throw new Error(errorMessages.noPlayer);
   }
 
   return bestCandidate;
 }
+
+type PlayerLookupFormErrors = {
+  emptySearch: string;
+  searchUnavailable: string;
+  noPlayer: string;
+  openPlayer: string;
+  generic: string;
+};
 
 export default function PlayerLookupForm({
   variant = "default",
 }: PlayerLookupFormProps) {
   const router = useRouter();
   const { startLoading } = useNavigationLoader();
+  const messages = useTranslations();
+  const copy = messages.home.playerLookup;
   const inputId = useId();
   const suggestionsId = `${inputId}-suggestions`;
   const containerRef = useRef<HTMLDivElement | null>(null);
@@ -187,6 +195,7 @@ export default function PlayerLookupForm({
       try {
         const nextSuggestions = await fetchPlayerSearchResults(
           trimmedQuery,
+          copy.lookupErrors,
           controller.signal
         );
 
@@ -213,7 +222,7 @@ export default function PlayerLookupForm({
       controller.abort();
       window.clearTimeout(timeoutId);
     };
-  }, [query]);
+  }, [copy.lookupErrors, query]);
 
   useEffect(() => {
     function handlePointerDown(event: MouseEvent) {
@@ -280,7 +289,7 @@ export default function PlayerLookupForm({
 
     const trimmedQuery = query.trim();
     if (!trimmedQuery) {
-      setError("Inserisci un nome Steam per aprire la pagina player.");
+      setError(copy.lookupErrors.openPlayer);
       return;
     }
 
@@ -292,6 +301,7 @@ export default function PlayerLookupForm({
       const cachedCandidate = pickBestSearchResult(trimmedQuery, suggestions);
       const resolvedPlayer = await resolvePlayerProfileId(
         trimmedQuery,
+        copy.lookupErrors,
         cachedCandidate ? suggestions : undefined
       );
       setIsSearching(false);
@@ -301,7 +311,7 @@ export default function PlayerLookupForm({
       setError(
         submissionError instanceof Error
           ? submissionError.message
-          : "Errore durante la ricerca del giocatore."
+          : copy.lookupErrors.generic
       );
     }
   }
@@ -341,9 +351,7 @@ export default function PlayerLookupForm({
         }}
         onKeyDown={handleInputKeyDown}
         placeholder={
-          isCompact
-            ? "Cerca un altro player..."
-            : "Es. MarineLorD, Beastyqt, Demu"
+          isCompact ? copy.compactPlaceholder : copy.defaultPlaceholder
         }
         className={`w-full rounded-2xl border border-white/10 bg-[rgba(14,23,40,0.92)] text-sm text-white outline-none transition placeholder:text-slate-500 focus:border-amber-400/50 focus:bg-[rgba(20,31,52,0.96)] ${
           isCompact ? "py-3.5 pl-11 pr-12" : "py-4 pl-11 pr-12"
@@ -390,14 +398,14 @@ export default function PlayerLookupForm({
                   </span>
 
                   <span className="rounded-full border border-white/10 bg-white/5 px-2.5 py-1 text-[11px] uppercase tracking-[0.2em] text-amber-300">
-                    Apri
+                    {copy.suggestionOpen}
                   </span>
                 </button>
               );
             })
           ) : (
             <div className="px-4 py-4 text-sm text-slate-400">
-              Nessun suggerimento trovato per{" "}
+              {copy.suggestionEmptyPrefix}{" "}
               <span className="text-slate-200">{query.trim()}</span>.
             </div>
           )}
@@ -419,10 +427,10 @@ export default function PlayerLookupForm({
       {isBusy ? (
         <>
           <Loader2 className="h-4 w-4 animate-spin" />
-          Cerco...
+          {copy.submitPending}
         </>
       ) : (
-        "Apri player"
+        copy.submit
       )}
     </button>
   );
@@ -433,16 +441,14 @@ export default function PlayerLookupForm({
         <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
           <div className="max-w-md">
             <p className="text-xs font-semibold uppercase tracking-[0.28em] text-amber-300/90">
-              Quick Search
+              {copy.compactBadge}
             </p>
-            <h2 className="mt-2 text-xl font-semibold text-white">
-              Cerca un altro player
-            </h2>
+            <h2 className="mt-2 text-xl font-semibold text-white">{copy.compactTitle}</h2>
           </div>
 
           <form onSubmit={handleSubmit} className="w-full lg:max-w-3xl">
             <label htmlFor={inputId} className="sr-only">
-              Nome Steam del giocatore
+              {copy.label}
             </label>
 
             <div className="flex flex-col gap-3 sm:flex-row">
@@ -452,11 +458,7 @@ export default function PlayerLookupForm({
           </form>
         </div>
 
-        {error ? (
-          <p aria-live="polite" className="mt-3 text-sm text-rose-300">
-            {error}
-          </p>
-        ) : null}
+        {error ? <p aria-live="polite" className="mt-3 text-sm text-rose-300">{error}</p> : null}
       </section>
     );
   }
@@ -470,25 +472,23 @@ export default function PlayerLookupForm({
         <div className="relative grid gap-8 px-6 py-8 md:px-8 lg:grid-cols-[minmax(0,0.95fr)_minmax(360px,0.9fr)] lg:items-center lg:px-10 lg:py-10">
           <div className="max-w-xl">
             <p className="text-xs font-semibold uppercase tracking-[0.32em] text-amber-300/90">
-              Player Analysis
+              {copy.defaultBadge}
             </p>
 
             <h2 className="mt-4 text-3xl font-bold tracking-tight text-white sm:text-4xl">
-              Trova il profilo giusto e apri la scheda completa del player
+              {copy.title}
             </h2>
 
             <p className="mt-4 max-w-lg text-sm leading-7 text-slate-300 sm:text-base">
-              Dopo gli stream della community, qui puoi passare subito
-              all&apos;analisi individuale: cerca un nome Steam e vai
-              direttamente alla pagina player del sito.
+              {copy.description}
             </p>
 
             <div className="mt-6 flex flex-wrap gap-3 text-xs text-slate-300">
               <span className="rounded-full border border-amber-300/20 bg-amber-400/10 px-3 py-1.5">
-                Ricerca AoE4World
+                {copy.chipSearch}
               </span>
               <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1.5">
-                Accesso diretto alla dashboard
+                {copy.chipDashboard}
               </span>
             </div>
           </div>
@@ -501,7 +501,7 @@ export default function PlayerLookupForm({
               className="relative rounded-[1.75rem] border border-white/10 bg-[linear-gradient(180deg,rgba(21,31,49,0.82),rgba(17,25,41,0.9))] p-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] backdrop-blur md:p-5"
             >
               <label htmlFor={inputId} className="sr-only">
-                Nome Steam del giocatore
+                {copy.label}
               </label>
 
               <div className="rounded-[1.4rem] border border-white/10 bg-[linear-gradient(180deg,rgba(26,37,58,0.96),rgba(17,26,43,0.96))] p-3">
@@ -511,17 +511,10 @@ export default function PlayerLookupForm({
                 </div>
               </div>
 
-              <p className="mt-4 text-xs leading-6 text-slate-400">
-                Inserisci il nome Steam esatto o il risultato piu vicino: il
-                sito risolve il profilo e ti porta direttamente alla sua
-                pagina analisi.
-              </p>
+              <p className="mt-4 text-xs leading-6 text-slate-400">{copy.helper}</p>
 
               {error ? (
-                <p
-                  aria-live="polite"
-                  className="mt-3 text-sm text-rose-300"
-                >
+                <p aria-live="polite" className="mt-3 text-sm text-rose-300">
                   {error}
                 </p>
               ) : null}

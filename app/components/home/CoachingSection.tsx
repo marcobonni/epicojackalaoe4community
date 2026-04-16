@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { useTranslations } from "@/app/components/LanguageProvider";
 
 type Coach = {
   name: string;
@@ -22,6 +23,8 @@ export default function CoachingSection({
   const scrollRef = useRef<HTMLDivElement | null>(null);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(false);
+  const messages = useTranslations();
+  const section = messages.home.coaching;
 
   const updateScrollState = () => {
     const container = scrollRef.current;
@@ -58,11 +61,9 @@ export default function CoachingSection({
 
     const firstCard = container.querySelector<HTMLElement>("[data-coach-card]");
     const cardWidth = firstCard?.offsetWidth ?? 360;
-    const gap = 24;
-    const amount = cardWidth + gap;
 
     container.scrollBy({
-      left: direction === "left" ? -amount : amount,
+      left: direction === "left" ? -(cardWidth + 24) : cardWidth + 24,
       behavior: "smooth",
     });
   };
@@ -71,18 +72,14 @@ export default function CoachingSection({
     <section className="mx-auto max-w-7xl px-6 py-20 lg:px-8">
       <div className="max-w-2xl">
         <p className="text-sm font-semibold uppercase tracking-[0.3em] text-amber-300">
-          Coaching
+          {section.badge}
         </p>
 
         <h2 className="mt-4 text-3xl font-bold text-white sm:text-4xl">
-          Allenati con player della community
+          {section.title}
         </h2>
 
-        <p className="mt-3 text-sm leading-7 text-slate-400">
-          In questa sezione puoi mostrare i membri disponibili a fare coaching
-          a pagamento, con specializzazione, prezzo e link diretto per essere
-          contattati.
-        </p>
+        <p className="mt-3 text-sm leading-7 text-slate-400">{section.description}</p>
       </div>
 
       <div className="relative mt-12 px-10">
@@ -100,7 +97,7 @@ export default function CoachingSection({
               <button
                 type="button"
                 onClick={() => scroll("left")}
-                aria-label="Scorri a sinistra"
+                aria-label={section.scrollLeft}
                 className="absolute left-0 top-1/2 z-20 -translate-x-1/2 -translate-y-1/2 rounded-full border border-slate-700 bg-slate-900 p-3 text-white shadow-lg shadow-black/30 transition hover:bg-slate-800"
               >
                 ←
@@ -111,7 +108,7 @@ export default function CoachingSection({
               <button
                 type="button"
                 onClick={() => scroll("right")}
-                aria-label="Scorri a destra"
+                aria-label={section.scrollRight}
                 className="absolute right-0 top-1/2 z-20 translate-x-1/2 -translate-y-1/2 rounded-full border border-slate-700 bg-slate-900 p-3 text-white shadow-lg shadow-black/30 transition hover:bg-slate-800"
               >
                 →
@@ -132,7 +129,7 @@ export default function CoachingSection({
                     <div className="flex items-start justify-between gap-4">
                       <div>
                         <p className="text-sm font-semibold uppercase tracking-[0.2em] text-amber-300">
-                          Coach disponibile
+                          {section.available}
                         </p>
 
                         <h3 className="mt-2 text-2xl font-semibold text-white">
@@ -160,14 +157,14 @@ export default function CoachingSection({
                     <div className="mt-6 space-y-3 text-sm text-slate-300">
                       {coach.specialty ? (
                         <div>
-                          <span className="font-semibold text-white">Focus:</span>{" "}
+                          <span className="font-semibold text-white">{section.focus}:</span>{" "}
                           {coach.specialty}
                         </div>
                       ) : null}
 
                       {coach.price ? (
                         <div>
-                          <span className="font-semibold text-white">Prezzo:</span>{" "}
+                          <span className="font-semibold text-white">{section.price}:</span>{" "}
                           {coach.price}
                         </div>
                       ) : null}
@@ -175,7 +172,7 @@ export default function CoachingSection({
                       {coach.availability ? (
                         <div>
                           <span className="font-semibold text-white">
-                            Disponibilità:
+                            {section.availability}:
                           </span>{" "}
                           {coach.availability}
                         </div>
@@ -190,7 +187,7 @@ export default function CoachingSection({
                           href={coach.contactUrl}
                           className="rounded-2xl bg-amber-400 px-5 py-3 text-sm font-semibold text-slate-950 transition hover:-translate-y-0.5"
                         >
-                          Contatta
+                          {section.contact}
                         </a>
                       ) : null}
 
@@ -201,7 +198,7 @@ export default function CoachingSection({
                           href={coach.profileUrl}
                           className="rounded-2xl border border-slate-700 bg-slate-950/70 px-5 py-3 text-sm font-semibold text-slate-100 transition hover:border-slate-500"
                         >
-                          Profilo
+                          {section.profile}
                         </a>
                       ) : null}
                     </div>
@@ -212,7 +209,7 @@ export default function CoachingSection({
           </>
         ) : (
           <div className="rounded-[2rem] border border-slate-800 bg-slate-900 p-8 text-sm text-slate-400">
-            Nessun coach configurato al momento.
+            {section.empty}
           </div>
         )}
       </div>

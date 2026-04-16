@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { FormEvent, useState, useTransition } from "react";
+import { useTranslations } from "@/app/components/LanguageProvider";
 import { createSupabaseBrowserClient } from "@/app/lib/supabase/client";
 
 type EmailPasswordLoginFormProps = {
@@ -14,6 +15,7 @@ export default function EmailPasswordLoginForm({
   const router = useRouter();
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
+  const messages = useTranslations();
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -40,9 +42,7 @@ export default function EmailPasswordLoginForm({
         router.refresh();
       } catch (error) {
         setErrorMessage(
-          error instanceof Error
-            ? error.message
-            : "Accesso non riuscito. Riprova."
+          error instanceof Error ? error.message : messages.auth.loginGenericError
         );
       }
     });
@@ -51,7 +51,9 @@ export default function EmailPasswordLoginForm({
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <label htmlFor="login-email" className="block">
-        <span className="mb-2 block text-sm font-medium text-slate-200">Email</span>
+        <span className="mb-2 block text-sm font-medium text-slate-200">
+          {messages.auth.email}
+        </span>
         <input
           id="login-email"
           name="email"
@@ -63,7 +65,9 @@ export default function EmailPasswordLoginForm({
       </label>
 
       <label htmlFor="login-password" className="block">
-        <span className="mb-2 block text-sm font-medium text-slate-200">Password</span>
+        <span className="mb-2 block text-sm font-medium text-slate-200">
+          {messages.auth.password}
+        </span>
         <input
           id="login-password"
           name="password"
@@ -85,7 +89,7 @@ export default function EmailPasswordLoginForm({
         disabled={isPending}
         className="flex w-full items-center justify-center rounded-2xl bg-amber-400 px-4 py-4 text-sm font-semibold text-slate-950 transition hover:bg-amber-300 disabled:cursor-not-allowed disabled:opacity-70"
       >
-        {isPending ? "Accesso in corso..." : "Accedi con email e password"}
+        {isPending ? messages.auth.loginPending : messages.auth.loginSubmit}
       </button>
     </form>
   );

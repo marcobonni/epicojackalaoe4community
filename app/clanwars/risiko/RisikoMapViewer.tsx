@@ -146,6 +146,7 @@ export function RisikoMapViewer({
   const canProclaimAttack =
     effectiveSession?.user.roles.includes("capoclan") === true && Boolean(effectiveSession.user.clanId);
   const isAdmin = effectiveSession?.user.roles.includes("admin") === true;
+  const isClanLeader = effectiveSession?.user.roles.includes("capoclan") === true;
   const validAttackTargets = useMemo(() => {
     if (!selectedTerritory || !canProclaimAttack || selectedTerritory.owner !== effectiveSession?.user.clanId) {
       return [];
@@ -692,8 +693,8 @@ export function RisikoMapViewer({
                     </div>
                   </div>
 
-                  <div className="mt-3 flex flex-wrap gap-2">
-                    {(isAdmin || (effectiveSession?.user.roles.includes("capoclan") && effectiveSession.user.clanId === attack.attackerFactionId)) ? (
+                  {isAdmin ? (
+                    <div className="mt-3 flex flex-wrap gap-2">
                       <form action={cancelAttackAction}>
                         <input type="hidden" name="attackId" value={attack.id} />
                         <button
@@ -703,33 +704,28 @@ export function RisikoMapViewer({
                           Annulla attacco
                         </button>
                       </form>
-                    ) : null}
-
-                    {isAdmin ? (
-                      <>
-                        <form action={resolveAttackAction}>
-                          <input type="hidden" name="attackId" value={attack.id} />
-                          <input type="hidden" name="outcome" value="attacker_win" />
-                          <button
-                            type="submit"
-                            className="inline-flex rounded-full border border-emerald-400/20 bg-emerald-400 px-3 py-2 text-xs font-semibold text-[#120d09] transition hover:bg-emerald-300"
-                          >
-                            Vince attaccante
-                          </button>
-                        </form>
-                        <form action={resolveAttackAction}>
-                          <input type="hidden" name="attackId" value={attack.id} />
-                          <input type="hidden" name="outcome" value="defender_hold" />
-                          <button
-                            type="submit"
-                            className="inline-flex rounded-full border border-amber-300/20 bg-amber-300 px-3 py-2 text-xs font-semibold text-[#120d09] transition hover:bg-[#f6d38f]"
-                          >
-                            Difesa riuscita
-                          </button>
-                        </form>
-                      </>
-                    ) : null}
-                  </div>
+                      <form action={resolveAttackAction}>
+                        <input type="hidden" name="attackId" value={attack.id} />
+                        <input type="hidden" name="outcome" value="attacker_win" />
+                        <button
+                          type="submit"
+                          className="inline-flex rounded-full border border-emerald-400/20 bg-emerald-400 px-3 py-2 text-xs font-semibold text-[#120d09] transition hover:bg-emerald-300"
+                        >
+                          Vince attaccante
+                        </button>
+                      </form>
+                      <form action={resolveAttackAction}>
+                        <input type="hidden" name="attackId" value={attack.id} />
+                        <input type="hidden" name="outcome" value="defender_hold" />
+                        <button
+                          type="submit"
+                          className="inline-flex rounded-full border border-amber-300/20 bg-amber-300 px-3 py-2 text-xs font-semibold text-[#120d09] transition hover:bg-[#f6d38f]"
+                        >
+                          Difesa riuscita
+                        </button>
+                      </form>
+                    </div>
+                  ) : null}
                 </div>
               ))
             ) : (
@@ -742,6 +738,7 @@ export function RisikoMapViewer({
       </div>
 
       <aside className="space-y-6">
+        {isClanLeader ? (
         <div className="rounded-[2rem] border border-[#f0dfbf]/10 bg-[#1b140f] p-6">
           <p className="text-xs uppercase tracking-[0.3em] text-[#bda376]">Stato mappa</p>
           <div className="mt-4 grid gap-3 sm:grid-cols-2">
@@ -767,6 +764,7 @@ export function RisikoMapViewer({
             </div>
           </div>
         </div>
+        ) : null}
 
         <div className="rounded-[2rem] border border-[#f0dfbf]/10 bg-[#1b140f] p-6">
           <p className="text-xs uppercase tracking-[0.3em] text-[#bda376]">Comando attacco</p>
@@ -926,8 +924,8 @@ export function RisikoMapViewer({
                     {clans[attack.attackerFactionId].name} vs {clans[attack.defenderFactionId].name}
                   </p>
                   <p className="mt-2 text-sm text-[#fbf4e7]">Timer: {attack.countdown}</p>
-                  <div className="mt-3 flex flex-wrap gap-2">
-                    {(isAdmin || (effectiveSession?.user.roles.includes("capoclan") && effectiveSession.user.clanId === attack.attackerFactionId)) ? (
+                  {isAdmin ? (
+                    <div className="mt-3 flex flex-wrap gap-2">
                       <form action={cancelAttackAction}>
                         <input type="hidden" name="attackId" value={attack.id} />
                         <button
@@ -937,33 +935,28 @@ export function RisikoMapViewer({
                           Annulla attacco
                         </button>
                       </form>
-                    ) : null}
-
-                    {isAdmin ? (
-                      <>
-                        <form action={resolveAttackAction}>
-                          <input type="hidden" name="attackId" value={attack.id} />
-                          <input type="hidden" name="outcome" value="attacker_win" />
-                          <button
-                            type="submit"
-                            className="inline-flex rounded-full border border-emerald-400/20 bg-emerald-400 px-3 py-2 text-xs font-semibold text-[#120d09] transition hover:bg-emerald-300"
-                          >
-                            Vince attaccante
-                          </button>
-                        </form>
-                        <form action={resolveAttackAction}>
-                          <input type="hidden" name="attackId" value={attack.id} />
-                          <input type="hidden" name="outcome" value="defender_hold" />
-                          <button
-                            type="submit"
-                            className="inline-flex rounded-full border border-amber-300/20 bg-amber-300 px-3 py-2 text-xs font-semibold text-[#120d09] transition hover:bg-[#f6d38f]"
-                          >
-                            Difesa riuscita
-                          </button>
-                        </form>
-                      </>
-                    ) : null}
-                  </div>
+                      <form action={resolveAttackAction}>
+                        <input type="hidden" name="attackId" value={attack.id} />
+                        <input type="hidden" name="outcome" value="attacker_win" />
+                        <button
+                          type="submit"
+                          className="inline-flex rounded-full border border-emerald-400/20 bg-emerald-400 px-3 py-2 text-xs font-semibold text-[#120d09] transition hover:bg-emerald-300"
+                        >
+                          Vince attaccante
+                        </button>
+                      </form>
+                      <form action={resolveAttackAction}>
+                        <input type="hidden" name="attackId" value={attack.id} />
+                        <input type="hidden" name="outcome" value="defender_hold" />
+                        <button
+                          type="submit"
+                          className="inline-flex rounded-full border border-amber-300/20 bg-amber-300 px-3 py-2 text-xs font-semibold text-[#120d09] transition hover:bg-[#f6d38f]"
+                        >
+                          Difesa riuscita
+                        </button>
+                      </form>
+                    </div>
+                  ) : null}
                 </div>
               ))
             ) : (

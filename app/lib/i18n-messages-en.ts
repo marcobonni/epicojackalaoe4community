@@ -1,0 +1,374 @@
+import type { Dictionary } from "@/app/lib/i18n-schema";
+
+export const enMessages: Dictionary = {
+  metadata: {
+    siteTitle: "Aoe4 Community - Rankings, Quiz and Matchmaking",
+    siteDescription:
+      "An Age of Empires 4 community with rankings, competitive quiz content and balanced matchmaking.",
+    homeTitle: "Aoe4 Community - Rankings, Streams and Quiz",
+    homeDescription:
+      "Join the AoE4 community for rankings, quiz content and automatic matchmaking.",
+    loginTitle: "Tournament Login | AoE4 Community",
+    registerTitle: "Tournament Registration | AoE4 Community",
+    tournamentsTitle: "Tournaments | AoE4 Community",
+  },
+  languageSwitcher: { label: "Site language", shortLabel: "Language" },
+  common: {
+    new: "NEW",
+    live: "Live",
+    offline: "Offline",
+    open: "Open",
+    loading: "Loading...",
+    viewerCount: "viewers",
+    noData: "—",
+  },
+  home: {
+    hero: {
+      badge: "Age of Empires Community Discord",
+      title: "Your Discord community for Age of Empires every single day",
+      description:
+        "A server built for Age of Empires fans: games, events, tournaments, strategy advice and a real community to queue up with.",
+      ctaJoin: "Join the server",
+      ctaItalianLeaderboard: "Italian leaderboard",
+      ctaNorthLeaderboard: "North leaderboard",
+      ctaCenterLeaderboard: "Center leaderboard",
+      ctaSouthLeaderboard: "South leaderboard",
+      ctaQuiz: "Quiz",
+      ctaMatchmaking: "Matchmaking",
+      ctaTournaments: "Tournaments",
+      ctaPortal: "Player/admin area",
+      statsHeading: "EpicoJackal's AoE4 Community",
+      stats: [
+        { value: "24/7", label: "Active community" },
+        { value: "AoE", label: "Full focus" },
+        { value: "Events", label: "Every week" },
+      ],
+    },
+    liveStats: ["Visible widget users", "Online now", "Visible channels"],
+    twitch: {
+      badge: "Live on Twitch",
+      title: "Featured streamers and secondary channels",
+      description:
+        "The main streamer is picked automatically from the live channels, prioritizing the highest viewer count. If nobody is online, a fallback streamer is shown instead.",
+      featured: "Featured streamer",
+      secondaryBadge: "Secondary streamers",
+      secondaryTitle: "More community channels",
+      open: "Open on Twitch",
+      empty: "No configured streamers.",
+    },
+    playerLookup: {
+      compactBadge: "Quick Search",
+      compactTitle: "Search another player",
+      defaultBadge: "Player Analysis",
+      title: "Find the right profile and open the full player page",
+      description:
+        "Right after community streams, jump into individual analysis here: search a Steam name and go straight to the player's page on the site.",
+      chipSearch: "AoE4World search",
+      chipDashboard: "Direct dashboard access",
+      label: "Player Steam name",
+      compactPlaceholder: "Search another player...",
+      defaultPlaceholder: "Ex. MarineLorD, Beastyqt, Demu",
+      submit: "Open player",
+      submitPending: "Searching...",
+      suggestionOpen: "Open",
+      suggestionEmptyPrefix: "No suggestions found for",
+      helper:
+        "Enter the exact Steam name or the closest result: the site resolves the profile and takes you straight to the analysis page.",
+      lookupErrors: {
+        emptySearch: "Enter a Steam name to search for a player.",
+        searchUnavailable: "Player search is not available right now.",
+        noPlayer: "No player found with that Steam name.",
+        openPlayer: "Enter a Steam name to open the player page.",
+        generic: "There was an error while searching for the player.",
+      },
+    },
+    features: {
+      badge: "Why join",
+      title: "A Discord server built for people who truly love Age of Empires",
+      items: [
+        {
+          title: "Games and matchmaking",
+          desc: "Find players for ranked, custom matches, team games and casual nights inside the community.",
+        },
+        {
+          title: "Tournaments and events",
+          desc: "Organize or follow tournaments, challenges and community nights built around Age of Empires.",
+        },
+        {
+          title: "Guides and strategy",
+          desc: "Share build orders, advice, replays and civilization discussions with other passionate players.",
+        },
+        {
+          title: "Italian community core",
+          desc: "A home base for players who want to play, chat and grow together in the Italian scene.",
+        },
+      ],
+    },
+    discord: {
+      liveBadge: "Discord live",
+      liveDescription: "The data below comes from players in our community.",
+      open: "Open Discord",
+      selectedRoom: "Players in the selected voice room",
+      serverBadge: "Server status",
+      serverTitle: "Numbers that build trust",
+      serverDescription: "The data below comes from the public server widget.",
+      presenceTitle: "Live presence",
+      presenceText: "members online right now.",
+    },
+    coaching: {
+      badge: "Coaching",
+      title: "Practice with community players",
+      description:
+        "This section highlights members available for coaching, with specialties, pricing and a direct contact link.",
+      available: "Available coach",
+      focus: "Focus",
+      price: "Price",
+      availability: "Availability",
+      contact: "Contact",
+      profile: "Profile",
+      empty: "No coaches configured right now.",
+      scrollLeft: "Scroll left",
+      scrollRight: "Scroll right",
+      coaches: {
+        EpicoJackal: {
+          badge: "AoE4 Coach",
+          role: "1v1 and teamgame coaching",
+          description:
+            "Sessions focused on macro, build orders, scouting and decision making.",
+          specialty: "Build optimization, replay reviews, competitive mindset",
+          availability: "Evenings and weekends",
+        },
+        Daddu23: {
+          badge: "AoE4 Coach",
+          role: "Existential coaching",
+          description:
+            "Sessions dedicated to understanding who you are and what you want to become in the game.",
+          specialty:
+            "Game fundamentals, finding your favorite civilization, tactics for different situations",
+          availability: "Evenings and afternoons",
+        },
+        Taffuz: {
+          badge: "Top Ladder",
+          role: "Competitive AoE4 coaching",
+          description:
+            "Training focused on advanced macro, timing pushes and meta civilization management.",
+          specialty: "Meta strategy, timing attacks, mid game decision making",
+          availability: "Weekends",
+        },
+        Kasiya: {
+          badge: "Strategy Coach",
+          role: "Replay analysis and decision making improvement",
+          description:
+            "Replay analysis sessions to improve macro, scouting and strategic adaptation.",
+          specialty: "Replay analysis, macro management, map control",
+          availability: "Evenings",
+        },
+      },
+    },
+    events: {
+      badge: "AoE events",
+      title: "Upcoming community sessions",
+      description:
+        "Tournaments, team game nights and coaching sessions organized directly by the community.",
+      cta: "Join the events",
+      timePrefix: "Time",
+      items: [
+        {
+          day: "12 MAR",
+          title: "4v4 Team Game Night",
+          time: "21:30",
+          type: "Community Night",
+          desc: "An open evening for everyone with balanced lobbies and dedicated voice channels.",
+        },
+        {
+          day: "15 MAR",
+          title: "Weekend Bo3 Tournament",
+          time: "18:00",
+          type: "Tournament",
+          desc: "A mini bracket tournament for community members.",
+        },
+        {
+          day: "18 MAR",
+          title: "Coaching & Replay Review",
+          time: "20:45",
+          type: "Strategy",
+          desc: "Replay analysis, build orders and practical civilization advice.",
+        },
+      ],
+    },
+    join: {
+      listBadge: "What you will find inside",
+      items: [
+        "Channels dedicated to civilizations, strategies and replays",
+        "Community events to play together and meet new players",
+        "Space for creators, clips, memes and competitive discussion",
+        "Simple organization for tournaments, team games and special nights",
+      ],
+      cardBadge: "Join now",
+      title: "Take your gameplay to the next level",
+      description: "Click here and start playing right away.",
+      cta: "Go to Discord!",
+    },
+    footer:
+      "Produced by EpicoJackal, all rights reserved. Any resemblance to real people is purely coincidental.",
+  },
+  portalShell: {
+    tagline: "Tournament portal with login, automatic brackets and result management.",
+    tournaments: "Tournaments",
+    clanWars: "Clan Wars map",
+    dashboard: "Dashboard",
+    admin: "Admin",
+    register: "Register",
+    login: "Login",
+  },
+  auth: {
+    email: "Email",
+    password: "Password",
+    accountEmail: "Account email",
+    steamName: "Steam name",
+    discordName: "Discord name",
+    passwordRequirementsPrefix: "Password requirements",
+    loginSubmit: "Sign in with email and password",
+    loginPending: "Signing in...",
+    loginGenericError: "Sign in failed. Please try again.",
+    registerSubmit: "Create account",
+    registerPending: "Creating account...",
+    registerGenericError: "Registration failed. Please try again.",
+    registerSuccess:
+      "Registration completed. Check your email and click the confirmation link to enter the dashboard.",
+    registerSuccessTitle: "Confirmation email sent",
+    registerSteps: [
+      "Open your email inbox.",
+      "Look for the Supabase confirmation message.",
+      "Click the link and you will be redirected to the dashboard.",
+    ],
+    recoverySubmit: "Send recovery link",
+    recoveryPending: "Sending link...",
+    recoveryGenericError: "Sending the recovery link failed. Please try again.",
+    recoverySuccess: "We sent you an email with the password reset link.",
+    recoverySuccessTitle: "Recovery link sent",
+    recoverySteps: [
+      "Open your email inbox.",
+      "Look for the message with the password recovery link.",
+      "Open the link and set your new password.",
+    ],
+    signOut: "Sign out",
+    signOutPending: "Signing out...",
+  },
+  loginPage: {
+    eyebrow: "Tournament access",
+    title: "Email and password login, simple and aligned with the tournament backend.",
+    description:
+      "The portal uses standard Supabase sessions with email and password. Users register with email, password, Steam name and Discord name, confirm their email and then enter the dashboard directly.",
+    cards: [
+      {
+        title: "Email verification",
+        text: "Access is enabled after confirming the email address.",
+      },
+      {
+        title: "Player dashboard",
+        text: "Your next opponent, match status and updated bracket.",
+      },
+      {
+        title: "Admin console",
+        text: "Tournament creation, manual roster, approvals and result overrides.",
+      },
+    ],
+    formTitle: "Enter the portal",
+    formDescription:
+      "Enter your account credentials. If you do not have a profile yet, complete registration first.",
+    forgotPassword: "Forgot your password?",
+    forgotDescription:
+      "Enter your email and we will send you a link to reset your password.",
+    missingConfig:
+      "Missing `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY` or `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` in `.env.local`.",
+    registerPrompt: "Need an account?",
+    registerCta: "Go to registration",
+    callbackHelp:
+      "Configure Supabase `URL Configuration` with the /auth/callback path for both the live domain and `localhost`.",
+    errors: {
+      supabaseEnv: "Public Supabase variables are missing from `.env.local`.",
+      authCallback:
+        "Email confirmation did not complete successfully. Try opening the link again.",
+    },
+    infos: {
+      passwordUpdated:
+        "Password updated. You can now sign in with your new credentials.",
+    },
+  },
+  registerPage: {
+    eyebrow: "User registration",
+    title: "Create your tournament account with email, password, Steam and Discord.",
+    description:
+      "After registration you will receive a confirmation email. Once the email is verified, the callback sends you to the user dashboard.",
+    bullets: [
+      "Email and password for standard login",
+      "Steam name and Discord name stored in the tournament profile",
+      "Email confirmation required before full access",
+    ],
+    formTitle: "Create account",
+    formDescription:
+      "Use real or stable details so admins can recognize you in tournaments and match confirmations.",
+    missingConfig:
+      "Missing `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY` or `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` in `.env.local`.",
+    loginPrompt: "Already have an account?",
+    loginCta: "Go to login",
+  },
+  tournamentsPage: {
+    eyebrow: "Community tournaments",
+    title: "Tournament list connected to the live backend.",
+    description:
+      "Here you can join open tournaments, see the format chosen by the admin and open the full bracket. Registrations and your personal status now come directly from the Express service.",
+    serviceUnavailable: "Tournament service unavailable",
+    serviceDescription:
+      "The frontend reached the backend, but the tournaments route returned an error. Locally this often happens if the Supabase schema is missing or the backend cannot read the tournament tables.",
+    openTournament: "Open tournament",
+    alreadyJoined: "Already participating",
+    pendingApproval: "Request pending approval",
+    joinPending: "Submitting registration...",
+    noDescription: "No description yet.",
+    participants: "Participants",
+    rules: "Rules",
+    emptyTitle: "No tournaments available",
+    emptyDescription:
+      "As soon as an admin creates the first tournament, it will appear here with format, status and a signup button.",
+    joinLabels: {
+      approval: "Request access",
+      hybrid: "Join / request slot",
+      default: "Join",
+    },
+    formatLabels: {
+      single_elimination: "Single elimination",
+      double_elimination: "Double elimination",
+      round_robin: "Round robin",
+      championship: "Championship",
+      swiss: "Swiss",
+      groups_playoff: "Groups + playoff",
+      international_style: "International style",
+      league_season: "League season",
+      ladder: "Ladder",
+      king_of_the_hill: "King of the hill",
+      gsl_group: "GSL group",
+    },
+    tournamentStatuses: {
+      draft: "Draft",
+      registration_open: "Registration open",
+      check_in: "Check-in",
+      seeding: "Seeding",
+      live: "Live",
+      paused: "Paused",
+      completed: "Completed",
+      cancelled: "Cancelled",
+    },
+    matchStatuses: {
+      pending: "Pending",
+      ready: "Ready",
+      awaiting_confirmation: "Awaiting confirmation",
+      disputed: "Disputed",
+      admin_review: "Admin review",
+      completed: "Completed",
+      forfeited: "Forfeit",
+      cancelled: "Cancelled",
+    },
+  },
+};

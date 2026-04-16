@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { FormEvent, useState, useTransition } from "react";
+import { useTranslations } from "@/app/components/LanguageProvider";
 import { createSupabaseBrowserClient } from "@/app/lib/supabase/client";
 import {
   passwordPolicyItems,
@@ -32,6 +33,7 @@ export default function EmailPasswordRegisterForm({
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [registeredEmail, setRegisteredEmail] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
+  const messages = useTranslations();
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -87,16 +89,12 @@ export default function EmailPasswordRegisterForm({
           return;
         }
 
-        setSuccessMessage(
-          "Registrazione completata. Controlla la tua email e clicca il link di conferma per entrare nella dashboard."
-        );
+        setSuccessMessage(messages.auth.registerSuccess);
         setRegisteredEmail(email);
         form.reset();
       } catch (error) {
         setErrorMessage(
-          error instanceof Error
-            ? error.message
-            : "Registrazione non riuscita. Riprova."
+          error instanceof Error ? error.message : messages.auth.registerGenericError
         );
       }
     });
@@ -105,7 +103,9 @@ export default function EmailPasswordRegisterForm({
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <label htmlFor="register-email" className="block">
-        <span className="mb-2 block text-sm font-medium text-slate-200">Email</span>
+        <span className="mb-2 block text-sm font-medium text-slate-200">
+          {messages.auth.email}
+        </span>
         <input
           id="register-email"
           name="email"
@@ -117,7 +117,9 @@ export default function EmailPasswordRegisterForm({
       </label>
 
       <label htmlFor="register-password" className="block">
-        <span className="mb-2 block text-sm font-medium text-slate-200">Password</span>
+        <span className="mb-2 block text-sm font-medium text-slate-200">
+          {messages.auth.password}
+        </span>
         <input
           id="register-password"
           name="password"
@@ -128,13 +130,13 @@ export default function EmailPasswordRegisterForm({
           className="w-full rounded-2xl border border-slate-700 bg-slate-900 px-4 py-3 text-sm text-white outline-none transition focus:border-amber-300"
         />
         <span className="mt-2 block text-xs leading-6 text-slate-500">
-          Requisiti password: {passwordPolicyItems.join(", ")}.
+          {messages.auth.passwordRequirementsPrefix}: {passwordPolicyItems.join(", ")}.
         </span>
       </label>
 
       <label htmlFor="register-steam" className="block">
         <span className="mb-2 block text-sm font-medium text-slate-200">
-          Nome Steam
+          {messages.auth.steamName}
         </span>
         <input
           id="register-steam"
@@ -148,7 +150,7 @@ export default function EmailPasswordRegisterForm({
 
       <label htmlFor="register-discord" className="block">
         <span className="mb-2 block text-sm font-medium text-slate-200">
-          Nome Discord
+          {messages.auth.discordName}
         </span>
         <input
           id="register-discord"
@@ -168,7 +170,9 @@ export default function EmailPasswordRegisterForm({
 
       {successMessage ? (
         <div className="rounded-3xl border border-emerald-500/30 bg-emerald-500/10 p-5 text-sm leading-6 text-emerald-100">
-          <p className="text-base font-semibold text-white">Email di conferma inviata</p>
+          <p className="text-base font-semibold text-white">
+            {messages.auth.registerSuccessTitle}
+          </p>
           <p className="mt-2">{successMessage}</p>
           {registeredEmail ? (
             <p className="mt-3 rounded-2xl border border-emerald-400/20 bg-slate-950/40 px-4 py-3 font-mono text-xs text-emerald-100">
@@ -176,9 +180,11 @@ export default function EmailPasswordRegisterForm({
             </p>
           ) : null}
           <div className="mt-4 space-y-2 text-sm">
-            <p>1. Apri la tua casella email.</p>
-            <p>2. Cerca il messaggio di conferma di Supabase.</p>
-            <p>3. Clicca il link e verrai mandato alla dashboard.</p>
+            {messages.auth.registerSteps.map((step, index) => (
+              <p key={step}>
+                {index + 1}. {step}
+              </p>
+            ))}
           </div>
         </div>
       ) : null}
@@ -188,7 +194,7 @@ export default function EmailPasswordRegisterForm({
         disabled={isPending}
         className="flex w-full items-center justify-center rounded-2xl bg-amber-400 px-4 py-4 text-sm font-semibold text-slate-950 transition hover:bg-amber-300 disabled:cursor-not-allowed disabled:opacity-70"
       >
-        {isPending ? "Registrazione in corso..." : "Crea account"}
+        {isPending ? messages.auth.registerPending : messages.auth.registerSubmit}
       </button>
     </form>
   );

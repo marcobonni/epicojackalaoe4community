@@ -6,7 +6,6 @@ import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Analytics } from "@vercel/analytics/next";
 import Script from "next/script";
 import { LanguageProvider } from "@/app/components/LanguageProvider";
-import LanguageSwitcher from "@/app/components/LanguageSwitcher";
 import { getTranslations } from "@/app/lib/i18n";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -65,7 +64,6 @@ export default async function RootLayout({
         <LanguageProvider locale={locale} messages={messages}>
           <NavigationLoaderProvider>
             <NavigationLoaderReset />
-            <LanguageSwitcher />
             {children}
           </NavigationLoaderProvider>
         </LanguageProvider>

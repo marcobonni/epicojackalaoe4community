@@ -1,4 +1,4 @@
-export type Locale = "it" | "en" | "fr" | "de" | "pl";
+export type Locale = "it" | "en" | "fr" | "de" | "pl" | "es";
 
 export type Dictionary = {
   metadata: {

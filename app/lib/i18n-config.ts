@@ -1,12 +1,13 @@
 import { deMessages } from "@/app/lib/i18n-messages-de";
 import { enMessages } from "@/app/lib/i18n-messages-en";
+import { esMessages } from "@/app/lib/i18n-messages-es";
 import { frMessages } from "@/app/lib/i18n-messages-fr";
 import { itMessages } from "@/app/lib/i18n-messages-it";
 import { plMessages } from "@/app/lib/i18n-messages-pl";
 import type { Dictionary, Locale } from "@/app/lib/i18n-schema";
 
 export const localeCookieName = "aoe4-locale";
-export const supportedLocales: Locale[] = ["it", "en", "fr", "de", "pl"];
+export const supportedLocales: Locale[] = ["it", "en", "fr", "de", "pl", "es"];
 export const defaultLocale: Locale = "en";
 
 export const localeLabels: Record<Locale, string> = {
@@ -15,6 +16,7 @@ export const localeLabels: Record<Locale, string> = {
   fr: "Francais",
   de: "Deutsch",
   pl: "Polski",
+  es: "Espanol",
 };
 
 const dictionaries: Record<Locale, Dictionary> = {
@@ -23,6 +25,7 @@ const dictionaries: Record<Locale, Dictionary> = {
   fr: frMessages,
   de: deMessages,
   pl: plMessages,
+  es: esMessages,
 };
 
 export function isSupportedLocale(value: string | null | undefined): value is Locale {

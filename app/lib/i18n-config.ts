@@ -1,5 +1,8 @@
+import { deMessages } from "@/app/lib/i18n-messages-de";
 import { enMessages } from "@/app/lib/i18n-messages-en";
+import { frMessages } from "@/app/lib/i18n-messages-fr";
 import { itMessages } from "@/app/lib/i18n-messages-it";
+import { plMessages } from "@/app/lib/i18n-messages-pl";
 import type { Dictionary, Locale } from "@/app/lib/i18n-schema";
 
 export const localeCookieName = "aoe4-locale";
@@ -17,9 +20,9 @@ export const localeLabels: Record<Locale, string> = {
 const dictionaries: Record<Locale, Dictionary> = {
   it: itMessages,
   en: enMessages,
-  fr: { ...enMessages, languageSwitcher: { label: "Langue du site", shortLabel: "Langue" } },
-  de: { ...enMessages, languageSwitcher: { label: "Sprache der Website", shortLabel: "Sprache" } },
-  pl: { ...enMessages, languageSwitcher: { label: "Jezyk strony", shortLabel: "Jezyk" } },
+  fr: frMessages,
+  de: deMessages,
+  pl: plMessages,
 };
 
 export function isSupportedLocale(value: string | null | undefined): value is Locale {

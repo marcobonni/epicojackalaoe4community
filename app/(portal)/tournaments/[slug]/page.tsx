@@ -101,7 +101,7 @@ export default async function TournamentDetailPage({
   return (
     <div className="space-y-8">
       <section className="grid gap-6 lg:grid-cols-[1.15fr_0.85fr]">
-        <div className="rounded-[2rem] border border-amber-400/20 bg-slate-950/75 p-8 shadow-2xl shadow-black/30">
+        <div className="cinematic-panel-strong p-8 sm:p-10">
           {tournament.banner_url ? (
             <div className="mb-6 overflow-hidden rounded-[1.75rem] border border-slate-800">
               <img
@@ -114,10 +114,10 @@ export default async function TournamentDetailPage({
 
           <div className="flex flex-wrap items-start justify-between gap-4">
             <div>
-              <p className="text-sm uppercase tracking-[0.3em] text-amber-300">
+              <p className="cinematic-kicker">
                 {tournamentFormatLabels[tournament.format]}
               </p>
-              <h1 className="mt-4 text-4xl font-bold tracking-tight text-white">
+              <h1 className="cinematic-title mt-5 text-4xl sm:text-5xl">
                 {tournament.title}
               </h1>
             </div>
@@ -125,12 +125,12 @@ export default async function TournamentDetailPage({
             <StatusBadge kind="tournament" status={tournament.status} />
           </div>
 
-          <p className="mt-4 max-w-3xl text-base leading-7 text-slate-300">
+          <p className="cinematic-body mt-5 max-w-3xl text-sm sm:text-base">
             {tournament.description || "Dettagli torneo in aggiornamento."}
           </p>
 
           <div className="mt-6 grid gap-4 sm:grid-cols-3">
-            <div className="rounded-3xl border border-slate-800 bg-slate-900/80 p-5">
+            <div className="cinematic-stat-card p-5">
               <p className="text-xs uppercase tracking-[0.26em] text-slate-500">
                 Partecipanti
               </p>
@@ -139,7 +139,7 @@ export default async function TournamentDetailPage({
               </p>
             </div>
 
-            <div className="rounded-3xl border border-slate-800 bg-slate-900/80 p-5">
+            <div className="cinematic-stat-card p-5">
               <p className="text-xs uppercase tracking-[0.26em] text-slate-500">
                 Modalita
               </p>
@@ -148,7 +148,7 @@ export default async function TournamentDetailPage({
               </p>
             </div>
 
-            <div className="rounded-3xl border border-slate-800 bg-slate-900/80 p-5">
+            <div className="cinematic-stat-card p-5">
               <p className="text-xs uppercase tracking-[0.26em] text-slate-500">
                 Iscrizione
               </p>
@@ -159,21 +159,21 @@ export default async function TournamentDetailPage({
           </div>
 
           <div className="mt-4 grid gap-4 sm:grid-cols-3">
-            <div className="rounded-3xl border border-slate-800 bg-slate-900/80 p-5">
+            <div className="cinematic-stat-card p-5">
               <p className="text-xs uppercase tracking-[0.26em] text-slate-500">
                 Conferma risultati
               </p>
               <p className="mt-3 text-base font-semibold text-white">{resultModeLabel}</p>
             </div>
 
-            <div className="rounded-3xl border border-slate-800 bg-slate-900/80 p-5">
+            <div className="cinematic-stat-card p-5">
               <p className="text-xs uppercase tracking-[0.26em] text-slate-500">
                 Scheduling
               </p>
               <p className="mt-3 text-base font-semibold text-white">{schedulingModeLabel}</p>
             </div>
 
-            <div className="rounded-3xl border border-slate-800 bg-slate-900/80 p-5">
+            <div className="cinematic-stat-card p-5">
               <p className="text-xs uppercase tracking-[0.26em] text-slate-500">
                 Tie-breaker
               </p>
@@ -182,13 +182,13 @@ export default async function TournamentDetailPage({
           </div>
         </div>
 
-        <div className="rounded-[2rem] border border-slate-800 bg-slate-950/80 p-8 shadow-2xl shadow-black/30">
-          <p className="text-sm uppercase tracking-[0.3em] text-slate-400">
+        <div className="cinematic-panel p-8 sm:p-10">
+          <p className="cinematic-kicker text-slate-300/74">
             Il tuo riepilogo
           </p>
 
           <div className="mt-6 space-y-4">
-            <div className="rounded-3xl border border-slate-800 bg-slate-900/70 p-5">
+            <div className="cinematic-stat-card p-5">
               <p className="text-xs uppercase tracking-[0.26em] text-slate-500">
                 Prossimo avversario
               </p>
@@ -197,7 +197,7 @@ export default async function TournamentDetailPage({
               </p>
             </div>
 
-            <div className="rounded-3xl border border-slate-800 bg-slate-900/70 p-5">
+            <div className="cinematic-stat-card p-5">
               <p className="text-xs uppercase tracking-[0.26em] text-slate-500">
                 Stato del tuo match
               </p>
@@ -217,16 +217,16 @@ export default async function TournamentDetailPage({
 
       {tournament.map_rules || tournament.notes ? (
         <section className="grid gap-6 lg:grid-cols-2">
-          <div className="rounded-[2rem] border border-slate-800 bg-slate-950/75 p-7 shadow-2xl shadow-black/20">
+          <div className="cinematic-panel p-7">
             <h2 className="text-2xl font-semibold text-white">Regole match</h2>
-            <p className="mt-4 text-sm leading-7 text-slate-400">
+            <p className="cinematic-body mt-4 text-sm">
               {tournament.map_rules || "Nessuna regola mappe specificata."}
             </p>
           </div>
 
-          <div className="rounded-[2rem] border border-slate-800 bg-slate-950/75 p-7 shadow-2xl shadow-black/20">
+          <div className="cinematic-panel p-7">
             <h2 className="text-2xl font-semibold text-white">Note organizzative</h2>
-            <p className="mt-4 text-sm leading-7 text-slate-400">
+            <p className="cinematic-body mt-4 text-sm">
               {tournament.notes || "Nessuna nota aggiuntiva."}
             </p>
           </div>
@@ -234,10 +234,10 @@ export default async function TournamentDetailPage({
       ) : null}
 
       {personalSummary.nextMatch ? (
-        <section className="rounded-[2rem] border border-emerald-500/20 bg-slate-950/75 p-7 shadow-2xl shadow-black/20">
+        <section className="cinematic-panel-strong rounded-[2rem] border border-emerald-500/20 p-7">
           <div className="flex flex-wrap items-center justify-between gap-4">
             <div>
-              <p className="text-sm uppercase tracking-[0.3em] text-emerald-300">
+              <p className="cinematic-kicker text-emerald-200">
                 Match personale
               </p>
               <h2 className="mt-3 text-2xl font-semibold text-white">
@@ -271,7 +271,7 @@ export default async function TournamentDetailPage({
                 max={tournament.best_of}
                 required
                 placeholder="Score player 1"
-                className="rounded-2xl border border-slate-700 bg-slate-900 px-4 py-3 text-sm text-white outline-none transition focus:border-amber-300"
+                className="cinematic-input text-sm"
               />
               <input
                 name="playerTwoWins"
@@ -280,7 +280,7 @@ export default async function TournamentDetailPage({
                 max={tournament.best_of}
                 required
                 placeholder="Score player 2"
-                className="rounded-2xl border border-slate-700 bg-slate-900 px-4 py-3 text-sm text-white outline-none transition focus:border-amber-300"
+                className="cinematic-input text-sm"
               />
               <input
                 name="evidenceNote"
@@ -291,7 +291,7 @@ export default async function TournamentDetailPage({
                     ? "Inserisci prova obbligatoria: screenshot, replay o link"
                     : "Screenshot, replay o nota prova"
                 }
-                className="rounded-2xl border border-slate-700 bg-slate-900 px-4 py-3 text-sm text-white outline-none transition focus:border-amber-300"
+                className="cinematic-input text-sm"
               />
               <PendingSubmitButton
                 idleLabel={
@@ -304,7 +304,7 @@ export default async function TournamentDetailPage({
                     ? "Confronto report in corso..."
                     : "Invio risultato..."
                 }
-                className="rounded-2xl bg-amber-400 px-5 py-3 text-sm font-semibold text-slate-950 transition hover:bg-amber-300"
+                className="cinematic-button-primary"
               />
             </form>
           ) : null}
@@ -330,12 +330,12 @@ export default async function TournamentDetailPage({
                   type="text"
                   name="disputeReason"
                   placeholder="Spiega brevemente il problema"
-                  className="rounded-2xl border border-slate-700 bg-slate-900 px-4 py-3 text-sm text-white outline-none transition focus:border-rose-300"
+                  className="cinematic-input text-sm"
                 />
                 <PendingSubmitButton
                   idleLabel="Contesta"
                   pendingLabel="Invio contestazione..."
-                  className="rounded-2xl border border-rose-500/40 bg-rose-500/10 px-5 py-3 text-sm font-semibold text-rose-100 transition hover:bg-rose-500/20"
+                  className="cinematic-button-ghost border-rose-500/40 bg-rose-500/10 text-rose-100 hover:bg-rose-500/20"
                 />
               </form>
             </div>
@@ -343,10 +343,10 @@ export default async function TournamentDetailPage({
         </section>
       ) : null}
 
-      <section className="rounded-[2rem] border border-slate-800 bg-slate-950/75 p-7 shadow-2xl shadow-black/20">
+      <section className="cinematic-panel p-7">
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div>
-            <p className="text-sm uppercase tracking-[0.3em] text-slate-400">
+            <p className="cinematic-kicker text-slate-300/74">
               Bracket
             </p>
             <h2 className="mt-3 text-2xl font-semibold text-white">
@@ -361,7 +361,7 @@ export default async function TournamentDetailPage({
                 <PendingSubmitButton
                 idleLabel="Genera struttura torneo"
                 pendingLabel="Generazione struttura..."
-                className="rounded-full bg-amber-400 px-4 py-2 text-sm font-semibold text-slate-950 transition hover:bg-amber-300"
+                className="cinematic-button-primary"
               />
             </form>
           ) : null}
@@ -372,7 +372,7 @@ export default async function TournamentDetailPage({
             <div className="flex min-w-max gap-5">
               {rounds.map((round) => (
                 <div key={round.roundNumber} className="w-80 shrink-0 space-y-4">
-                  <div className="rounded-3xl border border-slate-800 bg-slate-900/70 p-4">
+                  <div className="cinematic-stat-card p-4">
                     <p className="text-xs uppercase tracking-[0.26em] text-amber-300">
                       Round {round.roundNumber}
                     </p>
@@ -384,7 +384,7 @@ export default async function TournamentDetailPage({
                     return (
                       <article
                         key={match.id}
-                        className="rounded-3xl border border-slate-800 bg-slate-900/70 p-5"
+                        className="cinematic-card-grid p-5"
                       >
                         <div className="flex items-center justify-between gap-3">
                           <span className="text-sm font-semibold text-slate-200">
@@ -394,7 +394,7 @@ export default async function TournamentDetailPage({
                         </div>
 
                         <div className="mt-4 space-y-3">
-                          <div className="rounded-2xl border border-slate-800 bg-slate-950/70 px-4 py-3 text-sm text-slate-200">
+                          <div className="rounded-2xl border border-white/8 bg-black/16 px-4 py-3 text-sm text-slate-200">
                             {perspective.playerOneName}
                             {match.player1_wins != null ? (
                               <span className="float-right font-semibold text-white">
@@ -403,7 +403,7 @@ export default async function TournamentDetailPage({
                             ) : null}
                           </div>
 
-                          <div className="rounded-2xl border border-slate-800 bg-slate-950/70 px-4 py-3 text-sm text-slate-200">
+                          <div className="rounded-2xl border border-white/8 bg-black/16 px-4 py-3 text-sm text-slate-200">
                             {perspective.playerTwoName}
                             {match.player2_wins != null ? (
                               <span className="float-right font-semibold text-white">
@@ -438,7 +438,7 @@ export default async function TournamentDetailPage({
                           match.status === "ready") ? (
                           <form
                             action={resolveDisputedMatchAction}
-                            className="mt-5 space-y-3 rounded-3xl border border-slate-800 bg-slate-950/70 p-4"
+                            className="cinematic-stat-card mt-5 space-y-3 rounded-[1.6rem] p-4"
                           >
                             <input type="hidden" name="slug" value={tournament.slug} />
                             <input type="hidden" name="matchId" value={match.id} />
@@ -450,7 +450,7 @@ export default async function TournamentDetailPage({
                                 min={0}
                                 max={tournament.best_of}
                                 placeholder="Score P1"
-                                className="rounded-2xl border border-slate-700 bg-slate-900 px-4 py-3 text-sm text-white outline-none transition focus:border-amber-300"
+                                className="cinematic-input text-sm"
                               />
                               <input
                                 type="number"
@@ -458,7 +458,7 @@ export default async function TournamentDetailPage({
                                 min={0}
                                 max={tournament.best_of}
                                 placeholder="Score P2"
-                                className="rounded-2xl border border-slate-700 bg-slate-900 px-4 py-3 text-sm text-white outline-none transition focus:border-amber-300"
+                                className="cinematic-input text-sm"
                               />
                             </div>
 
@@ -466,7 +466,7 @@ export default async function TournamentDetailPage({
                               <select
                                 name="winnerSide"
                                 defaultValue="1"
-                                className="rounded-2xl border border-slate-700 bg-slate-900 px-4 py-3 text-sm text-white outline-none transition focus:border-amber-300"
+                                className="cinematic-input text-sm"
                               >
                                 <option value="1">Vince player 1</option>
                                 <option value="2">Vince player 2</option>
@@ -475,7 +475,7 @@ export default async function TournamentDetailPage({
                               <select
                                 name="resolution"
                                 defaultValue="admin"
-                                className="rounded-2xl border border-slate-700 bg-slate-900 px-4 py-3 text-sm text-white outline-none transition focus:border-amber-300"
+                                className="cinematic-input text-sm"
                               >
                                 <option value="admin">Risoluzione admin</option>
                                 <option value="forfeit">Forfeit</option>
@@ -486,13 +486,13 @@ export default async function TournamentDetailPage({
                               name="adminNotes"
                               rows={2}
                               placeholder="Nota admin"
-                              className="w-full rounded-2xl border border-slate-700 bg-slate-900 px-4 py-3 text-sm text-white outline-none transition focus:border-amber-300"
+                              className="cinematic-input text-sm"
                             />
 
                             <PendingSubmitButton
                               idleLabel="Risolvi da admin"
                               pendingLabel="Risoluzione match..."
-                              className="w-full rounded-2xl border border-amber-400/40 bg-amber-400/10 px-4 py-3 text-sm font-semibold text-amber-100 transition hover:bg-amber-400/20"
+                              className="cinematic-button-secondary w-full"
                             />
                           </form>
                         ) : null}
@@ -504,7 +504,7 @@ export default async function TournamentDetailPage({
             </div>
           </div>
         ) : (
-          <div className="mt-8 rounded-3xl border border-dashed border-slate-700 bg-slate-900/50 p-8 text-center">
+          <div className="cinematic-empty-state mt-8 p-8 text-center">
             <p className="text-base text-slate-300">
               La struttura del torneo non e ancora stata generata.
             </p>
@@ -513,16 +513,16 @@ export default async function TournamentDetailPage({
       </section>
 
       {standings.length > 0 ? (
-        <section className="rounded-[2rem] border border-slate-800 bg-slate-950/75 p-7 shadow-2xl shadow-black/20">
+        <section className="cinematic-panel p-7">
           <div className="flex flex-wrap items-center justify-between gap-4">
             <div>
               <h2 className="text-2xl font-semibold text-white">Classifica live</h2>
-              <p className="mt-2 text-sm leading-6 text-slate-400">
+              <p className="mt-2 text-sm leading-6 text-slate-300/74">
                 Ordinata usando il tie-breaker selezionato dall&apos;admin: {tieBreakerLabel}.
               </p>
             </div>
 
-            <div className="rounded-full border border-slate-700 bg-slate-950/80 px-4 py-2 text-sm text-slate-300">
+            <div className="cinematic-pill">
               Formato: {tournamentFormatLabels[tournament.format]}
             </div>
           </div>
@@ -543,7 +543,7 @@ export default async function TournamentDetailPage({
                 {standings.map((standing, index) => (
                   <tr
                     key={standing.participantId}
-                    className="rounded-2xl border border-slate-800 bg-slate-900/70"
+                    className="rounded-2xl border border-white/8 bg-white/[0.04]"
                   >
                     <td className="rounded-l-2xl px-4 py-3 font-semibold text-white">
                       {index + 1}
@@ -568,14 +568,14 @@ export default async function TournamentDetailPage({
       ) : null}
 
       <section className="grid gap-6 lg:grid-cols-[0.9fr_1.1fr]">
-        <div className="rounded-[2rem] border border-slate-800 bg-slate-950/75 p-7 shadow-2xl shadow-black/20">
+        <div className="cinematic-panel p-7">
           <h2 className="text-2xl font-semibold text-white">Partecipanti</h2>
           <div className="mt-6 space-y-3">
             {payload.participants.length > 0 ? (
               payload.participants.map((participant) => (
                 <div
                   key={participant.id}
-                  className="flex items-center justify-between rounded-2xl border border-slate-800 bg-slate-900/70 px-4 py-3 text-sm text-slate-200"
+                  className="cinematic-card-grid flex items-center justify-between rounded-[1.4rem] px-4 py-3 text-sm text-slate-200"
                 >
                   <span>{participant.profile?.display_name ?? "Player"}</span>
                   <span className="text-slate-400">
@@ -584,12 +584,12 @@ export default async function TournamentDetailPage({
                 </div>
               ))
             ) : (
-              <p className="text-sm text-slate-400">Ancora nessun partecipante.</p>
+              <p className="text-sm text-slate-300/74">Ancora nessun partecipante.</p>
             )}
           </div>
         </div>
 
-        <div className="rounded-[2rem] border border-slate-800 bg-slate-950/75 p-7 shadow-2xl shadow-black/20">
+        <div className="cinematic-panel p-7">
           <h2 className="text-2xl font-semibold text-white">Storico partite</h2>
           <div className="mt-6 space-y-3">
             {payload.matches.length > 0 ? (
@@ -599,7 +599,7 @@ export default async function TournamentDetailPage({
                 return (
                   <div
                     key={match.id}
-                    className="rounded-2xl border border-slate-800 bg-slate-900/70 p-4 text-sm text-slate-200"
+                    className="cinematic-card-grid rounded-[1.4rem] p-4 text-sm text-slate-200"
                   >
                     <div className="flex flex-wrap items-center justify-between gap-3">
                       <p>
@@ -614,7 +614,7 @@ export default async function TournamentDetailPage({
                 );
               })
             ) : (
-              <p className="text-sm text-slate-400">
+              <p className="text-sm text-slate-300/74">
                 Lo storico apparira qui appena il torneo parte.
               </p>
             )}

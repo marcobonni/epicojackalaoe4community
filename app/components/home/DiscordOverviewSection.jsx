@@ -11,16 +11,16 @@ export default function DiscordOverviewSection({
   const section = messages.home.discord;
 
   return (
-    <section className="mx-auto max-w-7xl px-6 py-20 lg:px-8">
-      <div className="grid gap-6 lg:grid-cols-2">
-        <div className="rounded-[2rem] border border-slate-800 bg-slate-900 p-8 shadow-lg shadow-black/20">
-          <div className="flex items-center justify-between gap-4">
-            <div>
-              <p className="text-sm font-semibold uppercase tracking-[0.3em] text-amber-300">
-                {section.liveBadge}
-              </p>
-
-              <p className="mt-3 max-w-xl text-sm leading-7 text-slate-400">
+    <section className="mx-auto max-w-[1500px] px-6 py-20 lg:px-10">
+      <div className="grid gap-6 lg:grid-cols-[minmax(0,0.92fr)_minmax(0,1.08fr)]">
+        <div className="cinematic-panel-strong p-8">
+          <div className="flex flex-col gap-6 sm:flex-row sm:items-start sm:justify-between">
+            <div className="max-w-xl">
+              <p className="cinematic-kicker">{section.liveBadge}</p>
+              <h2 className="cinematic-title mt-5 text-3xl sm:text-4xl">
+                {section.serverTitle}
+              </h2>
+              <p className="cinematic-body mt-4 text-sm sm:text-base">
                 {section.liveDescription}
               </p>
             </div>
@@ -29,54 +29,62 @@ export default function DiscordOverviewSection({
               target="_blank"
               rel="noopener noreferrer"
               href={inviteUrl}
-              className="hidden rounded-2xl bg-amber-400 px-5 py-3 text-sm font-semibold text-slate-950 transition hover:-translate-y-0.5 md:inline-flex"
+              className="cinematic-button-primary shrink-0"
             >
               {section.open}
             </a>
           </div>
 
-          <div className="mt-6 rounded-2xl border border-slate-800 bg-slate-950/80 p-5">
-            <p className="text-sm font-semibold text-white">{section.selectedRoom}</p>
-          </div>
-        </div>
-
-        <div className="rounded-[2rem] border border-slate-800 bg-slate-900 p-8 shadow-lg shadow-black/20">
-          <p className="text-sm font-semibold uppercase tracking-[0.3em] text-amber-300">
-            {section.serverBadge}
-          </p>
-
-          <h2 className="mt-3 text-3xl font-bold text-white">{section.serverTitle}</h2>
-
-          <p className="mt-3 text-sm leading-7 text-slate-400">
-            {section.serverDescription}
-          </p>
-
-          <div className="mt-8 grid gap-4 sm:grid-cols-2">
+          <div className="mt-8 grid gap-4 sm:grid-cols-3">
             {liveStats.map((item) => (
-              <div
-                key={item.label}
-                className="rounded-2xl border border-slate-800 bg-slate-950/80 p-5"
-              >
-                <div className="text-3xl font-bold text-amber-300">{item.value}</div>
-                <div className="mt-2 text-sm text-slate-400">{item.label}</div>
+              <div key={item.label} className="cinematic-stat-card p-5">
+                <div className="text-4xl font-semibold tracking-[-0.04em] text-white">
+                  {item.value}
+                </div>
+                <div className="mt-3 text-sm leading-6 text-slate-300/76">
+                  {item.label}
+                </div>
               </div>
             ))}
           </div>
+        </div>
 
-          <div className="mt-8 rounded-2xl border border-emerald-400/20 bg-emerald-400/5 p-5">
-            <div className="flex items-center justify-between gap-4">
+        <div className="cinematic-panel p-8">
+          <div className="flex flex-wrap items-start justify-between gap-4">
+            <div>
+              <p className="cinematic-kicker">{section.serverBadge}</p>
+              <p className="cinematic-body mt-4 max-w-xl text-sm">
+                {section.serverDescription}
+              </p>
+            </div>
+
+            <div className="rounded-full border border-emerald-300/24 bg-emerald-300/10 px-4 py-2 text-xs font-semibold uppercase tracking-[0.26em] text-emerald-100">
+              {messages.common.live}
+            </div>
+          </div>
+
+          <div className="mt-8 grid gap-4 md:grid-cols-[1.05fr_0.95fr]">
+            <div className="cinematic-card-grid p-6">
+              <p className="text-xs font-semibold uppercase tracking-[0.24em] text-emerald-200/88">
+                {section.presenceTitle}
+              </p>
+              <p className="mt-5 text-5xl font-semibold tracking-[-0.05em] text-white">
+                {onlineMembers ?? messages.common.noData}
+              </p>
+              <p className="mt-3 text-sm leading-7 text-slate-300/76">
+                {section.presenceText}
+              </p>
+            </div>
+
+            <div className="cinematic-card-grid flex items-end p-6">
               <div>
-                <p className="text-sm font-semibold text-emerald-300">
-                  {section.presenceTitle}
+                <p className="text-xs font-semibold uppercase tracking-[0.24em] text-amber-200/88">
+                  {section.selectedRoom}
                 </p>
-
-                <p className="mt-1 text-sm text-slate-300">
-                  {onlineMembers ?? messages.common.noData} {section.presenceText}
+                <div className="mt-5 h-px w-16 bg-gradient-to-r from-amber-200/60 to-transparent" />
+                <p className="mt-5 text-sm leading-7 text-slate-300/76">
+                  {section.serverDescription}
                 </p>
-              </div>
-
-              <div className="rounded-full border border-emerald-400/30 bg-emerald-400/10 px-3 py-1 text-sm text-emerald-300">
-                {messages.common.live}
               </div>
             </div>
           </div>

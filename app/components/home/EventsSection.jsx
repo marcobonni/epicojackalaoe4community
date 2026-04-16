@@ -8,18 +8,14 @@ export default function EventsSection() {
   const section = messages.home.events;
 
   return (
-    <section id="events" className="mx-auto max-w-7xl px-6 py-20 lg:px-8">
-      <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+    <section id="events" className="mx-auto max-w-[1500px] px-6 py-20 lg:px-10">
+      <div className="flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
         <div className="max-w-2xl">
-          <p className="text-sm font-semibold uppercase tracking-[0.3em] text-amber-300">
-            {section.badge}
-          </p>
-
-          <h2 className="mt-4 text-3xl font-bold text-white sm:text-4xl">
+          <p className="cinematic-kicker">{section.badge}</p>
+          <h2 className="cinematic-title mt-5 text-3xl sm:text-4xl">
             {section.title}
           </h2>
-
-          <p className="mt-3 text-sm leading-7 text-slate-400">
+          <p className="cinematic-body mt-4 text-sm sm:text-base">
             {section.description}
           </p>
         </div>
@@ -28,38 +24,37 @@ export default function EventsSection() {
           target="_blank"
           rel="noopener noreferrer"
           href={SERVER_CONFIG.inviteUrl}
-          className="inline-flex rounded-2xl border border-slate-700 bg-slate-900/70 px-5 py-3 text-sm font-semibold text-slate-100 transition hover:border-slate-500"
+          className="cinematic-button-ghost"
         >
           {section.cta}
         </a>
       </div>
 
-      <div className="mt-10 grid gap-6 lg:grid-cols-3">
-        {section.items.map((event) => (
-          <div
+      <div className="mt-10 grid gap-5 lg:grid-cols-3">
+        {section.items.map((event, index) => (
+          <article
             key={`${event.day}-${event.title}`}
-            className="rounded-[2rem] border border-slate-800 bg-slate-900 p-6 shadow-lg shadow-black/20"
+            className={`${index === 1 ? "cinematic-panel-strong" : "cinematic-panel-soft"} p-7`}
           >
             <div className="flex items-start justify-between gap-4">
               <div>
-                <div className="text-sm font-semibold uppercase tracking-[0.2em] text-amber-300">
-                  {event.day}
-                </div>
-
-                <h3 className="mt-3 text-xl font-semibold text-white">{event.title}</h3>
+                <div className="cinematic-kicker text-[11px]">{event.day}</div>
+                <h3 className="mt-5 text-2xl font-semibold tracking-[-0.03em] text-white">
+                  {event.title}
+                </h3>
               </div>
 
-              <div className="rounded-xl border border-slate-700 bg-slate-950/70 px-3 py-1 text-sm text-slate-300">
+              <div className="rounded-full border border-white/10 bg-white/[0.05] px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.2em] text-slate-200">
                 {event.type}
               </div>
             </div>
 
-            <p className="mt-4 text-sm text-slate-400">
+            <p className="mt-5 text-sm font-semibold text-amber-100/90">
               {section.timePrefix} {event.time}
             </p>
 
-            <p className="mt-4 text-sm leading-7 text-slate-300">{event.desc}</p>
-          </div>
+            <p className="cinematic-body mt-4 text-sm">{event.desc}</p>
+          </article>
         ))}
       </div>
     </section>

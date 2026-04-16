@@ -5,6 +5,13 @@
   --foreground: #171717;
   --font-geist-sans: "Trebuchet MS", "Segoe UI", sans-serif;
   --font-geist-mono: "Consolas", "Courier New", monospace;
+  --cinematic-ink-0: #040714;
+  --cinematic-ink-1: #081021;
+  --cinematic-ink-2: #111b31;
+  --cinematic-gold: #f3c86b;
+  --cinematic-gold-strong: #f59e0b;
+  --cinematic-text: #f7efe1;
+  --cinematic-muted: #9aa6bf;
 }
 
 @theme inline {
@@ -25,6 +32,241 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-geist-sans);
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at top, rgba(245, 158, 11, 0.12), transparent 28%),
+    radial-gradient(circle at bottom right, rgba(59, 130, 246, 0.08), transparent 22%),
+    linear-gradient(180deg, var(--cinematic-ink-0) 0%, #07101f 45%, #030611 100%);
+  color: var(--cinematic-text);
+}
+
+.cinematic-panel,
+.cinematic-panel-soft,
+.cinematic-panel-strong,
+.cinematic-card-grid,
+.cinematic-stat-card,
+.cinematic-empty-state {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  border-radius: 2rem;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+
+.cinematic-panel::before,
+.cinematic-panel-soft::before,
+.cinematic-panel-strong::before,
+.cinematic-card-grid::before,
+.cinematic-stat-card::before,
+.cinematic-empty-state::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at top left, rgba(243, 200, 107, 0.16), transparent 24%),
+    linear-gradient(135deg, rgba(255, 255, 255, 0.04), transparent 30%, rgba(15, 23, 42, 0.1));
+}
+
+.cinematic-panel > *,
+.cinematic-panel-soft > *,
+.cinematic-panel-strong > *,
+.cinematic-card-grid > *,
+.cinematic-stat-card > *,
+.cinematic-empty-state > * {
+  position: relative;
+  z-index: 1;
+}
+
+.cinematic-panel {
+  background:
+    linear-gradient(180deg, rgba(11, 18, 34, 0.9), rgba(7, 11, 24, 0.72)),
+    rgba(5, 10, 21, 0.72);
+  box-shadow:
+    0 28px 70px rgba(0, 0, 0, 0.28),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+.cinematic-panel-soft {
+  background:
+    linear-gradient(180deg, rgba(10, 16, 31, 0.84), rgba(6, 10, 21, 0.6)),
+    rgba(5, 10, 21, 0.66);
+  box-shadow:
+    0 24px 60px rgba(0, 0, 0, 0.22),
+    inset 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+
+.cinematic-panel-strong {
+  background:
+    linear-gradient(180deg, rgba(24, 17, 7, 0.28), rgba(10, 16, 31, 0.86)),
+    rgba(5, 10, 21, 0.8);
+  border-color: rgba(243, 200, 107, 0.18);
+  box-shadow:
+    0 32px 80px rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+.cinematic-card-grid {
+  background:
+    linear-gradient(180deg, rgba(9, 15, 29, 0.72), rgba(5, 10, 21, 0.56)),
+    rgba(5, 10, 21, 0.58);
+  box-shadow:
+    0 18px 40px rgba(0, 0, 0, 0.18),
+    inset 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+
+.cinematic-stat-card {
+  background:
+    linear-gradient(180deg, rgba(8, 13, 25, 0.82), rgba(5, 9, 20, 0.64)),
+    rgba(5, 10, 21, 0.64);
+  box-shadow:
+    0 18px 34px rgba(0, 0, 0, 0.16),
+    inset 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+
+.cinematic-empty-state {
+  background:
+    linear-gradient(180deg, rgba(8, 13, 25, 0.76), rgba(5, 9, 20, 0.58)),
+    rgba(5, 10, 21, 0.58);
+  border-style: dashed;
+}
+
+.cinematic-kicker {
+  color: var(--cinematic-gold);
+  text-transform: uppercase;
+  letter-spacing: 0.34em;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.cinematic-title {
+  color: var(--cinematic-text);
+  font-weight: 600;
+  letter-spacing: -0.04em;
+}
+
+.cinematic-body {
+  color: rgba(232, 237, 247, 0.74);
+  line-height: 1.9;
+}
+
+.cinematic-muted {
+  color: rgba(154, 166, 191, 0.92);
+}
+
+.cinematic-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9999px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--cinematic-text);
+  padding: 0.7rem 1.1rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  transition:
+    transform 180ms ease,
+    border-color 180ms ease,
+    background 180ms ease,
+    color 180ms ease,
+    box-shadow 180ms ease;
+}
+
+.cinematic-pill:hover {
+  transform: translateY(-2px);
+  border-color: rgba(243, 200, 107, 0.24);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.cinematic-button-primary,
+.cinematic-button-secondary,
+.cinematic-button-ghost {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 3.6rem;
+  border-radius: 9999px;
+  padding: 0.95rem 1.5rem;
+  font-size: 0.95rem;
+  font-weight: 700;
+  transition:
+    transform 180ms ease,
+    box-shadow 180ms ease,
+    border-color 180ms ease,
+    background 180ms ease,
+    color 180ms ease;
+}
+
+.cinematic-button-primary {
+  background: linear-gradient(180deg, #facc15, #f59e0b);
+  color: #0f172a;
+  box-shadow: 0 18px 46px rgba(245, 158, 11, 0.28);
+}
+
+.cinematic-button-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 24px 58px rgba(245, 158, 11, 0.34);
+}
+
+.cinematic-button-secondary {
+  border: 1px solid rgba(243, 200, 107, 0.18);
+  background:
+    linear-gradient(180deg, rgba(243, 200, 107, 0.12), rgba(7, 11, 24, 0.1)),
+    rgba(255, 255, 255, 0.03);
+  color: #fff3d4;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+
+.cinematic-button-secondary:hover {
+  transform: translateY(-2px);
+  border-color: rgba(243, 200, 107, 0.34);
+  background:
+    linear-gradient(180deg, rgba(243, 200, 107, 0.2), rgba(7, 11, 24, 0.16)),
+    rgba(255, 255, 255, 0.05);
+}
+
+.cinematic-button-ghost {
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--cinematic-text);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+
+.cinematic-button-ghost:hover {
+  transform: translateY(-2px);
+  border-color: rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.cinematic-input {
+  width: 100%;
+  border-radius: 1.35rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background:
+    linear-gradient(180deg, rgba(14, 22, 39, 0.92), rgba(9, 15, 29, 0.9)),
+    rgba(5, 10, 21, 0.78);
+  padding: 0.92rem 1rem;
+  color: var(--cinematic-text);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03);
+  outline: none;
+  transition:
+    border-color 180ms ease,
+    box-shadow 180ms ease,
+    background 180ms ease;
+}
+
+.cinematic-input:focus {
+  border-color: rgba(243, 200, 107, 0.42);
+  box-shadow:
+    0 0 0 3px rgba(245, 158, 11, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+.cinematic-input::placeholder {
+  color: rgba(154, 166, 191, 0.72);
 }
 @keyframes conquerorGlowPulse {
   0% {
@@ -165,5 +407,90 @@ body {
   50% {
     opacity: 0.82;
     transform: scale(1);
+  }
+}
+
+@keyframes hero-fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes hero-atmosphere-drift {
+  0% {
+    transform: translate3d(0, 0, 0) scale(1);
+    opacity: 0.72;
+  }
+
+  50% {
+    transform: translate3d(16px, -10px, 0) scale(1.08);
+    opacity: 0.95;
+  }
+
+  100% {
+    transform: translate3d(-12px, 14px, 0) scale(0.96);
+    opacity: 0.7;
+  }
+}
+
+@keyframes hero-rail-float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+.hero-intro {
+  animation: hero-fade-up 0.75s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.hero-intro-delay-1 {
+  animation-delay: 0.08s;
+}
+
+.hero-intro-delay-2 {
+  animation-delay: 0.16s;
+}
+
+.hero-intro-delay-3 {
+  animation-delay: 0.24s;
+}
+
+.hero-intro-delay-4 {
+  animation-delay: 0.32s;
+}
+
+.hero-intro-delay-5 {
+  animation-delay: 0.4s;
+}
+
+.hero-atmosphere-drift {
+  animation: hero-atmosphere-drift 12s ease-in-out infinite;
+}
+
+.hero-atmosphere-drift-delay {
+  animation-delay: -4s;
+}
+
+.hero-rail-float {
+  animation: hero-fade-up 0.75s cubic-bezier(0.22, 1, 0.36, 1) both,
+    hero-rail-float 8s ease-in-out 1.1s infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-intro,
+  .hero-atmosphere-drift,
+  .hero-rail-float {
+    animation: none !important;
   }
 }

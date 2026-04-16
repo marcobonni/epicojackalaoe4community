@@ -69,123 +69,117 @@ export default function CoachingSection({
   };
 
   return (
-    <section className="mx-auto max-w-7xl px-6 py-20 lg:px-8">
-      <div className="max-w-2xl">
-        <p className="text-sm font-semibold uppercase tracking-[0.3em] text-amber-300">
-          {section.badge}
-        </p>
+    <section className="mx-auto max-w-[1500px] px-6 py-20 lg:px-10">
+      <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+        <div className="max-w-2xl">
+          <p className="cinematic-kicker">{section.badge}</p>
+          <h2 className="cinematic-title mt-5 text-3xl sm:text-4xl">{section.title}</h2>
+          <p className="cinematic-body mt-4 text-sm sm:text-base">{section.description}</p>
+        </div>
 
-        <h2 className="mt-4 text-3xl font-bold text-white sm:text-4xl">
-          {section.title}
-        </h2>
-
-        <p className="mt-3 text-sm leading-7 text-slate-400">{section.description}</p>
+        {coaches.length > 0 ? (
+          <div className="flex items-center gap-3">
+            <button
+              type="button"
+              onClick={() => scroll("left")}
+              aria-label={section.scrollLeft}
+              disabled={!canScrollLeft}
+              className="cinematic-pill disabled:cursor-not-allowed disabled:opacity-45"
+            >
+              <span aria-hidden="true">&larr;</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => scroll("right")}
+              aria-label={section.scrollRight}
+              disabled={!canScrollRight}
+              className="cinematic-pill disabled:cursor-not-allowed disabled:opacity-45"
+            >
+              <span aria-hidden="true">&rarr;</span>
+            </button>
+          </div>
+        ) : null}
       </div>
 
-      <div className="relative mt-12 px-10">
+      <div className="relative mt-10">
         {coaches.length > 0 ? (
           <>
             {canScrollLeft ? (
-              <div className="pointer-events-none absolute inset-y-0 left-10 z-10 w-16 bg-gradient-to-r from-[#020617] to-transparent" />
+              <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-20 bg-gradient-to-r from-[#07101f] to-transparent" />
             ) : null}
 
             {canScrollRight ? (
-              <div className="pointer-events-none absolute inset-y-0 right-10 z-10 w-16 bg-gradient-to-l from-[#020617] to-transparent" />
-            ) : null}
-
-            {canScrollLeft ? (
-              <button
-                type="button"
-                onClick={() => scroll("left")}
-                aria-label={section.scrollLeft}
-                className="absolute left-0 top-1/2 z-20 -translate-x-1/2 -translate-y-1/2 rounded-full border border-slate-700 bg-slate-900 p-3 text-white shadow-lg shadow-black/30 transition hover:bg-slate-800"
-              >
-                ←
-              </button>
-            ) : null}
-
-            {canScrollRight ? (
-              <button
-                type="button"
-                onClick={() => scroll("right")}
-                aria-label={section.scrollRight}
-                className="absolute right-0 top-1/2 z-20 translate-x-1/2 -translate-y-1/2 rounded-full border border-slate-700 bg-slate-900 p-3 text-white shadow-lg shadow-black/30 transition hover:bg-slate-800"
-              >
-                →
-              </button>
+              <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-20 bg-gradient-to-l from-[#07101f] to-transparent" />
             ) : null}
 
             <div
               ref={scrollRef}
-              className="overflow-x-auto scroll-smooth [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
+              className="overflow-x-auto scroll-smooth pb-2 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
             >
-              <div className="flex gap-6 px-2">
-                {coaches.map((coach) => (
+              <div className="flex gap-5">
+                {coaches.map((coach, index) => (
                   <div
                     key={coach.name}
                     data-coach-card
-                    className="w-[320px] flex-none rounded-[2rem] border border-slate-800 bg-slate-900 p-6 shadow-lg shadow-black/20 sm:w-[360px] xl:w-[380px]"
+                    className={`${index === 0 ? "cinematic-panel-strong" : "cinematic-panel"} w-[320px] flex-none p-7 sm:w-[360px] xl:w-[390px]`}
                   >
                     <div className="flex items-start justify-between gap-4">
                       <div>
-                        <p className="text-sm font-semibold uppercase tracking-[0.2em] text-amber-300">
-                          {section.available}
-                        </p>
-
-                        <h3 className="mt-2 text-2xl font-semibold text-white">
+                        <p className="cinematic-kicker text-[11px]">{section.available}</p>
+                        <h3 className="mt-4 text-3xl font-semibold tracking-[-0.04em] text-white">
                           {coach.name}
                         </h3>
                       </div>
 
                       {coach.badge ? (
-                        <div className="rounded-xl border border-amber-400/20 bg-amber-400/10 px-3 py-1 text-xs font-semibold text-amber-300">
+                        <div className="rounded-full border border-amber-300/20 bg-amber-300/10 px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.2em] text-amber-100">
                           {coach.badge}
                         </div>
                       ) : null}
                     </div>
 
                     {coach.role ? (
-                      <p className="mt-3 text-sm text-slate-300">{coach.role}</p>
+                      <p className="mt-4 text-sm font-semibold text-slate-100/88">{coach.role}</p>
                     ) : null}
 
                     {coach.description ? (
-                      <p className="mt-4 text-sm leading-7 text-slate-400">
-                        {coach.description}
-                      </p>
+                      <p className="cinematic-body mt-4 text-sm">{coach.description}</p>
                     ) : null}
 
-                    <div className="mt-6 space-y-3 text-sm text-slate-300">
+                    <div className="mt-6 space-y-3 text-sm text-slate-200/84">
                       {coach.specialty ? (
-                        <div>
+                        <div className="cinematic-card-grid rounded-[1.4rem] p-4">
                           <span className="font-semibold text-white">{section.focus}:</span>{" "}
                           {coach.specialty}
                         </div>
                       ) : null}
 
-                      {coach.price ? (
-                        <div>
-                          <span className="font-semibold text-white">{section.price}:</span>{" "}
-                          {coach.price}
-                        </div>
-                      ) : null}
+                      <div className="grid gap-3 sm:grid-cols-2">
+                        {coach.price ? (
+                          <div className="cinematic-card-grid rounded-[1.4rem] p-4">
+                            <span className="font-semibold text-white">{section.price}:</span>{" "}
+                            {coach.price}
+                          </div>
+                        ) : null}
 
-                      {coach.availability ? (
-                        <div>
-                          <span className="font-semibold text-white">
-                            {section.availability}:
-                          </span>{" "}
-                          {coach.availability}
-                        </div>
-                      ) : null}
+                        {coach.availability ? (
+                          <div className="cinematic-card-grid rounded-[1.4rem] p-4">
+                            <span className="font-semibold text-white">
+                              {section.availability}:
+                            </span>{" "}
+                            {coach.availability}
+                          </div>
+                        ) : null}
+                      </div>
                     </div>
 
-                    <div className="mt-6 flex flex-wrap gap-3">
+                    <div className="mt-7 flex flex-wrap gap-3">
                       {coach.contactUrl ? (
                         <a
                           target="_blank"
                           rel="noopener noreferrer"
                           href={coach.contactUrl}
-                          className="rounded-2xl bg-amber-400 px-5 py-3 text-sm font-semibold text-slate-950 transition hover:-translate-y-0.5"
+                          className="cinematic-button-primary"
                         >
                           {section.contact}
                         </a>
@@ -196,7 +190,7 @@ export default function CoachingSection({
                           target="_blank"
                           rel="noopener noreferrer"
                           href={coach.profileUrl}
-                          className="rounded-2xl border border-slate-700 bg-slate-950/70 px-5 py-3 text-sm font-semibold text-slate-100 transition hover:border-slate-500"
+                          className="cinematic-button-ghost"
                         >
                           {section.profile}
                         </a>
@@ -208,7 +202,7 @@ export default function CoachingSection({
             </div>
           </>
         ) : (
-          <div className="rounded-[2rem] border border-slate-800 bg-slate-900 p-8 text-sm text-slate-400">
+          <div className="cinematic-empty-state p-8 text-sm text-slate-300/74">
             {section.empty}
           </div>
         )}

@@ -49,9 +49,9 @@ export default function EmailPasswordLoginForm({
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
+    <form onSubmit={handleSubmit} className="space-y-5">
       <label htmlFor="login-email" className="block">
-        <span className="mb-2 block text-sm font-medium text-slate-200">
+        <span className="mb-2 block text-xs font-semibold uppercase tracking-[0.26em] text-amber-200/88">
           {messages.auth.email}
         </span>
         <input
@@ -60,12 +60,12 @@ export default function EmailPasswordLoginForm({
           type="email"
           autoComplete="email"
           required
-          className="w-full rounded-2xl border border-slate-700 bg-slate-900 px-4 py-3 text-sm text-white outline-none transition focus:border-amber-300"
+          className="cinematic-input text-sm"
         />
       </label>
 
       <label htmlFor="login-password" className="block">
-        <span className="mb-2 block text-sm font-medium text-slate-200">
+        <span className="mb-2 block text-xs font-semibold uppercase tracking-[0.26em] text-amber-200/88">
           {messages.auth.password}
         </span>
         <input
@@ -74,12 +74,12 @@ export default function EmailPasswordLoginForm({
           type="password"
           autoComplete="current-password"
           required
-          className="w-full rounded-2xl border border-slate-700 bg-slate-900 px-4 py-3 text-sm text-white outline-none transition focus:border-amber-300"
+          className="cinematic-input text-sm"
         />
       </label>
 
       {errorMessage ? (
-        <div className="rounded-2xl border border-rose-500/30 bg-rose-500/10 p-4 text-sm leading-6 text-rose-100">
+        <div className="cinematic-panel-soft rounded-[1.6rem] border border-rose-500/26 bg-rose-500/10 p-4 text-sm leading-6 text-rose-100">
           {errorMessage}
         </div>
       ) : null}
@@ -87,7 +87,7 @@ export default function EmailPasswordLoginForm({
       <button
         type="submit"
         disabled={isPending}
-        className="flex w-full items-center justify-center rounded-2xl bg-amber-400 px-4 py-4 text-sm font-semibold text-slate-950 transition hover:bg-amber-300 disabled:cursor-not-allowed disabled:opacity-70"
+        className="cinematic-button-primary flex w-full disabled:cursor-not-allowed disabled:opacity-70"
       >
         {isPending ? messages.auth.loginPending : messages.auth.loginSubmit}
       </button>

@@ -27,62 +27,51 @@ export default function TwitchSection({
   const section = messages.home.twitch;
 
   return (
-    <section className="mx-auto max-w-7xl px-6 py-20 lg:px-8">
-      <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
-        <div className="max-w-2xl">
-          <p className="text-sm font-semibold uppercase tracking-[0.3em] text-amber-300">
-            {section.badge}
-          </p>
-
-          <h2 className="mt-4 text-3xl font-bold text-white sm:text-4xl">
-            {section.title}
-          </h2>
-
-          <p className="mt-3 text-sm leading-7 text-slate-400">
-            {section.description}
-          </p>
-        </div>
+    <section className="mx-auto max-w-[1500px] px-6 py-20 lg:px-10">
+      <div className="max-w-2xl">
+        <p className="cinematic-kicker">{section.badge}</p>
+        <h2 className="cinematic-title mt-5 text-3xl sm:text-4xl">{section.title}</h2>
+        <p className="cinematic-body mt-4 text-sm sm:text-base">{section.description}</p>
       </div>
 
       <div className="mt-10 space-y-8">
         {primaryStreamer ? (
-          <div className="overflow-hidden rounded-[2rem] border border-slate-800 bg-slate-900 p-5 shadow-lg shadow-black/20">
-            <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
+          <div className="cinematic-panel-strong p-5 sm:p-6">
+            <div className="mb-5 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
               <div>
-                <p className="text-sm font-semibold uppercase tracking-[0.2em] text-amber-300">
-                  {section.featured}
-                </p>
-
-                <h3 className="mt-2 text-2xl font-semibold text-white">
+                <p className="cinematic-kicker text-[11px]">{section.featured}</p>
+                <h3 className="mt-4 text-3xl font-semibold tracking-[-0.04em] text-white">
                   {primaryStreamer.name}
                 </h3>
 
-                <div className="mt-3 flex flex-wrap items-center gap-3 text-sm text-slate-300">
+                <div className="mt-4 flex flex-wrap items-center gap-3 text-sm text-slate-300/84">
                   <TwitchStatusBadge isLive={Boolean(primaryStreamer.isLive)} />
                   {primaryStreamer.gameName && <span>{primaryStreamer.gameName}</span>}
-                  {typeof primaryStreamer.viewerCount === "number" && (
+                  {typeof primaryStreamer.viewerCount === "number" ? (
                     <span>
                       {primaryStreamer.viewerCount} {messages.common.viewerCount}
                     </span>
-                  )}
+                  ) : null}
                 </div>
 
-                {primaryStreamer.title && (
-                  <p className="mt-3 text-sm text-slate-400">{primaryStreamer.title}</p>
-                )}
+                {primaryStreamer.title ? (
+                  <p className="cinematic-body mt-4 max-w-2xl text-sm">
+                    {primaryStreamer.title}
+                  </p>
+                ) : null}
               </div>
 
               <a
                 target="_blank"
                 rel="noopener noreferrer"
                 href={`https://www.twitch.tv/${primaryStreamer.name}`}
-                className="rounded-xl bg-purple-600 px-4 py-2 text-sm font-semibold text-white transition hover:-translate-y-0.5"
+                className="cinematic-button-secondary shrink-0"
               >
                 {section.open}
               </a>
             </div>
 
-            <div className="overflow-hidden rounded-[1.5rem] border border-slate-800 bg-black">
+            <div className="overflow-hidden rounded-[1.7rem] border border-white/8 bg-black">
               <div className="relative w-full" style={{ paddingBottom: "56.25%" }}>
                 <iframe
                   title={`Twitch player ${primaryStreamer.name}`}
@@ -97,41 +86,33 @@ export default function TwitchSection({
         ) : null}
 
         <div>
-          <div className="mb-4">
-            <p className="text-sm font-semibold uppercase tracking-[0.2em] text-slate-300">
-              {section.secondaryBadge}
-            </p>
-
-            <h3 className="mt-2 text-2xl font-semibold text-white">
-              {section.secondaryTitle}
-            </h3>
+          <div className="mb-5">
+            <p className="cinematic-kicker text-slate-300/74">{section.secondaryBadge}</p>
+            <h3 className="cinematic-title mt-4 text-2xl">{section.secondaryTitle}</h3>
           </div>
 
-          <div className="grid gap-6 lg:grid-cols-2 xl:grid-cols-3">
+          <div className="grid gap-5 lg:grid-cols-2 xl:grid-cols-3">
             {secondaryStreamers.length > 0 ? (
               secondaryStreamers.map((streamer) => (
-                <div
-                  key={streamer.name}
-                  className="overflow-hidden rounded-[2rem] border border-slate-800 bg-slate-900 p-4 shadow-lg shadow-black/20"
-                >
+                <div key={streamer.name} className="cinematic-panel p-4">
                   <div className="mb-4 flex items-start justify-between gap-4">
                     <div>
-                      <p className="text-sm font-semibold uppercase tracking-[0.2em] text-purple-300">
+                      <p className="cinematic-kicker text-[11px] text-purple-200/90">
                         Twitch Stream
                       </p>
 
-                      <h3 className="mt-2 text-xl font-semibold text-white">
+                      <h3 className="mt-4 text-2xl font-semibold tracking-[-0.03em] text-white">
                         {streamer.name}
                       </h3>
 
-                      <div className="mt-3 flex flex-wrap items-center gap-3 text-sm text-slate-300">
+                      <div className="mt-4 flex flex-wrap items-center gap-3 text-sm text-slate-300/84">
                         <TwitchStatusBadge isLive={Boolean(streamer.isLive)} />
                         {streamer.gameName && <span>{streamer.gameName}</span>}
-                        {typeof streamer.viewerCount === "number" && (
+                        {typeof streamer.viewerCount === "number" ? (
                           <span>
                             {streamer.viewerCount} {messages.common.viewerCount}
                           </span>
-                        )}
+                        ) : null}
                       </div>
                     </div>
 
@@ -139,13 +120,13 @@ export default function TwitchSection({
                       target="_blank"
                       rel="noopener noreferrer"
                       href={`https://www.twitch.tv/${streamer.name}`}
-                      className="rounded-xl bg-purple-600 px-4 py-2 text-sm font-semibold text-white transition hover:-translate-y-0.5"
+                      className="cinematic-button-ghost"
                     >
                       {section.open}
                     </a>
                   </div>
 
-                  <div className="overflow-hidden rounded-[1.5rem] border border-slate-800 bg-black">
+                  <div className="overflow-hidden rounded-[1.5rem] border border-white/8 bg-black">
                     <div className="relative w-full" style={{ paddingBottom: "56.25%" }}>
                       <iframe
                         title={`Twitch player ${streamer.name}`}
@@ -159,7 +140,7 @@ export default function TwitchSection({
                 </div>
               ))
             ) : (
-              <div className="rounded-[2rem] border border-slate-800 bg-slate-900 p-8 text-sm text-slate-400">
+              <div className="cinematic-empty-state p-8 text-sm text-slate-300/74">
                 {section.empty}
               </div>
             )}

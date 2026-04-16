@@ -33,7 +33,7 @@ export default function SignOutButton({ className }: SignOutButtonProps) {
       disabled={isPending}
       className={`${
         className ??
-        "rounded-full border border-slate-700 px-4 py-2 text-sm font-semibold text-slate-100 transition hover:border-amber-300 hover:text-amber-200"
+        "cinematic-button-ghost"
       } ${isPending ? "cursor-not-allowed opacity-75 saturate-75" : ""}`}
     >
       {isPending ? messages.auth.signOutPending : messages.auth.signOut}

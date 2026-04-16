@@ -50,46 +50,42 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
       : null;
 
   return (
-    <div className="grid gap-8 lg:grid-cols-[1.15fr_0.85fr]">
-      <section className="rounded-[2rem] border border-amber-400/20 bg-slate-950/70 p-8 shadow-2xl shadow-black/30">
-        <p className="text-sm uppercase tracking-[0.3em] text-amber-300">
-          {messages.loginPage.eyebrow}
-        </p>
-        <h1 className="mt-4 max-w-2xl text-4xl font-bold tracking-tight text-white sm:text-5xl">
+    <div className="grid gap-8 lg:grid-cols-[1.06fr_0.94fr]">
+      <section className="cinematic-panel-strong p-8 sm:p-10">
+        <p className="cinematic-kicker">{messages.loginPage.eyebrow}</p>
+        <h1 className="cinematic-title mt-5 max-w-3xl text-4xl sm:text-5xl">
           {messages.loginPage.title}
         </h1>
-        <p className="mt-4 max-w-2xl text-base leading-7 text-slate-300">
+        <p className="cinematic-body mt-5 max-w-2xl text-sm sm:text-base">
           {messages.loginPage.description}
         </p>
 
         <div className="mt-8 grid gap-4 sm:grid-cols-3">
-          {messages.loginPage.cards.map((item) => (
+          {messages.loginPage.cards.map((item, index) => (
             <div
               key={item.title}
-              className="rounded-3xl border border-slate-800 bg-slate-900/80 p-5"
+              className={`${index === 0 ? "cinematic-stat-card" : "cinematic-card-grid"} p-5`}
             >
               <h2 className="text-lg font-semibold text-white">{item.title}</h2>
-              <p className="mt-2 text-sm leading-6 text-slate-400">{item.text}</p>
+              <p className="mt-3 text-sm leading-7 text-slate-300/74">{item.text}</p>
             </div>
           ))}
         </div>
       </section>
 
-      <section className="rounded-[2rem] border border-slate-800 bg-slate-950/80 p-8 shadow-2xl shadow-black/30">
-        <h2 className="text-2xl font-semibold text-white">{messages.loginPage.formTitle}</h2>
-        <p className="mt-3 text-sm leading-6 text-slate-400">
-          {messages.loginPage.formDescription}
-        </p>
+      <section className="cinematic-panel p-8 sm:p-10">
+        <h2 className="cinematic-title text-2xl">{messages.loginPage.formTitle}</h2>
+        <p className="cinematic-body mt-3 text-sm">{messages.loginPage.formDescription}</p>
 
         <div className="mt-8 space-y-5">
           {errorMessage ? (
-            <div className="rounded-2xl border border-rose-500/30 bg-rose-500/10 p-4 text-sm leading-6 text-rose-100">
+            <div className="cinematic-panel-soft rounded-[1.6rem] border border-rose-500/26 bg-rose-500/10 p-4 text-sm leading-6 text-rose-100">
               {errorMessage}
             </div>
           ) : null}
 
           {infoMessage ? (
-            <div className="rounded-2xl border border-emerald-500/30 bg-emerald-500/10 p-4 text-sm leading-6 text-emerald-100">
+            <div className="cinematic-panel-soft rounded-[1.6rem] border border-emerald-500/28 bg-emerald-500/10 p-4 text-sm leading-6 text-emerald-100">
               {infoMessage}
             </div>
           ) : null}
@@ -98,7 +94,7 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
             <div className="space-y-5">
               <EmailPasswordLoginForm />
 
-              <details className="group rounded-2xl border border-slate-800 bg-slate-900/70 p-4">
+              <details className="cinematic-card-grid group rounded-[1.7rem] p-5">
                 <summary className="cursor-pointer list-none text-sm font-semibold text-white marker:hidden">
                   <span className="flex items-center justify-between gap-4">
                     <span>{messages.loginPage.forgotPassword}</span>
@@ -109,7 +105,7 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
                 </summary>
 
                 <div className="mt-4 space-y-4">
-                  <p className="text-sm leading-6 text-slate-400">
+                  <p className="text-sm leading-7 text-slate-300/74">
                     {messages.loginPage.forgotDescription}
                   </p>
                   <PasswordRecoveryRequestForm />
@@ -117,25 +113,25 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
               </details>
             </div>
           ) : (
-            <div className="rounded-2xl border border-amber-400/30 bg-amber-400/10 p-4 text-sm leading-6 text-amber-100">
+            <div className="cinematic-panel-soft rounded-[1.6rem] border border-amber-400/26 bg-amber-400/10 p-4 text-sm leading-6 text-amber-100">
               {messages.loginPage.missingConfig}
             </div>
           )}
 
-          <div className="rounded-2xl border border-slate-800 bg-slate-900/70 p-4 text-sm leading-6 text-slate-300">
+          <div className="cinematic-card-grid rounded-[1.7rem] p-5 text-sm leading-6 text-slate-300/84">
             {messages.loginPage.registerPrompt}
             <LoadingLink
               href="/register"
               prefetch={false}
-              className="mt-3 flex items-center justify-center rounded-xl border border-slate-700 px-4 py-3 font-semibold text-slate-100 transition hover:border-amber-300 hover:text-amber-200"
+              className="cinematic-button-secondary mt-4 w-full"
             >
               {messages.loginPage.registerCta}
             </LoadingLink>
           </div>
 
-          <div className="rounded-2xl border border-slate-800 bg-slate-900/70 p-4 text-sm leading-6 text-slate-300">
+          <div className="cinematic-card-grid rounded-[1.7rem] p-5 text-sm leading-6 text-slate-300/84">
             {messages.loginPage.callbackHelp}
-            <span className="mt-2 block rounded-xl bg-slate-950 px-3 py-2 font-mono text-xs text-amber-200">
+            <span className="mt-3 block rounded-2xl border border-white/8 bg-[#050916] px-4 py-3 font-mono text-xs text-amber-100">
               /auth/callback
             </span>
           </div>

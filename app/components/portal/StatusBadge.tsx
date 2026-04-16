@@ -20,7 +20,7 @@ export default function StatusBadge(props: StatusBadgeProps) {
   if (props.kind === "match") {
     return (
       <span
-        className={`inline-flex rounded-full border px-3 py-1 text-xs font-semibold ${getMatchStatusTone(
+        className={`inline-flex rounded-full border px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.18em] shadow-[inset_0_1px_0_rgba(255,255,255,0.03)] ${getMatchStatusTone(
           props.status
         )}`}
       >
@@ -42,7 +42,7 @@ export default function StatusBadge(props: StatusBadgeProps) {
 
   return (
     <span
-      className={`inline-flex rounded-full border px-3 py-1 text-xs font-semibold ${palette[props.status]}`}
+      className={`inline-flex rounded-full border px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.18em] shadow-[inset_0_1px_0_rgba(255,255,255,0.03)] ${palette[props.status]}`}
     >
       {messages.tournamentsPage.tournamentStatuses[props.status]}
     </span>

@@ -8,6 +8,20 @@ type PortalShellProps = {
   children: React.ReactNode;
 };
 
+function NavLink({
+  href,
+  children,
+}: {
+  href: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <LoadingLink href={href} prefetch={false} className="cinematic-pill">
+      {children}
+    </LoadingLink>
+  );
+}
+
 export default async function PortalShell({
   session,
   children,
@@ -16,83 +30,53 @@ export default async function PortalShell({
   const shell = messages.portalShell;
 
   return (
-    <div className="min-h-screen bg-[radial-gradient(circle_at_top,rgba(245,158,11,0.16),transparent_30%),linear-gradient(180deg,#020617_0%,#0f172a_48%,#111827_100%)] text-slate-100">
-      <header className="border-b border-slate-800/80 bg-slate-950/70 backdrop-blur">
-        <div className="mx-auto flex max-w-7xl flex-col gap-4 px-4 py-4 sm:px-6 lg:flex-row lg:items-center lg:justify-between lg:px-8">
-          <div>
-            <LoadingLink href="/" className="text-sm uppercase tracking-[0.35em] text-amber-300">
-              EpicoJackal AoE4
-            </LoadingLink>
-            <p className="mt-2 text-sm text-slate-400">{shell.tagline}</p>
-          </div>
+    <div className="min-h-screen bg-[radial-gradient(circle_at_top,rgba(245,158,11,0.18),transparent_26%),radial-gradient(circle_at_bottom_right,rgba(59,130,246,0.08),transparent_20%),linear-gradient(180deg,#030611_0%,#09101f_48%,#030611_100%)] text-slate-100">
+      <header className="sticky top-0 z-40 border-b border-white/8 bg-[rgba(4,7,18,0.72)] backdrop-blur-xl">
+        <div className="mx-auto flex max-w-[1500px] flex-col gap-5 px-4 py-4 sm:px-6 lg:px-10">
+          <div className="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
+            <div className="max-w-2xl">
+              <LoadingLink
+                href="/"
+                className="inline-flex items-center rounded-full border border-amber-300/18 bg-amber-300/10 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.38em] text-amber-200"
+              >
+                EpicoJackal AoE4
+              </LoadingLink>
+              <p className="mt-4 max-w-xl text-sm leading-7 text-slate-300/78">
+                {shell.tagline}
+              </p>
+            </div>
 
-          <div className="flex flex-wrap items-center gap-3">
-            <LoadingLink
-              href="/tournaments"
-              prefetch={false}
-              className="rounded-full border border-slate-700 px-4 py-2 text-sm font-semibold text-slate-200 transition hover:border-amber-300 hover:text-amber-200"
-            >
-              {shell.tournaments}
-            </LoadingLink>
-
-            <LoadingLink
-              href="/clanwars/risiko"
-              prefetch={false}
-              className="rounded-full border border-slate-700 px-4 py-2 text-sm font-semibold text-slate-200 transition hover:border-amber-300 hover:text-amber-200"
-            >
-              {shell.clanWars}
-            </LoadingLink>
-
-            {session?.user ? (
-              <>
-                <LoadingLink
-                  href="/dashboard"
-                  prefetch={false}
-                  className="rounded-full border border-slate-700 px-4 py-2 text-sm font-semibold text-slate-200 transition hover:border-amber-300 hover:text-amber-200"
-                >
-                  {shell.dashboard}
-                </LoadingLink>
-
-                {hasRole(session, "admin") ? (
-                  <LoadingLink
-                    href="/admin"
-                    prefetch={false}
-                    className="rounded-full bg-amber-400 px-4 py-2 text-sm font-semibold text-slate-950 transition hover:bg-amber-300"
-                  >
-                    {shell.admin}
+            <div className="cinematic-panel-soft flex items-center gap-3 rounded-[1.7rem] px-4 py-3">
+              {session?.user ? (
+                <>
+                  <div className="hidden rounded-full border border-white/10 bg-white/[0.04] px-4 py-2 text-sm text-slate-200 sm:block">
+                    {session.user.name}
+                  </div>
+                  <SignOutButton />
+                </>
+              ) : (
+                <>
+                  <NavLink href="/register">{shell.register}</NavLink>
+                  <LoadingLink href="/login" prefetch={false} className="cinematic-button-primary">
+                    {shell.login}
                   </LoadingLink>
-                ) : null}
-
-                <div className="rounded-full border border-slate-700 bg-slate-900/80 px-4 py-2 text-sm text-slate-200">
-                  {session.user.name}
-                </div>
-
-                <SignOutButton />
-              </>
-            ) : (
-              <>
-                <LoadingLink
-                  href="/register"
-                  prefetch={false}
-                  className="rounded-full border border-slate-700 px-4 py-2 text-sm font-semibold text-slate-200 transition hover:border-amber-300 hover:text-amber-200"
-                >
-                  {shell.register}
-                </LoadingLink>
-
-                <LoadingLink
-                  href="/login"
-                  prefetch={false}
-                  className="rounded-full bg-amber-400 px-4 py-2 text-sm font-semibold text-slate-950 transition hover:bg-amber-300"
-                >
-                  {shell.login}
-                </LoadingLink>
-              </>
-            )}
+                </>
+              )}
+            </div>
           </div>
+
+          <nav className="flex flex-wrap gap-3">
+            <NavLink href="/tournaments">{shell.tournaments}</NavLink>
+            <NavLink href="/clanwars/risiko">{shell.clanWars}</NavLink>
+            {session?.user ? <NavLink href="/dashboard">{shell.dashboard}</NavLink> : null}
+            {hasRole(session, "admin") ? <NavLink href="/admin">{shell.admin}</NavLink> : null}
+          </nav>
         </div>
       </header>
 
-      <main className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">{children}</main>
+      <main className="mx-auto max-w-[1500px] px-4 py-10 sm:px-6 lg:px-10 lg:py-12">
+        {children}
+      </main>
     </div>
   );
 }

@@ -32,27 +32,25 @@ export default async function TournamentsPage() {
 
   return (
     <div className="space-y-8">
-      <section className="rounded-[2rem] border border-amber-400/20 bg-slate-950/75 p-8 shadow-2xl shadow-black/30">
-        <p className="text-sm uppercase tracking-[0.3em] text-amber-300">
-          {messages.tournamentsPage.eyebrow}
-        </p>
-        <h1 className="mt-4 text-4xl font-bold tracking-tight text-white">
+      <section className="cinematic-panel-strong p-8 sm:p-10">
+        <p className="cinematic-kicker">{messages.tournamentsPage.eyebrow}</p>
+        <h1 className="cinematic-title mt-5 text-4xl sm:text-5xl">
           {messages.tournamentsPage.title}
         </h1>
-        <p className="mt-4 max-w-3xl text-base leading-7 text-slate-300">
+        <p className="cinematic-body mt-5 max-w-3xl text-sm sm:text-base">
           {messages.tournamentsPage.description}
         </p>
       </section>
 
       {loadError ? (
-        <section className="rounded-[2rem] border border-rose-500/25 bg-rose-950/20 p-6 shadow-2xl shadow-black/20">
-          <p className="text-sm uppercase tracking-[0.3em] text-rose-200">
+        <section className="cinematic-panel-soft rounded-[1.8rem] border border-rose-500/25 bg-rose-950/20 p-6">
+          <p className="cinematic-kicker text-rose-200">
             {messages.tournamentsPage.serviceUnavailable}
           </p>
-          <p className="mt-3 max-w-3xl text-sm leading-7 text-rose-100">
+          <p className="mt-4 max-w-3xl text-sm leading-7 text-rose-100/88">
             {messages.tournamentsPage.serviceDescription}
           </p>
-          <p className="mt-3 rounded-2xl border border-rose-400/20 bg-slate-950/60 px-4 py-3 font-mono text-xs text-rose-100">
+          <p className="mt-4 rounded-2xl border border-rose-400/20 bg-slate-950/60 px-4 py-3 font-mono text-xs text-rose-100">
             {loadError}
           </p>
         </section>
@@ -60,7 +58,7 @@ export default async function TournamentsPage() {
 
       <section className="grid gap-6 lg:grid-cols-2">
         {tournaments.length > 0 ? (
-          tournaments.map((tournament) => {
+          tournaments.map((tournament, index) => {
             const canJoin =
               Boolean(session?.user) &&
               !tournament.my_registration_status &&
@@ -79,24 +77,24 @@ export default async function TournamentsPage() {
             return (
               <article
                 key={tournament.id}
-                className="rounded-[2rem] border border-slate-800 bg-slate-950/75 p-7 shadow-2xl shadow-black/20"
+                className={`${index % 3 === 1 ? "cinematic-panel-strong" : "cinematic-panel"} p-7`}
               >
                 {tournament.banner_url ? (
-                  <div className="mb-6 overflow-hidden rounded-[1.75rem] border border-slate-800">
+                  <div className="mb-6 overflow-hidden rounded-[1.75rem] border border-white/8">
                     <img
                       src={tournament.banner_url}
                       alt={`Banner ${tournament.title}`}
-                      className="h-48 w-full object-cover"
+                      className="h-56 w-full object-cover"
                     />
                   </div>
                 ) : null}
 
                 <div className="flex flex-wrap items-start justify-between gap-4">
                   <div>
-                    <p className="text-sm uppercase tracking-[0.28em] text-amber-300">
+                    <p className="cinematic-kicker text-[11px]">
                       {messages.tournamentsPage.formatLabels[tournament.format]}
                     </p>
-                    <h2 className="mt-2 text-2xl font-semibold text-white">
+                    <h2 className="mt-4 text-3xl font-semibold tracking-[-0.04em] text-white">
                       {tournament.title}
                     </h2>
                   </div>
@@ -104,25 +102,25 @@ export default async function TournamentsPage() {
                   <StatusBadge kind="tournament" status={tournament.status} />
                 </div>
 
-                <p className="mt-4 text-sm leading-7 text-slate-400">
+                <p className="cinematic-body mt-5 text-sm">
                   {tournament.description || messages.tournamentsPage.noDescription}
                 </p>
 
                 <div className="mt-6 grid gap-4 sm:grid-cols-2">
-                  <div className="rounded-3xl border border-slate-800 bg-slate-900/70 p-5">
-                    <p className="text-xs uppercase tracking-[0.26em] text-slate-500">
+                  <div className="cinematic-stat-card p-5">
+                    <p className="text-xs uppercase tracking-[0.26em] text-slate-400">
                       {messages.tournamentsPage.participants}
                     </p>
-                    <p className="mt-3 text-2xl font-semibold text-white">
+                    <p className="mt-4 text-3xl font-semibold tracking-[-0.04em] text-white">
                       {tournament.participant_count ?? 0}/{tournament.max_participants}
                     </p>
                   </div>
 
-                  <div className="rounded-3xl border border-slate-800 bg-slate-900/70 p-5">
-                    <p className="text-xs uppercase tracking-[0.26em] text-slate-500">
+                  <div className="cinematic-stat-card p-5">
+                    <p className="text-xs uppercase tracking-[0.26em] text-slate-400">
                       {messages.tournamentsPage.rules}
                     </p>
-                    <p className="mt-3 text-sm text-slate-200">
+                    <p className="mt-4 text-sm font-semibold text-white">
                       {tournament.participant_mode} • BO{tournament.best_of}
                     </p>
                   </div>
@@ -131,7 +129,7 @@ export default async function TournamentsPage() {
                 <div className="mt-6 flex flex-wrap gap-3">
                   <LoadingLink
                     href={`/tournaments/${tournament.slug}`}
-                    className="rounded-full bg-amber-400 px-4 py-2 text-sm font-semibold text-slate-950 transition hover:bg-amber-300"
+                    className="cinematic-button-primary"
                   >
                     {messages.tournamentsPage.openTournament}
                   </LoadingLink>
@@ -155,7 +153,7 @@ export default async function TournamentsPage() {
                       <PendingSubmitButton
                         idleLabel={joinLabel}
                         pendingLabel={messages.tournamentsPage.joinPending}
-                        className="rounded-full border border-slate-700 px-4 py-2 text-sm font-semibold text-slate-100 transition hover:border-amber-300 hover:text-amber-200"
+                        className="cinematic-button-ghost"
                       />
                     </form>
                   ) : null}
@@ -164,11 +162,11 @@ export default async function TournamentsPage() {
             );
           })
         ) : (
-          <div className="rounded-[2rem] border border-dashed border-slate-700 bg-slate-950/70 p-10 text-center lg:col-span-2">
+          <div className="cinematic-empty-state p-10 text-center lg:col-span-2">
             <h2 className="text-2xl font-semibold text-white">
               {messages.tournamentsPage.emptyTitle}
             </h2>
-            <p className="mx-auto mt-4 max-w-2xl text-sm leading-7 text-slate-400">
+            <p className="mx-auto mt-4 max-w-2xl text-sm leading-8 text-slate-300/74">
               {messages.tournamentsPage.emptyDescription}
             </p>
           </div>

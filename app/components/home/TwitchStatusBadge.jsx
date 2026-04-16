@@ -7,10 +7,10 @@ export default function TwitchStatusBadge({ isLive }) {
 
   return (
     <div
-      className={`rounded-full px-3 py-1 text-xs font-semibold ${
+      className={`rounded-full border px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.18em] ${
         isLive
-          ? "border border-rose-400/30 bg-rose-400/10 text-rose-300"
-          : "border border-slate-700 bg-slate-800 text-slate-300"
+          ? "border-rose-400/30 bg-rose-400/10 text-rose-200"
+          : "border-white/10 bg-white/[0.05] text-slate-300"
       }`}
     >
       {isLive ? messages.common.live : messages.common.offline}

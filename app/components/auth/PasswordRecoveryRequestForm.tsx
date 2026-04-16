@@ -48,9 +48,9 @@ export default function PasswordRecoveryRequestForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
+    <form onSubmit={handleSubmit} className="space-y-5">
       <label htmlFor="recovery-email" className="block">
-        <span className="mb-2 block text-sm font-medium text-slate-200">
+        <span className="mb-2 block text-xs font-semibold uppercase tracking-[0.26em] text-amber-200/88">
           {messages.auth.accountEmail}
         </span>
         <input
@@ -59,18 +59,18 @@ export default function PasswordRecoveryRequestForm() {
           type="email"
           autoComplete="email"
           required
-          className="w-full rounded-2xl border border-slate-700 bg-slate-900 px-4 py-3 text-sm text-white outline-none transition focus:border-amber-300"
+          className="cinematic-input text-sm"
         />
       </label>
 
       {errorMessage ? (
-        <div className="rounded-2xl border border-rose-500/30 bg-rose-500/10 p-4 text-sm leading-6 text-rose-100">
+        <div className="cinematic-panel-soft rounded-[1.6rem] border border-rose-500/26 bg-rose-500/10 p-4 text-sm leading-6 text-rose-100">
           {errorMessage}
         </div>
       ) : null}
 
       {successMessage ? (
-        <div className="rounded-3xl border border-emerald-500/30 bg-emerald-500/10 p-5 text-sm leading-6 text-emerald-100">
+        <div className="cinematic-panel-soft rounded-[1.8rem] border border-emerald-500/28 bg-emerald-500/10 p-5 text-sm leading-6 text-emerald-100">
           <p className="text-base font-semibold text-white">
             {messages.auth.recoverySuccessTitle}
           </p>
@@ -93,7 +93,7 @@ export default function PasswordRecoveryRequestForm() {
       <button
         type="submit"
         disabled={isPending}
-        className="flex w-full items-center justify-center rounded-2xl border border-slate-700 px-4 py-4 text-sm font-semibold text-slate-100 transition hover:border-amber-300 hover:text-amber-200 disabled:cursor-not-allowed disabled:opacity-70"
+        className="cinematic-button-ghost flex w-full disabled:cursor-not-allowed disabled:opacity-70"
       >
         {isPending ? messages.auth.recoveryPending : messages.auth.recoverySubmit}
       </button>

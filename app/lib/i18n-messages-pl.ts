@@ -25,10 +25,11 @@ export const plMessages: Dictionary = {
     ...enMessages.home,
     hero: {
       ...enMessages.home.hero,
+      statsHeading: "Hub spolecznosci AoE4",
       title: "Twoja spolecznosc Discord do Age of Empires na co dzien",
       description:
         "Serwer stworzony dla fanow Age of Empires: mecze, wydarzenia, turnieje, porady strategiczne i prawdziwa spolecznosc do wspolnej gry.",
-      ctaJoin: "Dolacz do serwera",
+      ctaJoin: "Dolacz do Discorda",
       ctaItalianLeaderboard: "Ranking wloski",
       ctaNorthLeaderboard: "Ranking polnoc",
       ctaCenterLeaderboard: "Ranking centrum",
@@ -45,11 +46,10 @@ export const plMessages: Dictionary = {
     twitch: {
       ...enMessages.home.twitch,
       badge: "Na zywo na Twitchu",
-      title: "Wyroznieni streamerzy i dodatkowe kanaly",
-      description:
-        "Glowny streamer jest wybierany automatycznie sposrod tych, ktorzy sa na zywo, z priorytetem dla najwyzszej liczby widzow. Jesli nikt nie jest online, pokazujemy streamera rezerwowego.",
+      title: "Streamerzy spolecznosci",
+      description: "",
       featured: "Wyrozniony streamer",
-      secondaryBadge: "Dodatkowi streamerzy",
+      secondaryBadge: "Inni streamerzy",
       secondaryTitle: "Inne kanaly spolecznosci",
       open: "Otworz na Twitchu",
       empty: "Brak skonfigurowanych streamerow.",

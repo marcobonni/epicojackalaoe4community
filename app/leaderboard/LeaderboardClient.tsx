@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import type { LeaderboardPlayer } from "@/app/lib/aoe4world";
 
 type SortKey =
@@ -26,6 +26,69 @@ type LeaderboardClientProps = {
   background?: string;
   anthem?: string;
 };
+
+const leaderboardTabs = [
+  {
+    label: "Italia",
+    href: "/leaderboard",
+    accent: "from-amber-300/70 via-amber-200/24 to-transparent",
+    activeClass:
+      "border-amber-200/35 border-b-transparent bg-[linear-gradient(180deg,rgba(110,76,6,0.98),rgba(56,38,6,0.98))] text-[#fff3c6] shadow-[0_22px_46px_rgba(112,76,10,0.34)]",
+    inactiveClass:
+      "translate-y-3 border-amber-200/16 bg-[linear-gradient(180deg,rgba(76,55,10,0.72),rgba(38,28,7,0.8))] text-[#f8df96] shadow-[0_16px_32px_rgba(86,61,8,0.2)] hover:-translate-y-0.5 hover:border-amber-200/28 hover:bg-[linear-gradient(180deg,rgba(94,67,13,0.82),rgba(46,33,8,0.88))] hover:text-[#fff4cf]",
+    dotClass:
+      "bg-amber-200 shadow-[0_0_14px_rgba(243,200,107,0.85)]",
+    dotInactiveClass: "bg-amber-200/45 group-hover:bg-amber-200/75",
+  },
+  {
+    label: "Nord",
+    href: "/leaderboard/nord",
+    accent: "from-sky-400/70 via-sky-300/24 to-transparent",
+    activeClass:
+      "border-sky-300/34 border-b-transparent bg-[linear-gradient(180deg,rgba(11,79,116,0.98),rgba(8,39,77,0.98))] text-[#dff5ff] shadow-[0_22px_46px_rgba(14,102,150,0.3)]",
+    inactiveClass:
+      "translate-y-3 border-sky-300/16 bg-[linear-gradient(180deg,rgba(9,64,95,0.76),rgba(8,32,59,0.82))] text-[#a9ddfb] shadow-[0_16px_32px_rgba(10,75,111,0.2)] hover:-translate-y-0.5 hover:border-sky-300/28 hover:bg-[linear-gradient(180deg,rgba(12,78,114,0.84),rgba(8,40,71,0.88))] hover:text-[#e3f7ff]",
+    dotClass:
+      "bg-sky-200 shadow-[0_0_14px_rgba(125,211,252,0.8)]",
+    dotInactiveClass: "bg-sky-200/45 group-hover:bg-sky-200/75",
+  },
+  {
+    label: "Centro",
+    href: "/leaderboard/centro",
+    accent: "from-slate-200/68 via-slate-100/18 to-transparent",
+    activeClass:
+      "border-slate-200/34 border-b-transparent bg-[linear-gradient(180deg,rgba(89,100,123,0.98),rgba(45,54,72,0.98))] text-[#f4f8ff] shadow-[0_22px_46px_rgba(74,86,109,0.28)]",
+    inactiveClass:
+      "translate-y-3 border-slate-200/16 bg-[linear-gradient(180deg,rgba(70,80,102,0.76),rgba(37,44,59,0.84))] text-[#d7deeb] shadow-[0_16px_32px_rgba(64,74,93,0.18)] hover:-translate-y-0.5 hover:border-slate-200/28 hover:bg-[linear-gradient(180deg,rgba(88,99,121,0.84),rgba(44,53,71,0.9))] hover:text-white",
+    dotClass:
+      "bg-slate-100 shadow-[0_0_14px_rgba(226,232,240,0.72)]",
+    dotInactiveClass: "bg-slate-100/45 group-hover:bg-slate-100/75",
+  },
+  {
+    label: "Sud",
+    href: "/leaderboard/sud",
+    accent: "from-rose-400/70 via-rose-300/24 to-transparent",
+    activeClass:
+      "border-rose-300/34 border-b-transparent bg-[linear-gradient(180deg,rgba(116,23,61,0.98),rgba(74,14,41,0.98))] text-[#ffe3ee] shadow-[0_22px_46px_rgba(136,26,72,0.28)]",
+    inactiveClass:
+      "translate-y-3 border-rose-300/16 bg-[linear-gradient(180deg,rgba(96,19,51,0.78),rgba(56,11,31,0.84))] text-[#f3bdd2] shadow-[0_16px_32px_rgba(109,22,59,0.2)] hover:-translate-y-0.5 hover:border-rose-300/28 hover:bg-[linear-gradient(180deg,rgba(116,23,61,0.86),rgba(68,13,37,0.9))] hover:text-[#fff0f6]",
+    dotClass:
+      "bg-rose-200 shadow-[0_0_14px_rgba(251,182,206,0.78)]",
+    dotInactiveClass: "bg-rose-200/45 group-hover:bg-rose-200/75",
+  },
+  {
+    label: "Elvetica",
+    href: "/leaderboard/switzerland",
+    accent: "from-emerald-400/70 via-emerald-300/24 to-transparent",
+    activeClass:
+      "border-emerald-300/34 border-b-transparent bg-[linear-gradient(180deg,rgba(17,101,86,0.98),rgba(9,58,49,0.98))] text-[#ddfff6] shadow-[0_22px_46px_rgba(17,119,101,0.28)]",
+    inactiveClass:
+      "translate-y-3 border-emerald-300/16 bg-[linear-gradient(180deg,rgba(13,79,67,0.76),rgba(8,45,39,0.84))] text-[#a8eadc] shadow-[0_16px_32px_rgba(13,90,76,0.18)] hover:-translate-y-0.5 hover:border-emerald-300/28 hover:bg-[linear-gradient(180deg,rgba(16,98,82,0.84),rgba(8,52,44,0.88))] hover:text-[#ebfff8]",
+    dotClass:
+      "bg-emerald-200 shadow-[0_0_14px_rgba(167,243,208,0.78)]",
+    dotInactiveClass: "bg-emerald-200/45 group-hover:bg-emerald-200/75",
+  },
+] as const;
 
 function getRankBadgeClass(position: number) {
   if (position === 1) return "bg-[#f0b90b] text-[#07122d]";
@@ -190,6 +253,7 @@ export default function LeaderboardClient({
   anthem,
 }: LeaderboardClientProps) {
   const router = useRouter();
+  const pathname = usePathname();
   const [sortKey, setSortKey] = useState<SortKey>("rating1v1");
   const [sortDirection, setSortDirection] = useState<SortDirection>("desc");
   const [pageInput, setPageInput] = useState(String(currentPage));
@@ -380,10 +444,13 @@ export default function LeaderboardClient({
             )}
 
             <div>
-              <div className="text-sm font-semibold uppercase tracking-[0.24em] text-[#8d99b3]">
-                {eyebrow}
+              <div className="flex items-center gap-3">
+                <div className="h-px w-10 bg-gradient-to-r from-amber-200/60 to-transparent" />
+                <div className="text-sm font-semibold uppercase tracking-[0.24em] text-[#94a4c5]">
+                  {eyebrow}
+                </div>
               </div>
-              <h1 className="mt-1 text-3xl font-bold text-white md:text-4xl">
+              <h1 className="mt-3 text-3xl font-semibold tracking-[-0.04em] text-white md:text-5xl">
                 {title}
               </h1>
             </div>
@@ -391,15 +458,60 @@ export default function LeaderboardClient({
 
           <Link
             href="/"
-            className="inline-flex items-center justify-center rounded-2xl border border-white/10 bg-[#111d3a] px-5 py-3 text-sm font-semibold text-white transition hover:border-white/20 hover:bg-[#16264a]"
+            className="inline-flex items-center justify-center rounded-2xl border border-sky-300/28 bg-[linear-gradient(135deg,rgba(16,90,132,0.96),rgba(10,48,89,0.96))] px-5 py-3 text-sm font-semibold text-[#e6f7ff] shadow-[0_14px_36px_rgba(9,74,110,0.24)] transition hover:-translate-y-0.5 hover:border-sky-200/40 hover:bg-[linear-gradient(135deg,rgba(20,109,158,0.98),rgba(11,58,104,0.98))] hover:text-white"
           >
             ← Torna alla home
           </Link>
         </div>
 
-        <div className="rounded-[28px] border border-white/8 bg-[#0f1a36]/95 p-4 sm:p-6 md:p-8 shadow-[0_10px_40px_rgba(0,0,0,0.35)]">
+        <div className="mt-8">
+          <div className="relative z-10 flex items-end gap-2 overflow-x-auto px-2 pb-2 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
+            {leaderboardTabs.map((tab, index) => {
+              const isActive = pathname === tab.href;
+
+              return (
+                <Link
+                  key={tab.href}
+                  href={tab.href}
+                  style={{ zIndex: isActive ? 40 : 30 - index }}
+                  className={`group relative inline-flex min-h-[58px] shrink-0 items-center gap-2 overflow-hidden rounded-t-[1.55rem] rounded-b-[0.95rem] border px-5 py-3 text-sm font-semibold tracking-[0.01em] transition duration-300 ${
+                    isActive ? tab.activeClass : tab.inactiveClass
+                  }`}
+                >
+                  <span
+                    className={`pointer-events-none absolute inset-0 ${
+                      isActive
+                        ? "bg-[radial-gradient(circle_at_top_left,rgba(255,255,255,0.12),transparent_42%)]"
+                        : "bg-[radial-gradient(circle_at_top_left,rgba(255,255,255,0.07),transparent_44%)]"
+                    }`}
+                  />
+                  <span
+                    className={`pointer-events-none absolute inset-x-4 top-0 h-[2px] bg-gradient-to-r ${tab.accent}`}
+                  />
+                  {isActive ? (
+                    <span className="pointer-events-none absolute inset-x-4 bottom-[-1px] h-[3px] rounded-full bg-[#0f1a36]" />
+                  ) : null}
+                  <span
+                    className={`relative h-2.5 w-2.5 rounded-full transition ${
+                      isActive ? tab.dotClass : tab.dotInactiveClass
+                    }`}
+                  />
+                  <span className="relative">{tab.label}</span>
+                </Link>
+              );
+            })}
+          </div>
+
+          <div className="relative">
+            <div className="pointer-events-none absolute inset-x-8 top-5 h-full rounded-[32px] border border-white/[0.04] bg-[linear-gradient(180deg,rgba(21,31,58,0.68),rgba(10,18,38,0.5))]" />
+            <div className="pointer-events-none absolute inset-x-3 top-2.5 h-full rounded-[32px] border border-white/[0.05] bg-[linear-gradient(180deg,rgba(17,27,52,0.84),rgba(10,18,39,0.72))]" />
+
+            <div className="relative overflow-hidden rounded-[30px] border border-white/10 bg-[linear-gradient(180deg,rgba(20,31,60,0.98),rgba(10,18,40,0.98))] p-4 shadow-[0_20px_60px_rgba(0,0,0,0.38)] sm:p-6 md:p-8">
+              <div className="pointer-events-none absolute inset-x-0 top-0 h-24 bg-[linear-gradient(180deg,rgba(255,255,255,0.04),transparent)]" />
+              <div className="pointer-events-none absolute inset-x-8 top-0 h-px bg-gradient-to-r from-transparent via-amber-200/34 to-transparent" />
+
           {/* Mobile card view */}
-          <div className="block md:hidden space-y-3">
+          <div className="relative block space-y-3 md:hidden">
             {sortedPlayers.map((player, index) => {
               const absoluteIndex = (currentPage - 1) * 50 + index + 1;
               const pos1v1 = getPositionByMode(player.profile_id, top1v1Ids);
@@ -507,23 +619,13 @@ export default function LeaderboardClient({
           </div>
 
           {/* Desktop table view */}
-          <div className="hidden md:block overflow-x-auto">
-            <table className="w-full min-w-[1650px] border-separate border-spacing-y-3">
+          <div className="relative hidden md:block overflow-x-auto">
+            <table className="w-full min-w-[1360px] border-separate border-spacing-y-3">
               <thead>
                 <tr className="text-left text-sm uppercase tracking-[0.22em] text-[#7f8aa3]">
-                  <th className="px-4 py-2">Pos IT</th>
+                  <th className="px-3 py-2">Pos IT</th>
 
-                  <th className="px-4 py-2">
-                    <button
-                      type="button"
-                      onClick={() => sortPlayers("rank")}
-                      className="inline-flex items-center uppercase tracking-[0.22em] hover:text-white"
-                    >
-                      Rank Globale {getSortArrow("rank")}
-                    </button>
-                  </th>
-
-                  <th className="px-4 py-2">
+                  <th className="px-3 py-2">
                     <button
                       type="button"
                       onClick={() => sortPlayers("name")}
@@ -533,7 +635,7 @@ export default function LeaderboardClient({
                     </button>
                   </th>
 
-                  <th className="px-4 py-2">
+                  <th className="px-3 py-2">
                     <button
                       type="button"
                       onClick={() => sortPlayers("rating1v1")}
@@ -543,7 +645,7 @@ export default function LeaderboardClient({
                     </button>
                   </th>
 
-                  <th className="px-4 py-2">
+                  <th className="px-3 py-2">
                     <button
                       type="button"
                       onClick={() => sortPlayers("rating2v2")}
@@ -553,7 +655,7 @@ export default function LeaderboardClient({
                     </button>
                   </th>
 
-                  <th className="px-4 py-2">
+                  <th className="px-3 py-2">
                     <button
                       type="button"
                       onClick={() => sortPlayers("rating3v3")}
@@ -563,7 +665,7 @@ export default function LeaderboardClient({
                     </button>
                   </th>
 
-                  <th className="px-4 py-2">
+                  <th className="px-3 py-2">
                     <button
                       type="button"
                       onClick={() => sortPlayers("rating4v4")}
@@ -573,10 +675,10 @@ export default function LeaderboardClient({
                     </button>
                   </th>
 
-                  <th className="px-4 py-2">Solo</th>
-                  <th className="px-4 py-2">Team</th>
-                  <th className="px-4 py-2">Top 3 Civ</th>
-                  <th className="px-4 py-2">Profile</th>
+                  <th className="px-3 py-2">Solo</th>
+                  <th className="px-3 py-2">Team</th>
+                  <th className="px-3 py-2">Top 3 Civ</th>
+                  <th className="px-3 py-2">Profile</th>
                 </tr>
               </thead>
 
@@ -603,7 +705,7 @@ export default function LeaderboardClient({
 
                   return (
                     <tr key={player.profile_id} className="bg-[#07122d]">
-                      <td className="px-4 py-4">
+                      <td className="px-3 py-4">
                         <div
                           className={`inline-flex h-10 w-10 items-center justify-center rounded-xl font-bold ${getRankBadgeClass(
                             absoluteIndex
@@ -613,13 +715,7 @@ export default function LeaderboardClient({
                         </div>
                       </td>
 
-                      <td className="px-4 py-4">
-                        <div className="inline-flex min-w-[64px] items-center justify-center rounded-xl bg-[#111d3a] px-3 py-2 font-bold text-white">
-                          {player.rank}
-                        </div>
-                      </td>
-
-                      <td className="min-w-[320px] px-4 py-4">
+                      <td className="min-w-[280px] px-3 py-4">
                         <div className="flex items-center gap-4">
                           <img
                             src={
@@ -641,23 +737,23 @@ export default function LeaderboardClient({
                         </div>
                       </td>
 
-                      <td className="px-4 py-4">
+                      <td className="px-3 py-4">
                         {formatRating(player.rating1v1, pos1v1, "1v1")}
                       </td>
 
-                      <td className="px-4 py-4">
+                      <td className="px-3 py-4">
                         {formatRating(player.rating2v2, pos2v2, "2v2")}
                       </td>
 
-                      <td className="px-4 py-4">
+                      <td className="px-3 py-4">
                         {formatRating(player.rating3v3, pos3v3, "3v3")}
                       </td>
 
-                      <td className="px-4 py-4">
+                      <td className="px-3 py-4">
                         {formatRating(player.rating4v4, pos4v4, "4v4")}
                       </td>
 
-                      <td className="px-4 py-4 text-center">
+                      <td className="px-3 py-4 text-center">
                         <div
                           className={`inline-flex items-center justify-center ${getLeagueGlow(
                             player.soloRankLevel
@@ -671,7 +767,7 @@ export default function LeaderboardClient({
                         </div>
                       </td>
 
-                      <td className="px-4 py-4 text-center">
+                      <td className="px-3 py-4 text-center">
                         <div
                           className={`inline-flex items-center justify-center ${getLeagueGlow(
                             player.teamRankLevel
@@ -685,8 +781,8 @@ export default function LeaderboardClient({
                         </div>
                       </td>
 
-                      <td className="min-w-[220px] px-4 py-4">
-                        <div className="flex gap-2">
+                      <td className="min-w-[180px] px-3 py-4">
+                        <div className="flex gap-1.5">
                           {player.topCivilizations &&
                           player.topCivilizations.length > 0 ? (
                             player.topCivilizations.map((civ) => {
@@ -697,7 +793,7 @@ export default function LeaderboardClient({
                                   key={civ}
                                   src={icon}
                                   alt={formatCivilizationName(civ)}
-                                  className="h-10 w-10 object-contain"
+                                  className="h-9 w-9 object-contain"
                                   title={formatCivilizationName(civ)}
                                 />
                               );
@@ -706,18 +802,18 @@ export default function LeaderboardClient({
                             <img
                               src="/images/civs/generic_flag.png"
                               alt="unknown"
-                              className="h-10 w-10 object-contain opacity-70"
+                              className="h-9 w-9 object-contain opacity-70"
                             />
                           )}
                         </div>
                       </td>
 
-                      <td className="px-4 py-4">
+                      <td className="px-3 py-4">
                         <a
                           href={`https://aoe4community.vercel.app/player/${player.profile_id}`}
                           target="_blank"
                           rel="noreferrer"
-                          className="inline-flex min-w-[88px] items-center justify-center rounded-xl border border-[#f0b90b]/25 bg-[#f0b90b]/10 px-4 py-2 text-sm font-semibold text-[#f7cf59] transition hover:-translate-y-0.5 hover:border-[#f0b90b]/40 hover:bg-[#f0b90b]/20 hover:text-[#ffe082]"
+                          className="inline-flex min-w-[76px] items-center justify-center rounded-xl border border-[#f0b90b]/25 bg-[#f0b90b]/10 px-3 py-2 text-sm font-semibold text-[#f7cf59] transition hover:-translate-y-0.5 hover:border-[#f0b90b]/40 hover:bg-[#f0b90b]/20 hover:text-[#ffe082]"
                         >
                           View
                         </a>
@@ -730,17 +826,17 @@ export default function LeaderboardClient({
           </div>
           {/* End desktop table view */}
 
-          <div className="mt-8 rounded-[24px] border border-white/8 bg-[#0b1430] px-5 py-4 shadow-[0_8px_30px_rgba(0,0,0,0.25)]">
+          <div className="relative mt-8 rounded-[24px] border border-white/8 bg-[linear-gradient(180deg,rgba(12,20,48,0.96),rgba(8,15,37,0.96))] px-5 py-4 shadow-[0_14px_36px_rgba(0,0,0,0.28)]">
             <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
               <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-3">
                 <Link
                   href="/"
-                  className="inline-flex h-11 items-center justify-center rounded-xl border border-white/10 bg-[#111d3a] px-4 text-sm font-semibold text-white transition hover:bg-[#16264a]"
+                  className="inline-flex h-11 items-center justify-center rounded-xl border border-sky-300/28 bg-[linear-gradient(135deg,rgba(16,90,132,0.96),rgba(10,48,89,0.96))] px-4 text-sm font-semibold text-[#e6f7ff] shadow-[0_12px_28px_rgba(9,74,110,0.2)] transition hover:-translate-y-0.5 hover:border-sky-200/40 hover:bg-[linear-gradient(135deg,rgba(20,109,158,0.98),rgba(11,58,104,0.98))] hover:text-white"
                 >
                   ← Home
                 </Link>
 
-                <div className="inline-flex h-11 items-center gap-2 rounded-xl border border-white/10 bg-[#0f1f45] px-3">
+                <div className="inline-flex h-11 items-center gap-2 rounded-xl border border-violet-300/18 bg-[linear-gradient(135deg,rgba(46,34,92,0.88),rgba(20,30,70,0.88))] px-3 shadow-[0_12px_28px_rgba(34,28,81,0.18)]">
                   <span className="text-sm font-semibold text-[#b8c7e6]">
                     Pagina
                   </span>
@@ -770,7 +866,7 @@ export default function LeaderboardClient({
                       const page = Number(pageInput);
                       if (!Number.isNaN(page) && page > 0) goToPage(page);
                     }}
-                    className="h-8 rounded-lg bg-[#16305f] px-3 text-sm font-semibold text-white transition hover:bg-[#1b3d79]"
+                    className="h-8 rounded-lg border border-amber-200/28 bg-[linear-gradient(135deg,rgba(226,168,37,0.98),rgba(181,120,12,0.98))] px-3 text-sm font-semibold text-[#1b1405] shadow-[0_10px_24px_rgba(184,127,15,0.2)] transition hover:-translate-y-0.5 hover:border-amber-100/36 hover:bg-[linear-gradient(135deg,rgba(240,186,52,1),rgba(198,132,12,1))]"
                   >
                     Vai
                   </button>
@@ -782,7 +878,7 @@ export default function LeaderboardClient({
                   type="button"
                   onClick={goToPreviousPage}
                   disabled={currentPage === 1}
-                  className="h-11 rounded-xl border border-white/10 bg-[#111d3a] px-5 text-sm font-semibold text-white transition hover:bg-[#16264a] disabled:cursor-not-allowed disabled:opacity-40"
+                  className="h-11 rounded-xl border border-rose-300/24 bg-[linear-gradient(135deg,rgba(120,28,67,0.96),rgba(71,18,42,0.96))] px-5 text-sm font-semibold text-[#ffe6ef] shadow-[0_12px_28px_rgba(107,23,60,0.18)] transition hover:-translate-y-0.5 hover:border-rose-200/34 hover:bg-[linear-gradient(135deg,rgba(141,33,78,0.98),rgba(84,20,50,0.98))] disabled:cursor-not-allowed disabled:opacity-40"
                 >
                   Precedente
                 </button>
@@ -791,12 +887,14 @@ export default function LeaderboardClient({
                   type="button"
                   onClick={goToNextPage}
                   disabled={!hasNextPage}
-                  className="h-11 rounded-xl border border-[#1f3b72] bg-[#16305f] px-5 text-sm font-semibold text-white transition hover:bg-[#1b3d79] disabled:cursor-not-allowed disabled:opacity-40"
+                  className="h-11 rounded-xl border border-emerald-300/24 bg-[linear-gradient(135deg,rgba(18,110,89,0.96),rgba(10,67,55,0.96))] px-5 text-sm font-semibold text-[#e8fff7] shadow-[0_12px_28px_rgba(12,94,76,0.2)] transition hover:-translate-y-0.5 hover:border-emerald-200/34 hover:bg-[linear-gradient(135deg,rgba(23,132,107,0.98),rgba(11,82,66,0.98))] disabled:cursor-not-allowed disabled:opacity-40"
                 >
                   Successiva
                 </button>
               </div>
             </div>
+          </div>
+        </div>
           </div>
         </div>
       </section>

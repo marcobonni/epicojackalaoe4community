@@ -39,7 +39,7 @@ export default async function PortalShell({
                 href="/"
                 className="inline-flex items-center rounded-full border border-amber-300/18 bg-amber-300/10 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.38em] text-amber-200"
               >
-                EpicoJackal AoE4
+                AoE4 Community
               </LoadingLink>
               <p className="mt-4 max-w-xl text-sm leading-7 text-slate-300/78">
                 {shell.tagline}

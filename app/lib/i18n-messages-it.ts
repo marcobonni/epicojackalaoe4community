@@ -28,7 +28,8 @@ export const itMessages: Dictionary = {
       title: "La tua community Discord per vivere Age of Empires ogni giorno",
       description:
         "Un server pensato per appassionati di Age of Empires: partite, eventi, tornei, consigli strategici e una community con cui giocare davvero.",
-      ctaJoin: "Entra nel server",
+      statsHeading: "Community AoE4 Italia",
+      ctaJoin: "Entra nel Discord",
       ctaItalianLeaderboard: "Classifica italiana",
       ctaNorthLeaderboard: "Classifica Nord",
       ctaCenterLeaderboard: "Classifica Centro",
@@ -37,7 +38,6 @@ export const itMessages: Dictionary = {
       ctaMatchmaking: "Matchmaking",
       ctaTournaments: "Tornei",
       ctaPortal: "Area player/admin",
-      statsHeading: "EpicoJackal's AoE4 Community",
       stats: [
         { value: "24/7", label: "Community attiva" },
         { value: "AoE", label: "Focus totale" },
@@ -51,11 +51,10 @@ export const itMessages: Dictionary = {
     ],
     twitch: {
       badge: "Live su Twitch",
-      title: "Streamer in evidenza e canali secondari",
-      description:
-        "Lo streamer principale viene scelto automaticamente tra quelli live, dando priorita a chi ha piu spettatori. Se nessuno e online, viene mostrato uno streamer di fallback.",
+      title: "Streamers della community",
+      description: "",
       featured: "Streamer in evidenza",
-      secondaryBadge: "Streamer secondari",
+      secondaryBadge: "Altri streamer",
       secondaryTitle: "Altri canali della community",
       open: "Apri su Twitch",
       empty: "Nessuno streamer configurato.",

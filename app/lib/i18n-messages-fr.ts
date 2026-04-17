@@ -25,10 +25,11 @@ export const frMessages: Dictionary = {
     ...enMessages.home,
     hero: {
       ...enMessages.home.hero,
+      statsHeading: "Hub communaute AoE4",
       title: "Votre communaute Discord pour vivre Age of Empires chaque jour",
       description:
         "Un serveur pense pour les fans de Age of Empires : parties, evenements, tournois, conseils strategiques et une vraie communaute avec qui jouer.",
-      ctaJoin: "Rejoindre le serveur",
+      ctaJoin: "Rejoindre Discord",
       ctaItalianLeaderboard: "Classement italien",
       ctaNorthLeaderboard: "Classement nord",
       ctaCenterLeaderboard: "Classement centre",
@@ -45,11 +46,10 @@ export const frMessages: Dictionary = {
     twitch: {
       ...enMessages.home.twitch,
       badge: "En direct sur Twitch",
-      title: "Streamers mis en avant et chaines secondaires",
-      description:
-        "Le streamer principal est choisi automatiquement parmi ceux qui sont en direct, avec priorite au plus grand nombre de spectateurs. Si personne n'est en ligne, un streamer de secours est affiche.",
+      title: "Streamers de la communaute",
+      description: "",
       featured: "Streamer mis en avant",
-      secondaryBadge: "Streamers secondaires",
+      secondaryBadge: "Autres streamers",
       secondaryTitle: "Autres chaines de la communaute",
       open: "Ouvrir sur Twitch",
       empty: "Aucun streamer configure.",

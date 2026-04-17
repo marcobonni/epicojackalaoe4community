@@ -7,7 +7,7 @@ export default function FeaturesSection() {
   const section = messages.home.features;
 
   return (
-    <section id="features" className="mx-auto max-w-[1500px] px-6 py-20 lg:px-10">
+    <section id="features" className="mx-auto max-w-[1500px] px-8 py-20 lg:px-14 xl:px-16">
       <div className="grid gap-8 lg:grid-cols-[minmax(0,0.78fr)_minmax(0,1.22fr)] lg:items-start">
         <div className="lg:sticky lg:top-28">
           <p className="cinematic-kicker">{section.badge}</p>

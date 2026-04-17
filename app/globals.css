@@ -40,6 +40,20 @@ body {
   color: var(--cinematic-text);
 }
 
+.home-scale-80 {
+  zoom: 0.68;
+  font-size: 1.08rem;
+}
+
+@supports not (zoom: 1) {
+  .home-scale-80 {
+    width: 147.0588%;
+    transform: scale(0.68);
+    transform-origin: top left;
+    font-size: 1.08rem;
+  }
+}
+
 .cinematic-panel,
 .cinematic-panel-soft,
 .cinematic-panel-strong,

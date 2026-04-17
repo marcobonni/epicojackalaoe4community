@@ -22,21 +22,21 @@ function getRegionalTexts(region: RegionalCategory) {
       return {
         eyebrow: "Leaderboard regionale",
         title: "Classifica Nord",
-        basePath: "/leaderboard/north",
+        basePath: "/leaderboard/nord",
         icon: "/images/icon/flags/padania.gif",
       };
     case "center":
       return {
         eyebrow: "Leaderboard regionale",
         title: "Classifica Centro",
-        basePath: "/leaderboard/center",
+        basePath: "/leaderboard/centro",
         icon: "/images/icon/flags/papal.gif",
       };
     case "south":
       return {
         eyebrow: "Leaderboard regionale",
         title: "Classifica Sud",
-        basePath: "/leaderboard/south",
+        basePath: "/leaderboard/sud",
         icon: "/images/icon/flags/2sicilie.gif",
       };
   }

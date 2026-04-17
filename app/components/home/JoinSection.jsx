@@ -8,7 +8,7 @@ export default function JoinSection() {
   const section = messages.home.join;
 
   return (
-    <section className="mx-auto max-w-[1500px] px-6 pb-20 lg:px-10">
+    <section className="mx-auto max-w-[1500px] px-8 pb-20 lg:px-14 xl:px-16">
       <div className="grid gap-6 lg:grid-cols-[minmax(0,1.2fr)_minmax(320px,0.8fr)]">
         <div className="cinematic-panel p-8 sm:p-10">
           <p className="cinematic-kicker">{section.listBadge}</p>

@@ -28,7 +28,8 @@ export const enMessages: Dictionary = {
       title: "Your Discord community for Age of Empires every single day",
       description:
         "A server built for Age of Empires fans: games, events, tournaments, strategy advice and a real community to queue up with.",
-      ctaJoin: "Join the server",
+      statsHeading: "AoE4 Community Hub",
+      ctaJoin: "Join Discord",
       ctaItalianLeaderboard: "Italian leaderboard",
       ctaNorthLeaderboard: "North leaderboard",
       ctaCenterLeaderboard: "Center leaderboard",
@@ -37,7 +38,6 @@ export const enMessages: Dictionary = {
       ctaMatchmaking: "Matchmaking",
       ctaTournaments: "Tournaments",
       ctaPortal: "Player/admin area",
-      statsHeading: "EpicoJackal's AoE4 Community",
       stats: [
         { value: "24/7", label: "Active community" },
         { value: "AoE", label: "Full focus" },
@@ -47,11 +47,10 @@ export const enMessages: Dictionary = {
     liveStats: ["Visible widget users", "Online now", "Visible channels"],
     twitch: {
       badge: "Live on Twitch",
-      title: "Featured streamers and secondary channels",
-      description:
-        "The main streamer is picked automatically from the live channels, prioritizing the highest viewer count. If nobody is online, a fallback streamer is shown instead.",
+      title: "Community streamers",
+      description: "",
       featured: "Featured streamer",
-      secondaryBadge: "Secondary streamers",
+      secondaryBadge: "More streamers",
       secondaryTitle: "More community channels",
       open: "Open on Twitch",
       empty: "No configured streamers.",

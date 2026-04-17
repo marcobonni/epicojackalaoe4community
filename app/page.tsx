@@ -120,7 +120,7 @@ export default async function Page() {
   ];
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100">
+    <div className="home-scale-80 min-h-screen overflow-x-hidden bg-slate-950 text-slate-100">
       <HeroSection />
       <TwitchSection
         primaryStreamer={primaryStreamer}

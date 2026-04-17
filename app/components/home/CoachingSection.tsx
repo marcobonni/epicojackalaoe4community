@@ -69,7 +69,7 @@ export default function CoachingSection({
   };
 
   return (
-    <section className="mx-auto max-w-[1500px] px-6 py-20 lg:px-10">
+    <section className="mx-auto max-w-[1500px] px-8 py-20 lg:px-14 xl:px-16">
       <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
         <div className="max-w-2xl">
           <p className="cinematic-kicker">{section.badge}</p>

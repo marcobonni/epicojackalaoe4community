@@ -11,7 +11,7 @@ export default function DiscordOverviewSection({
   const section = messages.home.discord;
 
   return (
-    <section className="mx-auto max-w-[1500px] px-6 py-20 lg:px-10">
+    <section className="mx-auto max-w-[1500px] px-8 py-20 lg:px-14 xl:px-16">
       <div className="grid gap-6 lg:grid-cols-[minmax(0,0.92fr)_minmax(0,1.08fr)]">
         <div className="cinematic-panel-strong p-8">
           <div className="flex flex-col gap-6 sm:flex-row sm:items-start sm:justify-between">

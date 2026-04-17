@@ -27,42 +27,21 @@ export default function HeroSection() {
       href: "/leaderboard",
       label: hero.ctaItalianLeaderboard,
       accent:
-        "border-sky-300/18 bg-[linear-gradient(180deg,rgba(37,99,235,0.22),rgba(15,23,42,0.2))] text-sky-50 hover:border-sky-300/40",
-      badge: false,
-    },
-    {
-      href: "/leaderboard/nord",
-      label: hero.ctaNorthLeaderboard,
-      accent:
-        "border-emerald-300/18 bg-[linear-gradient(180deg,rgba(22,163,74,0.24),rgba(15,23,42,0.2))] text-emerald-50 hover:border-emerald-300/40",
-      badge: false,
-    },
-    {
-      href: "/leaderboard/centro",
-      label: hero.ctaCenterLeaderboard,
-      accent:
-        "border-slate-200/18 bg-[linear-gradient(180deg,rgba(255,255,255,0.18),rgba(15,23,42,0.2))] text-slate-50 hover:border-white/40",
-      badge: false,
-    },
-    {
-      href: "/leaderboard/sud",
-      label: hero.ctaSouthLeaderboard,
-      accent:
-        "border-rose-300/18 bg-[linear-gradient(180deg,rgba(225,29,72,0.24),rgba(15,23,42,0.2))] text-rose-50 hover:border-rose-300/40",
+        "border-emerald-300/18 bg-[linear-gradient(180deg,rgba(22,163,74,0.26),rgba(15,23,42,0.2))] text-emerald-50 hover:border-emerald-300/40",
       badge: false,
     },
     {
       href: "/beasty",
       label: hero.ctaQuiz,
       accent:
-        "border-amber-300/18 bg-[linear-gradient(180deg,rgba(245,158,11,0.26),rgba(15,23,42,0.2))] text-amber-50 hover:border-amber-300/40",
+        "border-slate-200/20 bg-[linear-gradient(180deg,rgba(255,255,255,0.22),rgba(15,23,42,0.2))] text-slate-50 hover:border-white/40",
       badge: true,
     },
     {
       href: "/matchmaking",
       label: hero.ctaMatchmaking,
       accent:
-        "border-indigo-300/18 bg-[linear-gradient(180deg,rgba(49,46,129,0.4),rgba(15,23,42,0.2))] text-indigo-50 hover:border-indigo-300/40",
+        "border-rose-300/18 bg-[linear-gradient(180deg,rgba(225,29,72,0.26),rgba(15,23,42,0.2))] text-rose-50 hover:border-rose-300/40",
       badge: true,
     },
   ];
@@ -115,7 +94,7 @@ export default function HeroSection() {
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_24%_46%,rgba(255,233,179,0.3),transparent_20%),radial-gradient(circle_at_54%_55%,rgba(255,177,66,0.18),transparent_26%),linear-gradient(180deg,rgba(2,6,23,0.14),rgba(2,6,23,0.9)_88%)]" />
       <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-b from-transparent to-[#040714]" />
 
-      <div className="relative mx-auto max-w-[1500px] px-4 py-12 sm:px-6 sm:py-16 lg:px-10 lg:py-20">
+      <div className="relative mx-auto max-w-[1500px] px-6 py-12 sm:px-8 sm:py-16 lg:px-14 lg:py-20 xl:px-16">
         <div className="grid min-h-[calc(100svh-4rem)] items-end gap-14 lg:grid-cols-[minmax(0,1.05fr)_minmax(340px,0.7fr)] lg:gap-10">
           <div className="max-w-3xl pb-2">
             <div className="hero-intro inline-flex items-center rounded-full border border-amber-300/28 bg-amber-300/10 px-4 py-1.5 text-sm font-semibold text-amber-200 shadow-[0_0_0_1px_rgba(250,204,21,0.08)]">
@@ -139,7 +118,7 @@ export default function HeroSection() {
                 target="_blank"
                 rel="noopener noreferrer"
                 href={SERVER_CONFIG.inviteUrl}
-                className="group inline-flex min-h-[60px] items-center justify-center rounded-full bg-[linear-gradient(180deg,#facc15,#f59e0b)] px-7 py-4 text-center text-base font-semibold text-slate-950 shadow-[0_18px_50px_rgba(245,158,11,0.34)] transition duration-300 hover:-translate-y-0.5 hover:shadow-[0_24px_60px_rgba(245,158,11,0.44)]"
+                className="group inline-flex min-h-[60px] items-center justify-center rounded-full bg-[linear-gradient(180deg,#22c55e,#15803d)] px-7 py-4 text-center text-base font-semibold text-white shadow-[0_18px_50px_rgba(21,128,61,0.34)] transition duration-300 hover:-translate-y-0.5 hover:shadow-[0_24px_60px_rgba(21,128,61,0.44)]"
               >
                 <span>{hero.ctaJoin}</span>
                 <span className="ml-3 text-lg transition duration-300 group-hover:translate-x-1">
@@ -149,20 +128,20 @@ export default function HeroSection() {
 
               <LoadingLink
                 href="/tournaments"
-                className="inline-flex min-h-[60px] items-center justify-center rounded-full border border-amber-200/18 bg-slate-950/40 px-7 py-4 text-center text-base font-semibold text-amber-50 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] backdrop-blur-sm transition duration-300 hover:-translate-y-0.5 hover:border-amber-200/40 hover:bg-slate-950/56"
+                className="inline-flex min-h-[60px] items-center justify-center rounded-full border border-white/18 bg-white/[0.1] px-7 py-4 text-center text-base font-semibold text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.08)] backdrop-blur-sm transition duration-300 hover:-translate-y-0.5 hover:border-white/36 hover:bg-white/[0.16]"
               >
                 {hero.ctaTournaments}
               </LoadingLink>
 
               <LoadingLink
                 href="/login"
-                className="inline-flex min-h-[60px] items-center justify-center rounded-full border border-white/14 bg-white/[0.04] px-7 py-4 text-center text-base font-semibold text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.05)] backdrop-blur-sm transition duration-300 hover:-translate-y-0.5 hover:border-white/28 hover:bg-white/[0.08]"
+                className="inline-flex min-h-[60px] items-center justify-center rounded-full border border-rose-300/18 bg-[linear-gradient(180deg,rgba(225,29,72,0.2),rgba(15,23,42,0.18))] px-7 py-4 text-center text-base font-semibold text-rose-50 shadow-[inset_0_1px_0_rgba(255,255,255,0.05)] backdrop-blur-sm transition duration-300 hover:-translate-y-0.5 hover:border-rose-300/36 hover:bg-[linear-gradient(180deg,rgba(225,29,72,0.28),rgba(15,23,42,0.22))]"
               >
                 {hero.ctaPortal}
               </LoadingLink>
             </div>
 
-            <div className="hero-intro hero-intro-delay-5 mt-10 grid gap-3 sm:grid-cols-2 xl:max-w-4xl xl:grid-cols-3">
+            <div className="hero-intro hero-intro-delay-5 mt-10 grid gap-3 sm:grid-cols-2 lg:max-w-[48rem] xl:max-w-3xl xl:grid-cols-3">
               {quickLinks.map((item) => (
                 <LoadingLink
                   key={item.label}

@@ -376,7 +376,7 @@ export default async function AdminPage() {
                 id="manualRoster"
                 name="manualRoster"
                 rows={6}
-                placeholder={"EpicoJackal <jackal@example.com>\nPlayerTwo <player2@example.com>\nPlayerTre"}
+                placeholder={"PlayerOne <player1@example.com>\nPlayerTwo <player2@example.com>\nPlayerThree"}
                 className="w-full rounded-2xl border border-slate-700 bg-slate-900 px-4 py-3 text-sm text-white outline-none transition focus:border-amber-300"
               />
               <span className="mt-2 block text-xs leading-6 text-slate-500">

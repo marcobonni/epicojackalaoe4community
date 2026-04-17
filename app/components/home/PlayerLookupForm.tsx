@@ -464,13 +464,13 @@ export default function PlayerLookupForm({
   }
 
   return (
-    <section className="mx-auto max-w-7xl px-6 pb-20 lg:px-8">
+    <section className="mx-auto max-w-[1720px] px-8 pb-16 lg:px-14 lg:pb-20 xl:px-16">
       <div className="relative overflow-hidden rounded-[2.25rem] border border-amber-300/18 bg-[linear-gradient(135deg,rgba(18,28,47,0.98),rgba(25,37,59,0.96)_50%,rgba(70,39,24,0.84))] shadow-[0_30px_100px_rgba(0,0,0,0.3)]">
         <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(245,158,11,0.18),transparent_34%),radial-gradient(circle_at_top_right,rgba(59,130,246,0.12),transparent_30%),radial-gradient(circle_at_bottom_right,rgba(249,115,22,0.14),transparent_28%)]" />
         <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-amber-200/60 to-transparent" />
 
-        <div className="relative grid gap-8 px-6 py-8 md:px-8 lg:grid-cols-[minmax(0,0.95fr)_minmax(360px,0.9fr)] lg:items-center lg:px-10 lg:py-10">
-          <div className="max-w-xl">
+        <div className="relative grid gap-8 px-6 py-7 md:px-8 lg:grid-cols-[minmax(0,1.08fr)_minmax(430px,0.92fr)] lg:items-center lg:gap-10 lg:px-10 lg:py-9 xl:px-12">
+          <div className="max-w-[54rem]">
             <p className="text-xs font-semibold uppercase tracking-[0.32em] text-amber-300/90">
               {copy.defaultBadge}
             </p>
@@ -493,7 +493,7 @@ export default function PlayerLookupForm({
             </div>
           </div>
 
-          <div className="relative">
+          <div className="relative lg:w-full lg:max-w-[700px] lg:justify-self-end">
             <div className="absolute inset-0 rounded-[2rem] bg-[linear-gradient(180deg,rgba(255,255,255,0.08),rgba(255,255,255,0.02))] blur-2xl" />
 
             <form

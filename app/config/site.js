@@ -13,7 +13,8 @@ export const TWITCH_STREAMER_PRIORITY = [
   'IKasiya',
   'RaionOn',
   'FRADIBIS',
-  'massimi25ap'
+  'massimi25ap',
+  'paky_b'
 ];
 
 export const TWITCH_STREAMERS = TWITCH_STREAMER_PRIORITY.map((name) => ({

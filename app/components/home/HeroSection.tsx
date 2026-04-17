@@ -118,7 +118,13 @@ export default function HeroSection() {
                 target="_blank"
                 rel="noopener noreferrer"
                 href={SERVER_CONFIG.inviteUrl}
-                className="group inline-flex min-h-[60px] items-center justify-center rounded-full bg-[linear-gradient(180deg,#22c55e,#15803d)] px-7 py-4 text-center text-base font-semibold text-white shadow-[0_18px_50px_rgba(21,128,61,0.34)] transition duration-300 hover:-translate-y-0.5 hover:shadow-[0_24px_60px_rgba(21,128,61,0.44)]"
+                className="group inline-flex min-h-[60px] items-center justify-center rounded-full 
+bg-[linear-gradient(180deg,#facc15,#eab308)] 
+px-7 py-4 text-center text-base font-semibold text-black 
+shadow-[0_18px_50px_rgba(234,179,8,0.35)] 
+transition duration-300 hover:-translate-y-0.5 
+hover:bg-[linear-gradient(180deg,#fde047,#facc15)] 
+hover:shadow-[0_24px_60px_rgba(234,179,8,0.5)]"
               >
                 <span>{hero.ctaJoin}</span>
                 <span className="ml-3 text-lg transition duration-300 group-hover:translate-x-1">

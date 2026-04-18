@@ -5,7 +5,7 @@ const TWITCH_STREAMERS = TWITCH_STREAMER_PRIORITY;
 
 const SERVER_CONFIG = {
   name: 'Age of Empires Hub',
-  inviteUrl: 'https://discord.gg/pjAakCz9',
+  inviteUrl: 'https://discord.gg/7qdYf4vH8P',
   widgetServerId: '470883209614458881',
 };
 

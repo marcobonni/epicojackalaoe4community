@@ -23,7 +23,7 @@ export const TWITCH_STREAMERS = TWITCH_STREAMER_PRIORITY.map((name) => ({
 
 export const SERVER_CONFIG = {
   name: "EpicoJackal's Aoe4 Community",
-  inviteUrl: 'https://discord.gg/GxVJYjkY5c',
+  inviteUrl: 'https://discord.gg/7qdYf4vH8P',
   widgetServerId: '470883209614458881',
 };
 

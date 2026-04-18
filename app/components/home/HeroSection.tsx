@@ -94,9 +94,9 @@ export default function HeroSection() {
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_24%_46%,rgba(255,233,179,0.3),transparent_20%),radial-gradient(circle_at_54%_55%,rgba(255,177,66,0.18),transparent_26%),linear-gradient(180deg,rgba(2,6,23,0.14),rgba(2,6,23,0.9)_88%)]" />
       <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-b from-transparent to-[#040714]" />
 
-      <div className="relative mx-auto max-w-[1500px] px-6 py-12 sm:px-8 sm:py-16 lg:px-14 lg:py-20 xl:px-16">
-        <div className="grid min-h-[calc(100svh-4rem)] items-end gap-14 lg:grid-cols-[minmax(0,1.05fr)_minmax(340px,0.7fr)] lg:gap-10">
-          <div className="max-w-3xl pb-2">
+      <div className="relative mx-auto max-w-[1720px] px-6 py-12 sm:px-8 sm:py-16 lg:px-14 lg:py-16 xl:px-18 xl:py-12 2xl:px-20 2xl:py-14">
+        <div className="grid min-h-[calc(100svh-4rem)] items-end gap-14 lg:min-h-[calc(100svh-5.5rem)] lg:grid-cols-[minmax(0,1.12fr)_minmax(400px,0.74fr)] lg:items-center lg:gap-14 2xl:min-h-[calc(100svh-4.5rem)] 2xl:gap-18">
+          <div className="max-w-[72rem] pb-2 lg:-translate-y-6 xl:-translate-y-10">
             <div className="hero-intro inline-flex items-center rounded-full border border-amber-300/28 bg-amber-300/10 px-4 py-1.5 text-sm font-semibold text-amber-200 shadow-[0_0_0_1px_rgba(250,204,21,0.08)]">
               {hero.badge}
             </div>
@@ -105,11 +105,11 @@ export default function HeroSection() {
               {hero.statsHeading}
             </p>
 
-            <h1 className="hero-intro hero-intro-delay-2 mt-5 max-w-4xl text-5xl font-semibold leading-[0.92] tracking-[-0.05em] text-white sm:text-6xl lg:text-7xl xl:text-[5.7rem]">
+            <h1 className="hero-intro hero-intro-delay-2 mt-5 max-w-5xl text-5xl font-semibold leading-[0.92] tracking-[-0.05em] text-white sm:text-6xl lg:text-7xl xl:text-[6.4rem] 2xl:text-[7rem]">
               {hero.title}
             </h1>
 
-            <p className="hero-intro hero-intro-delay-3 mt-7 max-w-2xl text-base leading-8 text-slate-200/88 sm:text-lg">
+            <p className="hero-intro hero-intro-delay-3 mt-7 max-w-3xl text-base leading-8 text-slate-200/88 sm:text-lg xl:text-[1.22rem] xl:leading-9">
               {hero.description}
             </p>
 
@@ -147,7 +147,7 @@ hover:shadow-[0_24px_60px_rgba(234,179,8,0.5)]"
               </LoadingLink>
             </div>
 
-            <div className="hero-intro hero-intro-delay-5 mt-10 grid gap-3 sm:grid-cols-2 lg:max-w-[48rem] xl:max-w-3xl xl:grid-cols-3">
+            <div className="hero-intro hero-intro-delay-5 mt-10 grid gap-3 sm:grid-cols-2 lg:max-w-[54rem] xl:max-w-[62rem] xl:grid-cols-3">
               {quickLinks.map((item) => (
                 <LoadingLink
                   key={item.label}
@@ -166,8 +166,8 @@ hover:shadow-[0_24px_60px_rgba(234,179,8,0.5)]"
             </div>
           </div>
 
-          <div className="hero-intro hero-intro-delay-4 hero-rail-float lg:justify-self-end">
-            <div className="relative overflow-hidden rounded-[2.6rem] border border-white/10 bg-[linear-gradient(180deg,rgba(10,14,28,0.82),rgba(7,11,22,0.52))] p-6 shadow-[0_32px_80px_rgba(0,0,0,0.34)] backdrop-blur-md sm:p-7 lg:min-w-[360px] lg:max-w-[430px]">
+          <div className="hero-intro hero-intro-delay-4 hero-rail-float lg:justify-self-end lg:-translate-y-4 xl:-translate-y-6">
+            <div className="relative overflow-hidden rounded-[2.6rem] border border-white/10 bg-[linear-gradient(180deg,rgba(10,14,28,0.82),rgba(7,11,22,0.52))] p-6 shadow-[0_32px_80px_rgba(0,0,0,0.34)] backdrop-blur-md sm:p-7 lg:min-w-[390px] lg:max-w-[470px] 2xl:min-w-[430px] 2xl:max-w-[510px]">
               <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(250,204,21,0.22),transparent_24%),linear-gradient(135deg,rgba(255,255,255,0.05),transparent_30%,rgba(15,23,42,0.22))]" />
               <div className="absolute inset-x-6 top-0 h-px bg-gradient-to-r from-transparent via-amber-200/55 to-transparent" />
 

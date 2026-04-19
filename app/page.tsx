@@ -3,7 +3,6 @@ import CoachingSection from "./components/home/CoachingSection";
 import DiscordOverviewSection from "./components/home/DiscordOverviewSection";
 import EventsSection from "./components/home/EventsSection";
 import FeaturesSection from "./components/home/FeaturesSection";
-import FooterSection from "./components/home/FooterSection";
 import HeroSection from "./components/home/HeroSection";
 import JoinSection from "./components/home/JoinSection";
 import PlayerLookupForm from "./components/home/PlayerLookupForm";
@@ -136,7 +135,6 @@ export default async function Page() {
       <CoachingSection coaches={coaches} />
       <EventsSection />
       <JoinSection />
-      <FooterSection />
     </div>
   );
 }

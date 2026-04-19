@@ -110,7 +110,7 @@ export const plMessages: Dictionary = {
       selectedRoom: "Gracze w wybranym kanale glosowym",
       serverBadge: "Status serwera",
       serverTitle: "Liczby, ktore buduja zaufanie",
-      serverDescription: "Ponizsze dane pochodza z publicznego widgetu serwera.",
+      serverDescription: "Tutaj widzisz aktualny podglad spolecznosci na Discordzie.",
       presenceTitle: "Obecnosc na zywo",
       presenceText: "czlonkow jest teraz online.",
     },
@@ -179,7 +179,7 @@ export const plMessages: Dictionary = {
   },
   portalShell: {
     tagline:
-      "Portal turniejowy z logowaniem, automatycznymi bracketami i obsluga wynikow.",
+      "Sledz turnieje, swoje mecze i badz blisko spolecznosci.",
     tournaments: "Turnieje",
     clanWars: "Mapa Clan Wars",
     dashboard: "Panel",
@@ -204,7 +204,7 @@ export const plMessages: Dictionary = {
     registerSuccessTitle: "Wyslano email potwierdzajacy",
     registerSteps: [
       "Otworz swoja skrzynke email.",
-      "Znajdz wiadomosc potwierdzajaca od Supabase.",
+      "Znajdz email potwierdzajacy.",
       "Kliknij link i zostaniesz przeniesiony do panelu.",
     ],
     recoverySubmit: "Wyslij link odzyskiwania",
@@ -225,9 +225,9 @@ export const plMessages: Dictionary = {
   loginPage: {
     ...enMessages.loginPage,
     eyebrow: "Dostep do turniejow",
-    title: "Logowanie emailem i haslem, proste i zgodne z backendem turniejowym.",
+    title: "Zaloguj sie do swojej strefy turniejowej",
     description:
-      "Portal uzywa standardowych sesji Supabase z emailem i haslem. Uzytkownicy rejestruja sie przez email, haslo, nazwe Steam i nazwe Discord, potwierdzaja email i trafiaja prosto do panelu.",
+      "Zaloguj sie emailem i haslem, aby przegladac turnieje, sledzic drabinke i sprawdzac swoje najblizsze mecze.",
     cards: [
       {
         title: "Weryfikacja email",
@@ -238,47 +238,47 @@ export const plMessages: Dictionary = {
         text: "Twoj nastepny przeciwnik, status meczu i zaktualizowany bracket.",
       },
       {
-        title: "Konsola admina",
-        text: "Tworzenie turniejow, reczne roster'y, akceptacje i poprawki wynikow.",
+        title: "Strefa organizatora",
+        text: "Zarzadzaj turniejami, zapisami i wynikami w jednym miejscu.",
       },
     ],
     formTitle: "Wejdz do portalu",
     formDescription:
-      "Wpisz dane swojego konta. Jesli nie masz jeszcze profilu, najpierw dokoncz rejestracje.",
+      "Wpisz dane swojego konta. Jesli nie masz jeszcze profilu, utworz go w kilka chwil.",
     forgotPassword: "Zapomniales hasla?",
     forgotDescription:
       "Wpisz swoj email, a wyslemy ci link do zresetowania hasla.",
     registerPrompt: "Potrzebujesz konta?",
     registerCta: "Przejdz do rejestracji",
     callbackHelp:
-      "Skonfiguruj w Supabase `URL Configuration` ze sciezka /auth/callback dla domeny live oraz `localhost`.",
+      "Jesli przed chwila potwierdziles email i nadal nie mozesz sie zalogowac, otworz ponownie otrzymany link.",
   },
   registerPage: {
     ...enMessages.registerPage,
     eyebrow: "Rejestracja uzytkownika",
-    title: "Utworz konto turniejowe przez email, haslo, Steam i Discord.",
+    title: "Utworz konto spolecznosci",
     description:
-      "Po rejestracji otrzymasz email potwierdzajacy. Gdy email zostanie zweryfikowany, callback przeniesie cie do panelu uzytkownika.",
+      "Utworz konto, aby dolaczac do turniejow, sledzic mecze i aktualizowac profil gracza.",
     bullets: [
-      "Email i haslo do standardowego logowania",
-      "Nazwa Steam i Discord zapisywane w profilu turniejowym",
-      "Potwierdzenie email wymagane przed pelnym dostepem",
+      "Szybkie logowanie przez email i haslo",
+      "Profil gracza z nazwa Steam i Discord",
+      "Potwierdzenie emaila przed pierwszym logowaniem",
     ],
     formTitle: "Utworz konto",
     formDescription:
-      "Uzywaj prawdziwych lub stabilnych danych, aby admini mogli rozpoznac cie w turniejach i potwierdzeniach meczow.",
+      "Uzyj jasnych i rozpoznawalnych danych, aby latwiej bylo cie znalezc w turniejach i potwierdzeniach meczow.",
     loginPrompt: "Masz juz konto?",
     loginCta: "Przejdz do logowania",
   },
   tournamentsPage: {
     ...enMessages.tournamentsPage,
     eyebrow: "Turnieje spolecznosci",
-    title: "Lista turniejow polaczona z prawdziwym backendem.",
+    title: "Otwarte turnieje spolecznosci",
     description:
-      "Tutaj mozesz dolaczac do otwartych turniejow, zobaczyc format wybrany przez admina i otworzyc pelny bracket. Rejestracje i twoj status osobisty pochodza bezposrednio z serwisu Express.",
-    serviceUnavailable: "Usluga turniejowa niedostepna",
+      "Sprawdz dostepne turnieje, zobacz format i zasady oraz zapisz sie, gdy rejestracja jest otwarta.",
+    serviceUnavailable: "Turnieje sa chwilowo niedostepne",
     serviceDescription:
-      "Frontend polaczyl sie z backendem, ale trasa turniejowa zwrocila blad. Lokalnie czesto dzieje sie tak, gdy brakuje schematu Supabase albo backend nie moze odczytac tabel turniejowych.",
+      "Nie udalo sie teraz zaladowac listy turniejow. Sprobuj ponownie za chwile.",
     openTournament: "Otworz turniej",
     alreadyJoined: "Juz bierzesz udzial",
     pendingApproval: "Prosba czeka na akceptacje",
@@ -288,7 +288,7 @@ export const plMessages: Dictionary = {
     rules: "Zasady",
     emptyTitle: "Brak dostepnych turniejow",
     emptyDescription:
-      "Gdy admin utworzy pierwszy turniej, pojawi sie tutaj wraz z formatem, statusem i przyciskiem zapisu.",
+      "Gdy pojawia sie nowe wydarzenia, znajdziesz je tutaj razem ze wszystkimi informacjami potrzebnymi do dolaczenia.",
     joinLabels: {
       approval: "Wyslij prosbe",
       hybrid: "Dolacz / popros o slot",

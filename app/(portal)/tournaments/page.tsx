@@ -50,9 +50,6 @@ export default async function TournamentsPage() {
           <p className="mt-4 max-w-3xl text-sm leading-7 text-rose-100/88">
             {messages.tournamentsPage.serviceDescription}
           </p>
-          <p className="mt-4 rounded-2xl border border-rose-400/20 bg-slate-950/60 px-4 py-3 font-mono text-xs text-rose-100">
-            {loadError}
-          </p>
         </section>
       ) : null}
 

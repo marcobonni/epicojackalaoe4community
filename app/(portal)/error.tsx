@@ -20,13 +20,9 @@ export default function PortalError({
         L&apos;area tornei non e riuscita a completare la richiesta.
       </h2>
       <p className="mt-4 max-w-2xl text-sm leading-7 text-slate-300">
-        In produzione questa schermata aiuta a gestire errori temporanei di backend,
-        configurazione o database senza lasciare l&apos;utente davanti a una pagina rotta.
+        Potrebbe trattarsi di un problema temporaneo. Riprova tra un attimo e,
+        se il problema continua, torna piu tardi.
       </p>
-
-      <div className="mt-6 rounded-2xl border border-slate-800 bg-slate-900/70 p-4 text-sm leading-6 text-slate-300">
-        {error.message || "Errore non previsto."}
-      </div>
 
       <button
         type="button"

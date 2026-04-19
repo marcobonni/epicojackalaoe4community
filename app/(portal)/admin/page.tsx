@@ -96,14 +96,14 @@ export default async function AdminPage() {
     <div className="space-y-8">
       <section className="rounded-[2rem] border border-amber-400/20 bg-slate-950/75 p-8 shadow-2xl shadow-black/30">
         <p className="text-sm uppercase tracking-[0.3em] text-amber-300">
-          Console admin
+          Area organizzazione
         </p>
         <h1 className="mt-4 text-4xl font-bold tracking-tight text-white">
-          Organizza tornei, gestisci roster e controlla il bracket reale.
+          Organizza tornei, gestisci iscrizioni e tieni tutto sotto controllo.
         </h1>
         <p className="mt-4 max-w-3xl text-base leading-7 text-slate-300">
-          Sei autenticato come {session.user.email}. Da qui il frontend parla con
-          il backend Express e usa il database Supabase del progetto torneo.
+          Sei connesso come {session.user.email}. Da qui puoi aprire iscrizioni,
+          aggiornare i roster, generare la fase torneo e seguire l&apos;andamento degli eventi.
         </p>
       </section>
 
@@ -118,7 +118,7 @@ export default async function AdminPage() {
                 Nuovo torneo
               </p>
               <h2 className="mt-3 text-2xl font-semibold text-white">
-                Creazione torneo collegata al backend
+                Crea un nuovo torneo
               </h2>
             </div>
           </div>
@@ -380,8 +380,8 @@ export default async function AdminPage() {
                 className="w-full rounded-2xl border border-slate-700 bg-slate-900 px-4 py-3 text-sm text-white outline-none transition focus:border-amber-300"
               />
               <span className="mt-2 block text-xs leading-6 text-slate-500">
-                Una riga per giocatore. Se inserisci email, il backend prova a
-                collegarlo al profilo reale; altrimenti crea un partecipante manuale.
+                Una riga per giocatore. Se inserisci anche l&apos;email, sara piu facile
+                riconoscere il partecipante corretto.
               </span>
             </label>
 
@@ -410,24 +410,24 @@ export default async function AdminPage() {
 
         <section className="rounded-[2rem] border border-slate-800 bg-slate-950/75 p-8 shadow-2xl shadow-black/20">
           <p className="text-sm uppercase tracking-[0.3em] text-slate-400">
-            Integrazione live
+            Guida rapida
           </p>
           <h2 className="mt-3 text-2xl font-semibold text-white">
-            Cosa cambia rispetto al tentativo locale
+            Cosa puoi fare da qui
           </h2>
 
           <div className="mt-6 space-y-4 text-sm leading-7 text-slate-300">
             <div className="rounded-2xl border border-slate-800 bg-slate-900/70 px-4 py-3">
-              Login email/password e sessioni tramite Supabase
+              Creare nuovi tornei con formato, date e regole
             </div>
             <div className="rounded-2xl border border-slate-800 bg-slate-900/70 px-4 py-3">
-              Dati torneo caricati dal backend Express
+              Approvare iscrizioni e completare il roster
             </div>
             <div className="rounded-2xl border border-slate-800 bg-slate-900/70 px-4 py-3">
-              Admin actions inoltrate al backend con chiave server-only
+              Aggiornare stato, seed e partecipanti
             </div>
             <div className="rounded-2xl border border-slate-800 bg-slate-900/70 px-4 py-3">
-              Nessun salvataggio JSON locale nel frontend
+              Generare il bracket quando tutto e pronto
             </div>
           </div>
         </section>
@@ -503,7 +503,7 @@ export default async function AdminPage() {
 
                   <div className="rounded-3xl border border-slate-800 bg-slate-900/70 p-5">
                     <p className="text-xs uppercase tracking-[0.26em] text-slate-500">
-                      Configurazione
+                      Dettagli torneo
                     </p>
                     <div className="mt-3 space-y-1 text-sm text-slate-200">
                       <p className="font-semibold text-white">
@@ -645,10 +645,10 @@ export default async function AdminPage() {
                         Puoi cambiare stato, seed e rimuovere ogni partecipante del torneo.
                       </div>
                       <div className="rounded-2xl border border-slate-800 bg-slate-950/70 px-4 py-3">
-                        Per sicurezza, rimozione e cambi roster vengono bloccati quando il bracket e gia stato generato.
+                        Se il bracket e gia stato generato, alcune modifiche potrebbero richiedere piu attenzione.
                       </div>
                       <div className="rounded-2xl border border-slate-800 bg-slate-950/70 px-4 py-3">
-                        Gli utenti reali restano collegati al loro profilo Supabase; i player manuali restano gestibili da qui.
+                        I partecipanti aggiunti a mano restano modificabili in qualsiasi momento da questa pagina.
                       </div>
                     </div>
                   </div>
@@ -770,7 +770,7 @@ export default async function AdminPage() {
                               </form>
                             ) : (
                               <div className="rounded-2xl border border-slate-800 bg-slate-900/70 px-4 py-3 text-sm text-slate-400">
-                                Usa lo stato per riportarlo in pending, rejected o withdrawn.
+                                Puoi aggiornare lo stato del partecipante in qualsiasi momento.
                               </div>
                             )}
 
@@ -806,8 +806,7 @@ export default async function AdminPage() {
               Nessun torneo creato
             </h3>
             <p className="mx-auto mt-4 max-w-2xl text-sm leading-7 text-slate-400">
-              Usa il form sopra per creare il primo torneo e iniziare a testare il
-              flusso completo di iscrizione, gestione match e aggiornamento del tabellone.
+              Usa il modulo qui sopra per pubblicare il primo torneo e iniziare a raccogliere iscrizioni.
             </p>
           </div>
         )}

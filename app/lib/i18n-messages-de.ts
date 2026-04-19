@@ -111,7 +111,7 @@ export const deMessages: Dictionary = {
       selectedRoom: "Spieler im ausgewahlten Sprachkanal",
       serverBadge: "Serverstatus",
       serverTitle: "Zahlen, die Vertrauen schaffen",
-      serverDescription: "Die folgenden Daten stammen aus dem offentlichen Server-Widget.",
+      serverDescription: "Hier siehst du einen Live-Uberblick uber die Community auf Discord.",
       presenceTitle: "Live-Prasenz",
       presenceText: "Mitglieder sind gerade online.",
     },
@@ -180,7 +180,7 @@ export const deMessages: Dictionary = {
   },
   portalShell: {
     tagline:
-      "Turnierportal mit Login, automatischen Brackets und Ergebnisverwaltung.",
+      "Verfolge Turniere, deine Matches und bleib mitten in der Community.",
     tournaments: "Turniere",
     clanWars: "Clan Wars Karte",
     dashboard: "Dashboard",
@@ -205,7 +205,7 @@ export const deMessages: Dictionary = {
     registerSuccessTitle: "Bestatigungs-E-Mail gesendet",
     registerSteps: [
       "Offne dein E-Mail-Postfach.",
-      "Suche die Bestatigungsnachricht von Supabase.",
+      "Suche nach der Bestatigungs-E-Mail.",
       "Klicke auf den Link und du wirst zum Dashboard weitergeleitet.",
     ],
     recoverySubmit: "Wiederherstellungslink senden",
@@ -226,9 +226,9 @@ export const deMessages: Dictionary = {
   loginPage: {
     ...enMessages.loginPage,
     eyebrow: "Turnierzugang",
-    title: "E-Mail- und Passwort-Login, einfach und passend zum Turnier-Backend.",
+    title: "Melde dich in deinem Turnierbereich an",
     description:
-      "Das Portal nutzt standardmassige Supabase-Sessions mit E-Mail und Passwort. Nutzer registrieren sich mit E-Mail, Passwort, Steam-Namen und Discord-Namen, bestatigen ihre E-Mail und gelangen dann direkt ins Dashboard.",
+      "Melde dich mit E-Mail und Passwort an, um Turniere zu sehen, das Bracket zu verfolgen und deine nachsten Matches zu prufen.",
     cards: [
       {
         title: "E-Mail-Bestatigung",
@@ -239,47 +239,47 @@ export const deMessages: Dictionary = {
         text: "Dein nachster Gegner, Match-Status und das aktualisierte Bracket.",
       },
       {
-        title: "Admin-Konsole",
-        text: "Turniererstellung, manuelles Roster, Freigaben und Ergebnisanpassungen.",
+        title: "Organisationsbereich",
+        text: "Verwalte Turniere, Anmeldungen und Ergebnisse an einem Ort.",
       },
     ],
     formTitle: "Portal betreten",
     formDescription:
-      "Gib deine Zugangsdaten ein. Falls du noch kein Profil hast, schliesse zuerst die Registrierung ab.",
+      "Gib deine Zugangsdaten ein. Falls du noch kein Profil hast, erstelle es in wenigen Augenblicken.",
     forgotPassword: "Passwort vergessen?",
     forgotDescription:
       "Gib deine E-Mail-Adresse ein und wir senden dir einen Link zum Zurucksetzen deines Passworts.",
     registerPrompt: "Noch kein Konto?",
     registerCta: "Zur Registrierung",
     callbackHelp:
-      "Konfiguriere in Supabase `URL Configuration` den Pfad /auth/callback sowohl fur die Live-Domain als auch fur `localhost`.",
+      "Wenn du deine E-Mail gerade bestatigt hast und dich noch nicht anmelden kannst, offne den erhaltenen Link bitte erneut.",
   },
   registerPage: {
     ...enMessages.registerPage,
     eyebrow: "Benutzerregistrierung",
-    title: "Erstelle dein Turnierkonto mit E-Mail, Passwort, Steam und Discord.",
+    title: "Erstelle dein Community-Konto",
     description:
-      "Nach der Registrierung erhaltst du eine Bestatigungs-E-Mail. Sobald die E-Mail bestatigt ist, fuhrt dich der Callback zum Benutzer-Dashboard.",
+      "Erstelle dein Konto, um Turnieren beizutreten, deine Matches zu verfolgen und dein Spielerprofil aktuell zu halten.",
     bullets: [
-      "E-Mail und Passwort fur den normalen Login",
-      "Steam-Name und Discord-Name werden im Turnierprofil gespeichert",
-      "E-Mail-Bestatigung vor vollem Zugriff erforderlich",
+      "Schnelle Anmeldung mit E-Mail und Passwort",
+      "Spielerprofil mit Steam- und Discord-Namen",
+      "E-Mail-Bestatigung vor dem ersten Zugriff",
     ],
     formTitle: "Konto erstellen",
     formDescription:
-      "Verwende echte oder zumindest stabile Angaben, damit Admins dich in Turnieren und Match-Bestatigungen erkennen konnen.",
+      "Verwende klare und wiedererkennbare Angaben, damit man dich in Turnieren und Match-Bestatigungen leichter findet.",
     loginPrompt: "Hast du schon ein Konto?",
     loginCta: "Zum Login",
   },
   tournamentsPage: {
     ...enMessages.tournamentsPage,
     eyebrow: "Community-Turniere",
-    title: "Turnierliste mit Verbindung zum Live-Backend.",
+    title: "Offene Community-Turniere",
     description:
-      "Hier kannst du offenen Turnieren beitreten, das vom Admin gewahlte Format sehen und das komplette Bracket offnen. Registrierungen und dein personlicher Status kommen direkt aus dem Express-Service.",
-    serviceUnavailable: "Turnierdienst nicht verfugbar",
+      "Entdecke verfugbare Turniere, prufe Format und Regeln und melde dich an, sobald die Registrierung offen ist.",
+    serviceUnavailable: "Turniere sind vorubergehend nicht verfugbar",
     serviceDescription:
-      "Das Frontend hat das Backend erreicht, aber die Turnier-Route hat einen Fehler zuruckgegeben. Lokal passiert das oft, wenn das Supabase-Schema fehlt oder das Backend die Turniertabellen nicht lesen kann.",
+      "Die Turnierliste kann gerade nicht geladen werden. Bitte versuche es gleich noch einmal.",
     openTournament: "Turnier offnen",
     alreadyJoined: "Bereits teilnehmend",
     pendingApproval: "Anfrage wartet auf Freigabe",
@@ -289,7 +289,7 @@ export const deMessages: Dictionary = {
     rules: "Regeln",
     emptyTitle: "Keine Turniere verfugbar",
     emptyDescription:
-      "Sobald ein Admin das erste Turnier erstellt, erscheint es hier mit Format, Status und Anmeldebutton.",
+      "Sobald neue Events verfugbar sind, findest du sie hier mit allen Infos zur Teilnahme.",
     joinLabels: {
       approval: "Anfrage senden",
       hybrid: "Beitreten / Slot anfragen",

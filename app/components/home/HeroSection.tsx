@@ -44,6 +44,13 @@ export default function HeroSection() {
         "border-rose-300/18 bg-[linear-gradient(180deg,rgba(225,29,72,0.26),rgba(15,23,42,0.2))] text-rose-50 hover:border-rose-300/40",
       badge: true,
     },
+    {
+      href: "/patch-notes",
+      label: "Patch Notes",
+      accent:
+        "border-amber-300/18 bg-[linear-gradient(180deg,rgba(250,204,21,0.22),rgba(15,23,42,0.18))] text-amber-50 hover:border-amber-300/40",
+      badge: true,
+    },
   ];
 
   useEffect(() => {
@@ -94,70 +101,70 @@ export default function HeroSection() {
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_24%_46%,rgba(255,233,179,0.3),transparent_20%),radial-gradient(circle_at_54%_55%,rgba(255,177,66,0.18),transparent_26%),linear-gradient(180deg,rgba(2,6,23,0.14),rgba(2,6,23,0.9)_88%)]" />
       <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-b from-transparent to-[#040714]" />
 
-      <div className="relative mx-auto max-w-[1720px] px-6 py-12 sm:px-8 sm:py-16 lg:px-14 lg:py-16 xl:px-18 xl:py-12 2xl:px-20 2xl:py-14">
-        <div className="grid min-h-[calc(100svh-4rem)] items-end gap-14 lg:min-h-[calc(100svh-5.5rem)] lg:grid-cols-[minmax(0,1.12fr)_minmax(400px,0.74fr)] lg:items-center lg:gap-14 2xl:min-h-[calc(100svh-4.5rem)] 2xl:gap-18">
-          <div className="max-w-[72rem] pb-2 lg:-translate-y-6 xl:-translate-y-10">
+      <div className="relative mx-auto max-w-[min(90vw,1380px)] px-[clamp(1rem,1.9vw,1.45rem)] py-[clamp(2.2rem,5vh,3.5rem)]">
+        <div className="grid min-h-[calc(100svh-4.5rem)] items-end gap-[clamp(1.2rem,2vw,2.3rem)] xl:min-h-[calc(100svh-6rem)] xl:grid-cols-[minmax(0,0.98fr)_minmax(16rem,0.68fr)] xl:items-center">
+          <div className="max-w-[min(100%,47rem)] pb-2 xl:-translate-y-[clamp(0.15rem,0.8vw,0.55rem)]">
             <div className="hero-intro inline-flex items-center rounded-full border border-amber-300/28 bg-amber-300/10 px-4 py-1.5 text-sm font-semibold text-amber-200 shadow-[0_0_0_1px_rgba(250,204,21,0.08)]">
               {hero.badge}
             </div>
 
-            <p className="hero-intro hero-intro-delay-1 mt-6 text-xs font-semibold uppercase tracking-[0.48em] text-amber-200/85 sm:text-sm">
+            <p className="hero-intro hero-intro-delay-1 mt-[clamp(0.85rem,1.4vw,1.15rem)] text-[clamp(0.64rem,0.2vw+0.6rem,0.74rem)] font-semibold uppercase tracking-[0.38em] text-amber-200/85">
               {hero.statsHeading}
             </p>
 
-            <h1 className="hero-intro hero-intro-delay-2 mt-5 max-w-5xl text-5xl font-semibold leading-[0.92] tracking-[-0.05em] text-white sm:text-6xl lg:text-7xl xl:text-[6.4rem] 2xl:text-[7rem]">
+            <h1 className="hero-intro hero-intro-delay-2 mt-[clamp(0.65rem,1.2vw,0.95rem)] max-w-[min(100%,10.5ch)] text-[clamp(2.5rem,2.5vw+1.2rem,3.95rem)] font-semibold leading-[0.95] tracking-[-0.05em] text-white">
               {hero.title}
             </h1>
 
-            <p className="hero-intro hero-intro-delay-3 mt-7 max-w-3xl text-base leading-8 text-slate-200/88 sm:text-lg xl:text-[1.22rem] xl:leading-9">
+            <p className="hero-intro hero-intro-delay-3 mt-[clamp(0.75rem,1.15vw,1rem)] max-w-[min(100%,34rem)] text-[clamp(0.88rem,0.16vw+0.82rem,0.96rem)] leading-[1.62] text-slate-200/88">
               {hero.description}
             </p>
 
-            <div className="hero-intro hero-intro-delay-4 mt-9 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+            <div className="hero-intro hero-intro-delay-4 mt-[clamp(1rem,1.5vw,1.3rem)] flex flex-col gap-3 sm:flex-row sm:flex-wrap">
               <LoadingLink
                 target="_blank"
                 rel="noopener noreferrer"
                 href={SERVER_CONFIG.inviteUrl}
-                className="group inline-flex min-h-[60px] items-center justify-center rounded-full 
+                className="group inline-flex min-h-[clamp(2.8rem,2.2vw,3.05rem)] items-center justify-center rounded-full 
 bg-[linear-gradient(180deg,#facc15,#eab308)] 
-px-7 py-4 text-center text-base font-semibold text-black 
+px-[clamp(0.95rem,1vw,1.2rem)] py-[clamp(0.7rem,0.7vw,0.82rem)] text-center text-[clamp(0.82rem,0.12vw+0.79rem,0.9rem)] font-semibold text-black 
 shadow-[0_18px_50px_rgba(234,179,8,0.35)] 
 transition duration-300 hover:-translate-y-0.5 
 hover:bg-[linear-gradient(180deg,#fde047,#facc15)] 
 hover:shadow-[0_24px_60px_rgba(234,179,8,0.5)]"
               >
                 <span>{hero.ctaJoin}</span>
-                <span className="ml-3 text-lg transition duration-300 group-hover:translate-x-1">
+                <span className="ml-2.5 text-base transition duration-300 group-hover:translate-x-1">
                   →
                 </span>
               </LoadingLink>
 
               <LoadingLink
                 href="/tournaments"
-                className="inline-flex min-h-[60px] items-center justify-center rounded-full border border-white/18 bg-white/[0.1] px-7 py-4 text-center text-base font-semibold text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.08)] backdrop-blur-sm transition duration-300 hover:-translate-y-0.5 hover:border-white/36 hover:bg-white/[0.16]"
+                className="inline-flex min-h-[clamp(2.8rem,2.2vw,3.05rem)] items-center justify-center rounded-full border border-white/18 bg-white/[0.1] px-[clamp(0.95rem,1vw,1.2rem)] py-[clamp(0.7rem,0.7vw,0.82rem)] text-center text-[clamp(0.82rem,0.12vw+0.79rem,0.9rem)] font-semibold text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.08)] backdrop-blur-sm transition duration-300 hover:-translate-y-0.5 hover:border-white/36 hover:bg-white/[0.16]"
               >
                 {hero.ctaTournaments}
               </LoadingLink>
 
               <LoadingLink
                 href="/login"
-                className="inline-flex min-h-[60px] items-center justify-center rounded-full border border-rose-300/18 bg-[linear-gradient(180deg,rgba(225,29,72,0.2),rgba(15,23,42,0.18))] px-7 py-4 text-center text-base font-semibold text-rose-50 shadow-[inset_0_1px_0_rgba(255,255,255,0.05)] backdrop-blur-sm transition duration-300 hover:-translate-y-0.5 hover:border-rose-300/36 hover:bg-[linear-gradient(180deg,rgba(225,29,72,0.28),rgba(15,23,42,0.22))]"
+                className="inline-flex min-h-[clamp(2.8rem,2.2vw,3.05rem)] items-center justify-center rounded-full border border-rose-300/18 bg-[linear-gradient(180deg,rgba(225,29,72,0.2),rgba(15,23,42,0.18))] px-[clamp(0.95rem,1vw,1.2rem)] py-[clamp(0.7rem,0.7vw,0.82rem)] text-center text-[clamp(0.82rem,0.12vw+0.79rem,0.9rem)] font-semibold text-rose-50 shadow-[inset_0_1px_0_rgba(255,255,255,0.05)] backdrop-blur-sm transition duration-300 hover:-translate-y-0.5 hover:border-rose-300/36 hover:bg-[linear-gradient(180deg,rgba(225,29,72,0.28),rgba(15,23,42,0.22))]"
               >
                 {hero.ctaPortal}
               </LoadingLink>
             </div>
 
-            <div className="hero-intro hero-intro-delay-5 mt-10 grid gap-3 sm:grid-cols-2 lg:max-w-[54rem] xl:max-w-[62rem] xl:grid-cols-3">
+            <div className="hero-intro hero-intro-delay-5 mt-[clamp(1rem,1.4vw,1.3rem)] grid gap-3 sm:grid-cols-2 xl:max-w-[min(100%,35rem)] xl:grid-cols-3">
               {quickLinks.map((item) => (
                 <LoadingLink
                   key={item.label}
                   href={item.href}
-                  className={`group flex min-h-[64px] items-center justify-between rounded-[1.4rem] border px-4 py-3 text-sm font-semibold shadow-[inset_0_1px_0_rgba(255,255,255,0.05)] backdrop-blur-sm transition duration-300 hover:-translate-y-0.5 ${item.accent}`}
+                  className={`group flex min-h-[clamp(2.8rem,2vw,3.05rem)] items-center justify-between rounded-[1.05rem] border px-[clamp(0.78rem,0.75vw,0.92rem)] py-[clamp(0.62rem,0.65vw,0.76rem)] text-[clamp(0.7rem,0.1vw+0.67rem,0.78rem)] font-semibold shadow-[inset_0_1px_0_rgba(255,255,255,0.05)] backdrop-blur-sm transition duration-300 hover:-translate-y-0.5 ${item.accent}`}
                 >
-                  <span className="max-w-[12rem] leading-5">{item.label}</span>
+                  <span className="max-w-[8rem] leading-[0.95rem]">{item.label}</span>
                   <span className="ml-3 flex items-center gap-2">
                     {item.badge ? <NewBadge /> : null}
-                    <span className="text-base text-white/70 transition duration-300 group-hover:translate-x-1">
+                    <span className="text-[0.82rem] text-white/70 transition duration-300 group-hover:translate-x-1">
                       →
                     </span>
                   </span>
@@ -166,8 +173,8 @@ hover:shadow-[0_24px_60px_rgba(234,179,8,0.5)]"
             </div>
           </div>
 
-          <div className="hero-intro hero-intro-delay-4 hero-rail-float lg:justify-self-end lg:-translate-y-4 xl:-translate-y-6">
-            <div className="relative overflow-hidden rounded-[2.6rem] border border-white/10 bg-[linear-gradient(180deg,rgba(10,14,28,0.82),rgba(7,11,22,0.52))] p-6 shadow-[0_32px_80px_rgba(0,0,0,0.34)] backdrop-blur-md sm:p-7 lg:min-w-[390px] lg:max-w-[470px] 2xl:min-w-[430px] 2xl:max-w-[510px]">
+          <div className="hero-intro hero-intro-delay-4 hero-rail-float xl:justify-self-end">
+            <div className="relative w-full max-w-[min(100%,21rem)] overflow-hidden rounded-[clamp(1.45rem,1.1vw,1.8rem)] border border-white/10 bg-[linear-gradient(180deg,rgba(10,14,28,0.82),rgba(7,11,22,0.52))] p-[clamp(0.85rem,0.9vw,1.05rem)] shadow-[0_32px_80px_rgba(0,0,0,0.34)] backdrop-blur-md">
               <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(250,204,21,0.22),transparent_24%),linear-gradient(135deg,rgba(255,255,255,0.05),transparent_30%,rgba(15,23,42,0.22))]" />
               <div className="absolute inset-x-6 top-0 h-px bg-gradient-to-r from-transparent via-amber-200/55 to-transparent" />
 
@@ -176,11 +183,11 @@ hover:shadow-[0_24px_60px_rgba(234,179,8,0.5)]"
                   {hero.statsHeading}
                 </p>
 
-                <div className="mt-6 space-y-4">
+                <div className="mt-[clamp(0.9rem,1.2vw,1.15rem)] space-y-[clamp(0.7rem,0.8vw,0.9rem)]">
                   {hero.stats.map((stat, index) => (
                     <div
                       key={stat.label}
-                      className={`rounded-[1.8rem] border px-5 py-5 ${
+                      className={`rounded-[clamp(1.15rem,1vw,1.45rem)] border px-[clamp(0.9rem,0.9vw,1rem)] py-[clamp(0.9rem,1vw,1rem)] ${
                         index === 0
                           ? "border-amber-300/22 bg-amber-300/[0.08]"
                           : "border-white/8 bg-slate-950/26"
@@ -188,10 +195,10 @@ hover:shadow-[0_24px_60px_rgba(234,179,8,0.5)]"
                     >
                       <div className="flex items-end justify-between gap-4">
                         <div>
-                          <div className="text-4xl font-semibold tracking-[-0.04em] text-white sm:text-[2.8rem]">
+                          <div className="text-[clamp(1.85rem,1vw+1.55rem,2.45rem)] font-semibold tracking-[-0.04em] text-white">
                             {stat.value}
                           </div>
-                          <div className="mt-2 text-sm text-slate-300/78">
+                          <div className="mt-1.5 text-[clamp(0.76rem,0.12vw+0.74rem,0.86rem)] text-slate-300/78">
                             {stat.label}
                           </div>
                         </div>

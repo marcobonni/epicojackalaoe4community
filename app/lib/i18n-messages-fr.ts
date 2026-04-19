@@ -111,7 +111,7 @@ export const frMessages: Dictionary = {
       selectedRoom: "Joueurs dans le salon vocal selectionne",
       serverBadge: "Etat du serveur",
       serverTitle: "Des chiffres qui inspirent confiance",
-      serverDescription: "Les donnees ci-dessous proviennent du widget public du serveur.",
+      serverDescription: "Voici un apercu en direct de la communaute sur Discord.",
       presenceTitle: "Presence en direct",
       presenceText: "membres en ligne en ce moment.",
     },
@@ -180,7 +180,7 @@ export const frMessages: Dictionary = {
   },
   portalShell: {
     tagline:
-      "Portail de tournois avec connexion, brackets automatiques et gestion des resultats.",
+      "Suivez les tournois, vos matchs et restez au coeur de la communaute.",
     tournaments: "Tournois",
     clanWars: "Carte Clan Wars",
     dashboard: "Tableau de bord",
@@ -205,7 +205,7 @@ export const frMessages: Dictionary = {
     registerSuccessTitle: "Email de confirmation envoye",
     registerSteps: [
       "Ouvrez votre boite mail.",
-      "Cherchez le message de confirmation Supabase.",
+      "Cherchez l'email de confirmation.",
       "Cliquez sur le lien et vous serez redirige vers le tableau de bord.",
     ],
     recoverySubmit: "Envoyer le lien de recuperation",
@@ -226,9 +226,9 @@ export const frMessages: Dictionary = {
   loginPage: {
     ...enMessages.loginPage,
     eyebrow: "Acces tournois",
-    title: "Connexion par email et mot de passe, simple et alignee sur le backend des tournois.",
+    title: "Accedez a votre espace tournois",
     description:
-      "Le portail utilise des sessions Supabase standard avec email et mot de passe. Les utilisateurs s'inscrivent avec email, mot de passe, nom Steam et nom Discord, confirment leur email puis accedent directement au tableau de bord.",
+      "Connectez-vous avec votre email et votre mot de passe pour voir les tournois, suivre le bracket et consulter vos prochains matchs.",
     cards: [
       {
         title: "Verification email",
@@ -239,47 +239,47 @@ export const frMessages: Dictionary = {
         text: "Votre prochain adversaire, l'etat du match et le bracket mis a jour.",
       },
       {
-        title: "Console admin",
-        text: "Creation de tournois, roster manuel, validations et corrections de resultats.",
+        title: "Espace organisation",
+        text: "Gerez les tournois, les inscriptions et les resultats depuis un seul endroit.",
       },
     ],
     formTitle: "Entrer dans le portail",
     formDescription:
-      "Saisissez vos identifiants. Si vous n'avez pas encore de profil, terminez d'abord l'inscription.",
+      "Saisissez vos identifiants. Si vous n'avez pas encore de profil, creez-en un en quelques instants.",
     forgotPassword: "Mot de passe oublie ?",
     forgotDescription:
       "Saisissez votre email et nous vous enverrons un lien pour reinitialiser votre mot de passe.",
     registerPrompt: "Besoin d'un compte ?",
     registerCta: "Aller a l'inscription",
     callbackHelp:
-      "Configurez le `URL Configuration` de Supabase avec le chemin /auth/callback pour le domaine live et pour `localhost`.",
+      "Si vous venez de confirmer votre email et que l'acces ne fonctionne pas encore, essayez d'ouvrir de nouveau le lien recu.",
   },
   registerPage: {
     ...enMessages.registerPage,
     eyebrow: "Inscription utilisateur",
-    title: "Creez votre compte tournoi avec email, mot de passe, Steam et Discord.",
+    title: "Creez votre compte communaute",
     description:
-      "Apres l'inscription, vous recevrez un email de confirmation. Une fois l'email verifie, le callback vous envoie vers le tableau de bord utilisateur.",
+      "Creez votre compte pour rejoindre les tournois, suivre vos matchs et garder votre profil joueur a jour.",
     bullets: [
-      "Email et mot de passe pour la connexion standard",
-      "Nom Steam et nom Discord enregistres dans le profil tournoi",
-      "Confirmation email requise avant l'acces complet",
+      "Connexion rapide avec email et mot de passe",
+      "Profil joueur avec nom Steam et nom Discord",
+      "Confirmation email avant le premier acces",
     ],
     formTitle: "Creer un compte",
     formDescription:
-      "Utilisez des informations reelles ou stables afin que les admins puissent vous reconnaitre dans les tournois et les confirmations de match.",
+      "Utilisez des informations claires et reconnaissables pour etre retrouve plus facilement dans les tournois et les validations de matchs.",
     loginPrompt: "Vous avez deja un compte ?",
     loginCta: "Aller a la connexion",
   },
   tournamentsPage: {
     ...enMessages.tournamentsPage,
     eyebrow: "Tournois de la communaute",
-    title: "Liste des tournois connectee au backend en direct.",
+    title: "Tournois ouverts de la communaute",
     description:
-      "Ici vous pouvez rejoindre les tournois ouverts, voir le format choisi par l'admin et ouvrir le bracket complet. Les inscriptions et votre statut personnel arrivent directement depuis le service Express.",
-    serviceUnavailable: "Service de tournois indisponible",
+      "Decouvrez les tournois disponibles, consultez le format et les regles, puis rejoignez-les lorsque les inscriptions sont ouvertes.",
+    serviceUnavailable: "Les tournois sont temporairement indisponibles",
     serviceDescription:
-      "Le frontend a bien atteint le backend, mais la route des tournois a renvoye une erreur. En local, cela arrive souvent si le schema Supabase manque ou si le backend ne peut pas lire les tables de tournois.",
+      "Nous ne pouvons pas charger la liste des tournois pour le moment. Reessayez dans un instant.",
     openTournament: "Ouvrir le tournoi",
     alreadyJoined: "Deja inscrit",
     pendingApproval: "Demande en attente d'approbation",
@@ -289,7 +289,7 @@ export const frMessages: Dictionary = {
     rules: "Regles",
     emptyTitle: "Aucun tournoi disponible",
     emptyDescription:
-      "Des qu'un admin cree le premier tournoi, il apparaitra ici avec son format, son statut et le bouton d'inscription.",
+      "Lorsque de nouveaux evenements seront disponibles, vous les trouverez ici avec toutes les informations pour participer.",
     joinLabels: {
       approval: "Envoyer une demande",
       hybrid: "Rejoindre / demander une place",

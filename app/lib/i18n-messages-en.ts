@@ -110,7 +110,7 @@ export const enMessages: Dictionary = {
       selectedRoom: "Players in the selected voice room",
       serverBadge: "Server status",
       serverTitle: "Numbers that build trust",
-      serverDescription: "The data below comes from the public server widget.",
+      serverDescription: "Here is a live snapshot of the community on Discord.",
       presenceTitle: "Live presence",
       presenceText: "members online right now.",
     },
@@ -212,7 +212,7 @@ export const enMessages: Dictionary = {
       "Produced by EpicoJackal, all rights reserved. Any resemblance to real people is purely coincidental.",
   },
   portalShell: {
-    tagline: "Tournament portal with login, automatic brackets and result management.",
+    tagline: "Follow tournaments, track your matches and stay close to the community.",
     tournaments: "Tournaments",
     clanWars: "Clan Wars map",
     dashboard: "Dashboard",
@@ -238,7 +238,7 @@ export const enMessages: Dictionary = {
     registerSuccessTitle: "Confirmation email sent",
     registerSteps: [
       "Open your email inbox.",
-      "Look for the Supabase confirmation message.",
+      "Look for the confirmation email.",
       "Click the link and you will be redirected to the dashboard.",
     ],
     recoverySubmit: "Send recovery link",
@@ -256,9 +256,9 @@ export const enMessages: Dictionary = {
   },
   loginPage: {
     eyebrow: "Tournament access",
-    title: "Email and password login, simple and aligned with the tournament backend.",
+    title: "Sign in to your tournament space",
     description:
-      "The portal uses standard Supabase sessions with email and password. Users register with email, password, Steam name and Discord name, confirm their email and then enter the dashboard directly.",
+      "Sign in with your email and password to view tournaments, follow the bracket and check your upcoming matches.",
     cards: [
       {
         title: "Email verification",
@@ -269,24 +269,24 @@ export const enMessages: Dictionary = {
         text: "Your next opponent, match status and updated bracket.",
       },
       {
-        title: "Admin console",
-        text: "Tournament creation, manual roster, approvals and result overrides.",
+        title: "Organizer area",
+        text: "Manage tournaments, signups and results in one place.",
       },
     ],
     formTitle: "Enter the portal",
     formDescription:
-      "Enter your account credentials. If you do not have a profile yet, complete registration first.",
+      "Enter your account details. If you do not have a profile yet, create one in a few moments.",
     forgotPassword: "Forgot your password?",
     forgotDescription:
       "Enter your email and we will send you a link to reset your password.",
     missingConfig:
-      "Missing `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY` or `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` in `.env.local`.",
+      "Sign in is not available right now. Please try again shortly.",
     registerPrompt: "Need an account?",
     registerCta: "Go to registration",
     callbackHelp:
-      "Configure Supabase `URL Configuration` with the /auth/callback path for both the live domain and `localhost`.",
+      "If you just confirmed your email and still cannot sign in, try opening the link again.",
     errors: {
-      supabaseEnv: "Public Supabase variables are missing from `.env.local`.",
+      supabaseEnv: "Sign in is not available right now. Please try again shortly.",
       authCallback:
         "Email confirmation did not complete successfully. Try opening the link again.",
     },
@@ -297,30 +297,30 @@ export const enMessages: Dictionary = {
   },
   registerPage: {
     eyebrow: "User registration",
-    title: "Create your tournament account with email, password, Steam and Discord.",
+    title: "Create your community account",
     description:
-      "After registration you will receive a confirmation email. Once the email is verified, the callback sends you to the user dashboard.",
+      "Create your account to join tournaments, follow your matches and keep your player profile updated.",
     bullets: [
-      "Email and password for standard login",
-      "Steam name and Discord name stored in the tournament profile",
-      "Email confirmation required before full access",
+      "Quick sign in with email and password",
+      "Player profile with Steam and Discord names",
+      "Email confirmation before your first access",
     ],
     formTitle: "Create account",
     formDescription:
-      "Use real or stable details so admins can recognize you in tournaments and match confirmations.",
+      "Use clear, recognizable details so it is easier to identify you in tournaments and match confirmations.",
     missingConfig:
-      "Missing `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY` or `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` in `.env.local`.",
+      "Registration is not available right now. Please try again shortly.",
     loginPrompt: "Already have an account?",
     loginCta: "Go to login",
   },
   tournamentsPage: {
     eyebrow: "Community tournaments",
-    title: "Tournament list connected to the live backend.",
+    title: "Open community tournaments",
     description:
-      "Here you can join open tournaments, see the format chosen by the admin and open the full bracket. Registrations and your personal status now come directly from the Express service.",
-    serviceUnavailable: "Tournament service unavailable",
+      "Explore available tournaments, check the format and rules, and join when registration is open.",
+    serviceUnavailable: "Tournaments are temporarily unavailable",
     serviceDescription:
-      "The frontend reached the backend, but the tournaments route returned an error. Locally this often happens if the Supabase schema is missing or the backend cannot read the tournament tables.",
+      "We could not load the tournament list right now. Please try again shortly.",
     openTournament: "Open tournament",
     alreadyJoined: "Already participating",
     pendingApproval: "Request pending approval",
@@ -330,7 +330,7 @@ export const enMessages: Dictionary = {
     rules: "Rules",
     emptyTitle: "No tournaments available",
     emptyDescription:
-      "As soon as an admin creates the first tournament, it will appear here with format, status and a signup button.",
+      "When new events are available, you will find them here with everything you need to join.",
     joinLabels: {
       approval: "Request access",
       hybrid: "Join / request slot",

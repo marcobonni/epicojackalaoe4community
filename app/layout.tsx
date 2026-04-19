@@ -7,6 +7,7 @@ import { Analytics } from "@vercel/analytics/next";
 import Script from "next/script";
 import { LanguageProvider } from "@/app/components/LanguageProvider";
 import { getTranslations } from "@/app/lib/i18n";
+import FooterSection from "@/app/components/home/FooterSection";
 
 export async function generateMetadata(): Promise<Metadata> {
   const { messages } = await getTranslations();
@@ -64,7 +65,10 @@ export default async function RootLayout({
         <LanguageProvider locale={locale} messages={messages}>
           <NavigationLoaderProvider>
             <NavigationLoaderReset />
-            {children}
+            <div className="flex min-h-screen flex-col">
+              <div className="flex-1">{children}</div>
+              <FooterSection />
+            </div>
           </NavigationLoaderProvider>
         </LanguageProvider>
 

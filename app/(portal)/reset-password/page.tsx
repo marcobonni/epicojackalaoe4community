@@ -6,7 +6,7 @@ export const metadata = {
 };
 
 export default function ResetPasswordPage() {
-  const isSupabaseConfigured = Boolean(
+  const isRecoveryAvailable = Boolean(
     process.env.NEXT_PUBLIC_SUPABASE_URL &&
       (
         process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ||
@@ -36,11 +36,11 @@ export default function ResetPasswordPage() {
         </p>
 
         <div className="mt-8 space-y-5">
-          {isSupabaseConfigured ? (
+          {isRecoveryAvailable ? (
             <ResetPasswordForm />
           ) : (
             <div className="rounded-2xl border border-amber-400/30 bg-amber-400/10 p-4 text-sm leading-6 text-amber-100">
-              Mancano `NEXT_PUBLIC_SUPABASE_URL` e la chiave pubblica Supabase nel file `.env.local`.
+              Il recupero password non e disponibile in questo momento. Riprova tra poco.
             </div>
           )}
 

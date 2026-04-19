@@ -114,7 +114,7 @@ export const itMessages: Dictionary = {
       selectedRoom: "Giocatori nella stanza selezionata",
       serverBadge: "Stato del server",
       serverTitle: "Numeri che danno fiducia",
-      serverDescription: "I dati qui sotto arrivano dal widget pubblico del server.",
+      serverDescription: "Qui trovi una panoramica live della community su Discord.",
       presenceTitle: "Presenza live",
       presenceText: "membri online in questo momento.",
     },
@@ -217,7 +217,7 @@ export const itMessages: Dictionary = {
       "Produced by EpicoJackal, all rights reserved. Ogni riferimento a persone reali e puramente casuale.",
   },
   portalShell: {
-    tagline: "Portale tornei con login, bracket automatico e gestione risultati.",
+    tagline: "Segui i tornei, controlla i match e resta dentro l'azione della community.",
     tournaments: "Tornei",
     clanWars: "Mappa Clan Wars",
     dashboard: "Dashboard",
@@ -243,7 +243,7 @@ export const itMessages: Dictionary = {
     registerSuccessTitle: "Email di conferma inviata",
     registerSteps: [
       "Apri la tua casella email.",
-      "Cerca il messaggio di conferma di Supabase.",
+      "Cerca l'email di conferma.",
       "Clicca il link e verrai mandato alla dashboard.",
     ],
     recoverySubmit: "Invia link di recupero",
@@ -262,9 +262,9 @@ export const itMessages: Dictionary = {
   },
   loginPage: {
     eyebrow: "Accesso tornei",
-    title: "Login email e password, semplice e allineato al backend torneo.",
+    title: "Accedi al tuo spazio tornei",
     description:
-      "Il portale usa sessioni Supabase standard con email e password. L'utente si registra con email, password, nome Steam e nome Discord, conferma l'email e poi entra direttamente nella dashboard.",
+      "Entra con email e password per vedere i tuoi tornei, seguire il bracket e controllare i prossimi match.",
     cards: [
       {
         title: "Verifica email",
@@ -275,24 +275,24 @@ export const itMessages: Dictionary = {
         text: "Prossimo avversario, stato match e bracket aggiornato.",
       },
       {
-        title: "Console admin",
-        text: "Creazione torneo, roster manuale, approvazioni e override risultati.",
+        title: "Area organizzazione",
+        text: "Gestisci tornei, iscrizioni e risultati in un unico spazio.",
       },
     ],
     formTitle: "Entra nel portale",
     formDescription:
-      "Inserisci le credenziali del tuo account. Se non hai ancora un profilo, completa prima la registrazione.",
+      "Inserisci le credenziali del tuo account. Se non hai ancora un profilo, registrati in pochi istanti.",
     forgotPassword: "Password dimenticata?",
     forgotDescription:
       "Inserisci la tua email e ti mandiamo un link per reimpostare la password.",
     missingConfig:
-      "Mancano `NEXT_PUBLIC_SUPABASE_URL` e `NEXT_PUBLIC_SUPABASE_ANON_KEY` oppure `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` nel file `.env.local`.",
+      "L'accesso non e disponibile in questo momento. Riprova tra poco.",
     registerPrompt: "Registrazione account:",
     registerCta: "Vai alla pagina registrazione",
     callbackHelp:
-      "Configura in Supabase `URL Configuration` il callback /auth/callback sia per il dominio live sia per `localhost`.",
+      "Se hai appena confermato l'email ma non riesci a entrare, prova ad aprire di nuovo il link ricevuto.",
     errors: {
-      supabaseEnv: "Mancano le variabili pubbliche Supabase nel file `.env.local`.",
+      supabaseEnv: "L'accesso non e disponibile in questo momento. Riprova tra poco.",
       authCallback:
         "La conferma email non e andata a buon fine. Riprova ad aprire il link ricevuto.",
     },
@@ -303,30 +303,30 @@ export const itMessages: Dictionary = {
   },
   registerPage: {
     eyebrow: "Registrazione utente",
-    title: "Crea il tuo account torneo con email, password, Steam e Discord.",
+    title: "Crea il tuo account community",
     description:
-      "Dopo la registrazione riceverai una mail di conferma. Quando l'email viene verificata, il callback ti porta nella dashboard utente.",
+      "Registrati per partecipare ai tornei, seguire i tuoi match e tenere aggiornato il tuo profilo giocatore.",
     bullets: [
-      "Email e password per il login standard",
-      "Nome Steam e nome Discord salvati nel profilo torneo",
-      "Conferma email obbligatoria prima dell'accesso completo",
+      "Accesso rapido con email e password",
+      "Profilo con nome Steam e nome Discord",
+      "Conferma email prima del primo accesso",
     ],
     formTitle: "Crea account",
     formDescription:
-      "Usa dati reali o comunque stabili, cosi gli admin possono riconoscerti nei tornei e nelle conferme match.",
+      "Usa dati chiari e riconoscibili, cosi sara piu facile trovarti nei tornei e nelle conferme match.",
     missingConfig:
-      "Mancano `NEXT_PUBLIC_SUPABASE_URL` e `NEXT_PUBLIC_SUPABASE_ANON_KEY` oppure `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` nel file `.env.local`.",
+      "La registrazione non e disponibile in questo momento. Riprova tra poco.",
     loginPrompt: "Hai gia un account?",
     loginCta: "Vai al login",
   },
   tournamentsPage: {
     eyebrow: "Tornei community",
-    title: "Elenco tornei collegato al backend reale.",
+    title: "Tornei aperti della community",
     description:
-      "Qui puoi entrare nei tornei aperti, vedere il formato scelto dall'admin e aprire il tabellone completo. Le iscrizioni e lo stato personale arrivano ora direttamente dal servizio Express.",
-    serviceUnavailable: "Servizio torneo non disponibile",
+      "Scopri i tornei disponibili, controlla formato e regole e iscriviti quando le registrazioni sono aperte.",
+    serviceUnavailable: "Tornei temporaneamente non disponibili",
     serviceDescription:
-      "Il frontend ha raggiunto il backend, ma la rotta tornei ha risposto con un errore. In locale succede spesso se manca lo schema Supabase oppure se il backend non riesce a leggere le tabelle torneo.",
+      "Non riusciamo a caricare l'elenco dei tornei in questo momento. Riprova tra poco.",
     openTournament: "Apri torneo",
     alreadyJoined: "Gia partecipante",
     pendingApproval: "Richiesta in approvazione",
@@ -336,7 +336,7 @@ export const itMessages: Dictionary = {
     rules: "Regole",
     emptyTitle: "Nessun torneo disponibile",
     emptyDescription:
-      "Appena un admin crea il primo torneo, comparira qui con formato, stato e pulsante di iscrizione.",
+      "Quando saranno disponibili nuovi eventi, li troverai qui con tutti i dettagli per partecipare.",
     joinLabels: {
       approval: "Invia richiesta",
       hybrid: "Entra / richiedi slot",

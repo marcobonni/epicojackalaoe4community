@@ -29,7 +29,7 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
     redirect("/dashboard");
   }
 
-  const isSupabaseConfigured = Boolean(
+  const isAuthAvailable = Boolean(
     process.env.NEXT_PUBLIC_SUPABASE_URL &&
       (
         process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ||
@@ -90,7 +90,7 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
             </div>
           ) : null}
 
-          {isSupabaseConfigured ? (
+          {isAuthAvailable ? (
             <div className="space-y-5">
               <EmailPasswordLoginForm />
 
@@ -131,9 +131,6 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
 
           <div className="cinematic-card-grid rounded-[1.7rem] p-5 text-sm leading-6 text-slate-300/84">
             {messages.loginPage.callbackHelp}
-            <span className="mt-3 block rounded-2xl border border-white/8 bg-[#050916] px-4 py-3 font-mono text-xs text-amber-100">
-              /auth/callback
-            </span>
           </div>
         </div>
       </section>

@@ -23,9 +23,8 @@ export default async function DashboardPage() {
             Ciao {session.user.name}, qui trovi il tuo percorso torneo.
           </h1>
           <p className="cinematic-body mt-5 max-w-3xl text-sm sm:text-base">
-            La dashboard ora legge i tuoi dati dal backend torneo reale e mostra
-            per ogni evento la prossima partita, il relativo stato e il link
-            diretto al bracket.
+            Qui puoi controllare i tornei a cui partecipi, vedere la tua prossima
+            partita e raggiungere in un attimo il tabellone completo.
           </p>
         </div>
 
@@ -42,7 +41,7 @@ export default async function DashboardPage() {
 
             {hasRole(session, "admin") ? (
               <LoadingLink href="/admin" className="cinematic-button-secondary w-full">
-                Vai alla console admin
+                Vai all'area organizzazione
               </LoadingLink>
             ) : null}
           </div>
@@ -121,9 +120,8 @@ export default async function DashboardPage() {
             Nessun torneo personale trovato
           </h2>
           <p className="mx-auto mt-4 max-w-2xl text-sm leading-8 text-slate-300/74">
-            Appena ti iscrivi a un torneo o vieni aggiunto dall&apos;admin, qui
-            compariranno il prossimo avversario, il tuo tabellone e le partite da
-            confermare.
+            Quando entrerai in un torneo, qui vedrai subito avversari, partite da
+            giocare e aggiornamenti del tabellone.
           </p>
           <LoadingLink href="/tournaments" className="cinematic-button-primary mt-6">
             Vai ai tornei disponibili

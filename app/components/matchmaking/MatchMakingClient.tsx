@@ -175,7 +175,7 @@ export default function MatchmakingClient() {
       setError(
         err instanceof Error
           ? err.message
-          : "Errore di connessione verso il backend."
+          : "Non riusciamo a contattare il servizio matchmaking in questo momento."
       );
     } finally {
       setLoading(false);
@@ -207,7 +207,7 @@ export default function MatchmakingClient() {
       <div className="grid gap-8 xl:grid-cols-[1.1fr_0.9fr]">
         <div className="rounded-[2rem] border border-slate-800 bg-slate-900/90 p-8 shadow-lg shadow-black/20">
           <p className="text-sm font-semibold uppercase tracking-[0.3em] text-amber-300">
-            Configurazione
+            Preferenze
           </p>
 
           <div className="mt-6">

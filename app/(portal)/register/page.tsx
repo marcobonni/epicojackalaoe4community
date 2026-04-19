@@ -20,7 +20,7 @@ export default async function RegisterPage() {
     redirect("/dashboard");
   }
 
-  const isSupabaseConfigured = Boolean(
+  const isRegistrationAvailable = Boolean(
     process.env.NEXT_PUBLIC_SUPABASE_URL &&
       (
         process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ||
@@ -59,7 +59,7 @@ export default async function RegisterPage() {
         <p className="cinematic-body mt-3 text-sm">{messages.registerPage.formDescription}</p>
 
         <div className="mt-8 space-y-5">
-          {isSupabaseConfigured ? (
+          {isRegistrationAvailable ? (
             <EmailPasswordRegisterForm />
           ) : (
             <div className="cinematic-panel-soft rounded-[1.6rem] border border-amber-400/26 bg-amber-400/10 p-4 text-sm leading-6 text-amber-100">

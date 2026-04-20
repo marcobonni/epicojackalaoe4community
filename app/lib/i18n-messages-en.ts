@@ -162,6 +162,14 @@ export const enMessages: Dictionary = {
           specialty: "Replay analysis, macro management, map control",
           availability: "Evenings",
         },
+        Scapolocaldo667: {
+          badge: "Strategy Coach",
+          role: "Replay analysis and decision making improvement",
+          description:
+            "Personalized sessions on build orders, macro and micro management, map control and scouting.",
+          specialty: "Macro management and map control",
+          availability: "Evenings",
+        },
       },
     },
     events: {

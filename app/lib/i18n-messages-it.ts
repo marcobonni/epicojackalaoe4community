@@ -167,6 +167,14 @@ export const itMessages: Dictionary = {
           specialty: "Replay analysis, macro management, map control",
           availability: "Sera",
         },
+        Scapolocaldo667: {
+          badge: "Strategy Coach",
+          role: "Analisi replay e miglioramento decision making",
+          description:
+            "Sessione personalizzata su build order, gestione di macro e micro, controllo mappa e scout.",
+          specialty: "Gestione della macro e controllo della mappa",
+          availability: "Sera",
+        },
       },
     },
     events: {

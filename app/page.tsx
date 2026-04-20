@@ -7,7 +7,7 @@ import HeroSection from "./components/home/HeroSection";
 import JoinSection from "./components/home/JoinSection";
 import PlayerLookupForm from "./components/home/PlayerLookupForm";
 import TwitchSection from "./components/home/TwitchSection";
-import { SERVER_CONFIG, TWITCH_STREAMERS } from "./config/site";
+import { COACHES, SERVER_CONFIG, TWITCH_STREAMERS } from "./config/site";
 import { getDiscordWidgetData } from "./lib/discord";
 import { getTranslations } from "./lib/i18n";
 import { getTwitchLiveMap } from "./lib/twitch";
@@ -71,52 +71,18 @@ export default async function Page() {
     { value: visibleChannels.length, label: messages.home.liveStats[2] },
   ];
 
-  const coaches = [
-    {
-      name: "EpicoJackal",
-      badge: messages.home.coaching.coaches.EpicoJackal.badge,
-      role: messages.home.coaching.coaches.EpicoJackal.role,
-      description: messages.home.coaching.coaches.EpicoJackal.description,
-      specialty: messages.home.coaching.coaches.EpicoJackal.specialty,
-      price: null,
-      availability: messages.home.coaching.coaches.EpicoJackal.availability,
-      contactUrl: "https://discord.com/users/240210612582481922",
-      profileUrl: "https://www.twitch.tv/epicojackal",
-    },
-    {
-      name: "Daddu23",
-      badge: messages.home.coaching.coaches.Daddu23.badge,
-      role: messages.home.coaching.coaches.Daddu23.role,
-      description: messages.home.coaching.coaches.Daddu23.description,
-      specialty: messages.home.coaching.coaches.Daddu23.specialty,
-      price: "1.000.000 Rial Iraniano",
-      availability: messages.home.coaching.coaches.Daddu23.availability,
-      contactUrl: "https://discord.com/users/257545506081734658",
-      profileUrl: null,
-    },
-    {
-      name: "Taffuz",
-      badge: messages.home.coaching.coaches.Taffuz.badge,
-      role: messages.home.coaching.coaches.Taffuz.role,
-      description: messages.home.coaching.coaches.Taffuz.description,
-      specialty: messages.home.coaching.coaches.Taffuz.specialty,
-      price: null,
-      availability: messages.home.coaching.coaches.Taffuz.availability,
-      contactUrl: "https://discord.com/users/702542802432688270",
-      profileUrl: "https://www.twitch.tv/taffuz_gg",
-    },
-    {
-      name: "Kasiya",
-      badge: messages.home.coaching.coaches.Kasiya.badge,
-      role: messages.home.coaching.coaches.Kasiya.role,
-      description: messages.home.coaching.coaches.Kasiya.description,
-      specialty: messages.home.coaching.coaches.Kasiya.specialty,
-      price: null,
-      availability: messages.home.coaching.coaches.Kasiya.availability,
-      contactUrl: "https://discord.com/users/725895228531146794",
-      profileUrl: "https://www.twitch.tv/IKasiya",
-    },
-  ];
+  const coaches = COACHES.map((coach) => {
+    const translatedCoach = messages.home.coaching.coaches[coach.name];
+
+    return {
+      ...coach,
+      badge: translatedCoach?.badge ?? coach.badge,
+      role: translatedCoach?.role ?? coach.role,
+      description: translatedCoach?.description ?? coach.description,
+      specialty: translatedCoach?.specialty ?? coach.specialty,
+      availability: translatedCoach?.availability ?? coach.availability,
+    };
+  });
 
   return (
     <div className="home-scale-80 min-h-screen overflow-x-hidden bg-slate-950 text-slate-100">

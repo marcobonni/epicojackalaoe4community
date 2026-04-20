@@ -130,5 +130,17 @@ export const COACHES = [
     contactUrl: "https://discord.com/users/725895228531146794",
     profileUrl: "https://www.twitch.tv/IKasiya",
   },
-
+  {
+    name: "Scapolocaldo667",
+    badge: "Strategy Coach",
+    role: "Analisi replay e miglioramento decision making",
+    description:
+      "Sessione personalizzata su:Build order, gestione della macro e della micro, controllo mappa e scout",
+    specialty:
+      "Gestione della macro e controllo della mappa",
+    price: "Sub su twitch",
+    availability: "Sera",
+    contactUrl: "https://discord.com/users/1036906671349452820",
+    profileUrl: "https://www.twitch.tv/scapolocaldo667",
+  }
 ];

@@ -2,15 +2,15 @@ import type { Dictionary } from "@/app/lib/i18n-schema";
 
 export const itMessages: Dictionary = {
   metadata: {
-    siteTitle: "Aoe4 Community Italia - Classifica, Quiz e Matchmaking",
+    siteTitle: "AoE4 Italia Legacy - Classifica, Quiz e Matchmaking",
     siteDescription:
-      "La community italiana di Age of Empires 4. Classifica aggiornata, quiz competitivi e matchmaking bilanciato per giocatori italiani.",
-    homeTitle: "Aoe4 Italia - Community, Classifica e Quiz",
+      "AoE4 Italia Legacy e la community italiana di Age of Empires 4. Classifica aggiornata, quiz competitivi e matchmaking bilanciato per giocatori italiani.",
+    homeTitle: "AoE4 Italia Legacy - Community, Classifica e Quiz",
     homeDescription:
-      "Unisciti alla community italiana AoE4. Classifica aggiornata, quiz e matchmaking automatico.",
-    loginTitle: "Login tornei | AoE4 Community Italia",
-    registerTitle: "Registrazione tornei | AoE4 Community Italia",
-    tournamentsTitle: "Tornei | AoE4 Community Italia",
+      "Unisciti ad AoE4 Italia Legacy: community italiana AoE4 con classifica aggiornata, quiz e matchmaking automatico.",
+    loginTitle: "Login tornei | AoE4 Italia Legacy",
+    registerTitle: "Registrazione tornei | AoE4 Italia Legacy",
+    tournamentsTitle: "Tornei | AoE4 Italia Legacy",
   },
   languageSwitcher: { label: "Lingua del sito", shortLabel: "Lingua" },
   common: {
@@ -24,11 +24,11 @@ export const itMessages: Dictionary = {
   },
   home: {
     hero: {
-      badge: "Age of Empires Community Discord",
+      badge: "AoE4 Italia Legacy",
       title: "La tua community Discord per vivere Age of Empires ogni giorno",
       description:
         "Un server pensato per appassionati di Age of Empires: partite, eventi, tornei, consigli strategici e una community con cui giocare davvero.",
-      statsHeading: "Community AoE4 Italia",
+      statsHeading: "AoE4 Italia Legacy",
       ctaJoin: "Entra nel Discord",
       ctaItalianLeaderboard: "Classifica italiana",
       ctaNorthLeaderboard: "Classifica Nord",

@@ -1,4 +1,4 @@
-import { redirect } from "next/navigation";
+﻿import { redirect } from "next/navigation";
 import LoadingLink from "@/app/components/LoadingLink";
 import EmailPasswordRegisterForm from "@/app/components/auth/EmailPasswordRegisterForm";
 import { getTranslations } from "@/app/lib/i18n";
@@ -43,7 +43,7 @@ export default async function RegisterPage() {
           {messages.registerPage.bullets.map((item, index) => (
             <div
               key={item}
-              className={`${index === 0 ? "cinematic-stat-card" : "cinematic-card-grid"} flex gap-4 rounded-[1.6rem] p-5 text-sm leading-7 text-slate-200/84`}
+              className={`${index === 0 ? "cinematic-stat-card" : "cinematic-card-grid"} flex gap-4 rounded-[1.6rem] p-5 text-sm leading-7 text-[#e8dcc8]/84`}
             >
               <span className="text-sm font-semibold text-amber-200">
                 {(index + 1).toString().padStart(2, "0")}
@@ -67,7 +67,7 @@ export default async function RegisterPage() {
             </div>
           )}
 
-          <div className="cinematic-card-grid rounded-[1.7rem] p-5 text-sm leading-6 text-slate-300/84">
+          <div className="cinematic-card-grid rounded-[1.7rem] p-5 text-sm leading-6 text-[#d8cbb7]/84">
             {messages.registerPage.loginPrompt}
             <LoadingLink
               href="/login"
@@ -82,3 +82,4 @@ export default async function RegisterPage() {
     </div>
   );
 }
+

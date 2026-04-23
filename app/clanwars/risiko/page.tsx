@@ -4,7 +4,7 @@ import { getRisikoMapData } from "./getRisikoMapData";
 import { RisikoMapViewer } from "./RisikoMapViewer";
 
 export const metadata: Metadata = {
-  title: "Mappa Clan Wars Stile Risiko | AoE4 Community Italia",
+  title: "Mappa Clan Wars Stile Risiko | AoE4 Italia Legacy",
   description:
     "Plancia Clan Wars esagonale con layer semi-trasparente e navigazione drag/zoom, pronta per una cartina reale dell'Italia sotto.",
 };

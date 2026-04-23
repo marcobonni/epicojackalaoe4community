@@ -1,7 +1,7 @@
-import type { Metadata } from "next";
+﻿import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Concept Mappe Clan Wars | AoE4 Community Italia",
+  title: "Concept Mappe Clan Wars | AoE4 Italia Legacy",
   description:
     "Quattro concept per la mappa interattiva Clan Wars: regioni reali, territori custom, macro-aree e board game fantasy.",
 };
@@ -44,7 +44,7 @@ const concepts: Concept[] = [
     vibe: "Chiaro, istituzionale, facilissimo da capire per la community.",
     strengths: [
       "Perfetto per un MVP veloce e leggibile.",
-      "Ogni territorio ha già un nome familiare.",
+      "Ogni territorio ha giÃ  un nome familiare.",
       "Molto semplice da spiegare in stream e su Discord.",
     ],
     territories: [
@@ -125,11 +125,11 @@ const concepts: Concept[] = [
     eyebrow: "Concept 02",
     title: "Territori custom competitivi",
     description:
-      "La silhouette italiana resta sullo sfondo, ma le zone sono ridisegnate per creare fronti sensati, connessioni bilanciate e partite più interessanti.",
-    vibe: "Più game design, meno geografia scolastica.",
+      "La silhouette italiana resta sullo sfondo, ma le zone sono ridisegnate per creare fronti sensati, connessioni bilanciate e partite piÃ¹ interessanti.",
+    vibe: "PiÃ¹ game design, meno geografia scolastica.",
     strengths: [
-      "Libertà totale per bilanciare attacco e difesa.",
-      "Ogni confine può essere pensato per il meta AoE4.",
+      "LibertÃ  totale per bilanciare attacco e difesa.",
+      "Ogni confine puÃ² essere pensato per il meta AoE4.",
       "Ideale se vuoi una stagione lunga con vera strategia.",
     ],
     territories: [
@@ -196,11 +196,11 @@ const concepts: Concept[] = [
     eyebrow: "Concept 03",
     title: "Macro-aree leggibili",
     description:
-      "Pochi territori, fronti grandi e identità pulita. La mappa è meno dettagliata ma molto più leggibile da mobile e in live stream.",
+      "Pochi territori, fronti grandi e identitÃ  pulita. La mappa Ã¨ meno dettagliata ma molto piÃ¹ leggibile da mobile e in live stream.",
     vibe: "Diretta, elegante, facile da seguire durante eventi e guerre lampo.",
     strengths: [
       "Pochi territori = onboarding immediato.",
-      "Ottima leggibilità su telefono.",
+      "Ottima leggibilitÃ  su telefono.",
       "Molto adatta a stagioni brevi o eventi weekend.",
     ],
     territories: [
@@ -246,10 +246,10 @@ const concepts: Concept[] = [
     eyebrow: "Concept 04",
     title: "Board game fantasy",
     description:
-      "Qui la mappa smette di sembrare una carta politica e diventa un teatro di guerra: territori più netti, nomi evocativi e forte identità visiva.",
-    vibe: "Più epico, più evento, più memorabile.",
+      "Qui la mappa smette di sembrare una carta politica e diventa un teatro di guerra: territori piÃ¹ netti, nomi evocativi e forte identitÃ  visiva.",
+    vibe: "PiÃ¹ epico, piÃ¹ evento, piÃ¹ memorabile.",
     strengths: [
-      "Visivamente la più forte.",
+      "Visivamente la piÃ¹ forte.",
       "Perfetta per stream, promo e stagioni narrative.",
       "Trasforma il sito in una vera campagna strategica.",
     ],
@@ -309,9 +309,9 @@ const concepts: Concept[] = [
 
 function TerritoryChip({ territory }: { territory: Territory }) {
   return (
-    <div className="rounded-full border border-white/12 bg-white/6 px-3 py-2 text-xs text-slate-200">
+    <div className="rounded-full border border-white/12 bg-white/6 px-3 py-2 text-xs text-[#e8dcc8]">
       <span className="font-semibold text-white">{territory.label}</span>
-      <span className="ml-2 text-slate-400">{territory.modifier}</span>
+      <span className="ml-2 text-[#bcae9a]">{territory.modifier}</span>
     </div>
   );
 }
@@ -378,10 +378,10 @@ export default function ClanWarsConceptsPage() {
           <h1 className="mt-5 max-w-4xl text-4xl font-semibold tracking-tight text-white sm:text-5xl lg:text-6xl">
             Quattro modi diversi di trasformare l&apos;Italia in una campagna di conquista AoE4.
           </h1>
-          <p className="mt-6 max-w-3xl text-base leading-8 text-slate-300 sm:text-lg">
-            Ho preparato quattro direzioni visive già leggibili dentro il sito:
-            una più realistica, una più competitiva, una super accessibile e una
-            più epica da evento. Possiamo sceglierne una oppure fonderne due.
+          <p className="mt-6 max-w-3xl text-base leading-8 text-[#d8cbb7] sm:text-lg">
+            Ho preparato quattro direzioni visive giÃ  leggibili dentro il sito:
+            una piÃ¹ realistica, una piÃ¹ competitiva, una super accessibile e una
+            piÃ¹ epica da evento. Possiamo sceglierne una oppure fonderne due.
           </p>
 
           <div className="mt-10 flex flex-wrap gap-3 text-sm">
@@ -394,7 +394,7 @@ export default function ClanWarsConceptsPage() {
             <span className="rounded-full border border-[#4c79d8]/35 bg-[#4c79d8]/12 px-4 py-2 text-[#c9d8ff]">
               Clan Corvi
             </span>
-            <span className="rounded-full border border-white/12 bg-white/6 px-4 py-2 text-slate-300">
+            <span className="rounded-full border border-white/12 bg-white/6 px-4 py-2 text-[#d8cbb7]">
               Viola = territorio speciale / evento
             </span>
           </div>
@@ -409,32 +409,32 @@ export default function ClanWarsConceptsPage() {
               className="grid gap-8 rounded-[2.25rem] border border-white/8 bg-white/[0.03] p-5 backdrop-blur-sm sm:p-7 xl:grid-cols-[1.05fr_0.95fr]"
             >
               <div>
-                <p className="text-xs uppercase tracking-[0.32em] text-slate-400">
+                <p className="text-xs uppercase tracking-[0.32em] text-[#bcae9a]">
                   {concept.eyebrow}
                 </p>
                 <h2 className="mt-3 text-3xl font-semibold tracking-tight text-white sm:text-4xl">
                   {concept.title}
                 </h2>
-                <p className="mt-4 max-w-2xl text-base leading-8 text-slate-300">
+                <p className="mt-4 max-w-2xl text-base leading-8 text-[#d8cbb7]">
                   {concept.description}
                 </p>
 
                 <div className="mt-6 rounded-[1.6rem] border border-white/8 bg-black/20 p-5">
-                  <p className="text-xs uppercase tracking-[0.28em] text-slate-500">
+                  <p className="text-xs uppercase tracking-[0.28em] text-[#8f7e69]">
                     Vibe
                   </p>
-                  <p className="mt-3 text-lg text-slate-100">{concept.vibe}</p>
+                  <p className="mt-3 text-lg text-[#f5ecdc]">{concept.vibe}</p>
                 </div>
 
                 <div className="mt-6">
-                  <p className="text-xs uppercase tracking-[0.28em] text-slate-500">
-                    Perché funziona
+                  <p className="text-xs uppercase tracking-[0.28em] text-[#8f7e69]">
+                    PerchÃ© funziona
                   </p>
                   <div className="mt-4 space-y-3">
                     {concept.strengths.map((strength) => (
                       <div
                         key={strength}
-                        className="rounded-[1.2rem] border border-white/8 bg-white/[0.04] px-4 py-3 text-sm leading-7 text-slate-200"
+                        className="rounded-[1.2rem] border border-white/8 bg-white/[0.04] px-4 py-3 text-sm leading-7 text-[#e8dcc8]"
                       >
                         {strength}
                       </div>
@@ -453,12 +453,12 @@ export default function ClanWarsConceptsPage() {
                 <MapPreview territories={concept.territories} title={concept.title} />
 
                 <div className="mt-5 rounded-[1.6rem] border border-white/8 bg-[#0a1020] p-5">
-                  <p className="text-xs uppercase tracking-[0.28em] text-slate-500">
+                  <p className="text-xs uppercase tracking-[0.28em] text-[#8f7e69]">
                     Lettura rapida
                   </p>
                   <div className="mt-4 grid gap-3 sm:grid-cols-2">
                     <div className="rounded-[1.2rem] border border-white/8 bg-white/[0.03] px-4 py-3">
-                      <span className="text-xs uppercase tracking-[0.2em] text-slate-500">
+                      <span className="text-xs uppercase tracking-[0.2em] text-[#8f7e69]">
                         Territori
                       </span>
                       <p className="mt-2 text-2xl font-semibold text-white">
@@ -466,11 +466,11 @@ export default function ClanWarsConceptsPage() {
                       </p>
                     </div>
                     <div className="rounded-[1.2rem] border border-white/8 bg-white/[0.03] px-4 py-3">
-                      <span className="text-xs uppercase tracking-[0.2em] text-slate-500">
+                      <span className="text-xs uppercase tracking-[0.2em] text-[#8f7e69]">
                         Uso ideale
                       </span>
-                      <p className="mt-2 text-sm leading-6 text-slate-200">
-                        {concept.slug === "regioni-reali" && "MVP e leggibilità immediata"}
+                      <p className="mt-2 text-sm leading-6 text-[#e8dcc8]">
+                        {concept.slug === "regioni-reali" && "MVP e leggibilitÃ  immediata"}
                         {concept.slug === "territori-custom" && "Competizione bilanciata"}
                         {concept.slug === "macro-aree" && "Eventi rapidi e mobile"}
                         {concept.slug === "board-game" && "Stagioni narrative e stream"}
@@ -486,3 +486,4 @@ export default function ClanWarsConceptsPage() {
     </main>
   );
 }
+

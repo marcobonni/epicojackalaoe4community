@@ -1,4 +1,4 @@
-import { requestTournamentJoinAction } from "@/app/actions/tournaments";
+﻿import { requestTournamentJoinAction } from "@/app/actions/tournaments";
 import LoadingLink from "@/app/components/LoadingLink";
 import PendingSubmitButton from "@/app/components/portal/PendingSubmitButton";
 import StatusBadge from "@/app/components/portal/StatusBadge";
@@ -105,7 +105,7 @@ export default async function TournamentsPage() {
 
                 <div className="mt-6 grid gap-4 sm:grid-cols-2">
                   <div className="cinematic-stat-card p-5">
-                    <p className="text-xs uppercase tracking-[0.26em] text-slate-400">
+                    <p className="text-xs uppercase tracking-[0.26em] text-[#bcae9a]">
                       {messages.tournamentsPage.participants}
                     </p>
                     <p className="mt-4 text-3xl font-semibold tracking-[-0.04em] text-white">
@@ -114,11 +114,11 @@ export default async function TournamentsPage() {
                   </div>
 
                   <div className="cinematic-stat-card p-5">
-                    <p className="text-xs uppercase tracking-[0.26em] text-slate-400">
+                    <p className="text-xs uppercase tracking-[0.26em] text-[#bcae9a]">
                       {messages.tournamentsPage.rules}
                     </p>
                     <p className="mt-4 text-sm font-semibold text-white">
-                      {tournament.participant_mode} • BO{tournament.best_of}
+                      {tournament.participant_mode} â€¢ BO{tournament.best_of}
                     </p>
                   </div>
                 </div>
@@ -132,7 +132,7 @@ export default async function TournamentsPage() {
                   </LoadingLink>
 
                   {tournament.my_registration_status === "registered" ? (
-                    <span className="rounded-full border border-emerald-500/30 bg-emerald-500/10 px-4 py-2 text-sm font-semibold text-emerald-100">
+                  <span className="rounded-full border border-[#d9b265]/30 bg-[#d9b265]/10 px-4 py-2 text-sm font-semibold text-[#f8edd7]">
                       {messages.tournamentsPage.alreadyJoined}
                     </span>
                   ) : null}
@@ -163,7 +163,7 @@ export default async function TournamentsPage() {
             <h2 className="text-2xl font-semibold text-white">
               {messages.tournamentsPage.emptyTitle}
             </h2>
-            <p className="mx-auto mt-4 max-w-2xl text-sm leading-8 text-slate-300/74">
+            <p className="mx-auto mt-4 max-w-2xl text-sm leading-8 text-[#d8cbb7]/74">
               {messages.tournamentsPage.emptyDescription}
             </p>
           </div>
@@ -172,3 +172,4 @@ export default async function TournamentsPage() {
     </div>
   );
 }
+

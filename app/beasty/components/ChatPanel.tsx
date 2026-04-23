@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useEffect, useRef, useState } from "react";
 import { formatChatTime } from "../utils/formatChatTime";
@@ -43,19 +43,19 @@ export default function ChatPanel({
   };
 
   return (
-    <div className="rounded-3xl border border-slate-800 bg-slate-950/50 p-4">
+    <div className="rounded-3xl border border-[#3a2621] bg-[#0b0708]/50 p-4">
       <div className="flex items-center justify-between gap-3">
         <h3 className="text-lg font-bold text-white">Chat stanza</h3>
         {roomCode ? (
-          <span className="rounded-full border border-slate-700 bg-slate-900 px-3 py-1 text-xs text-slate-300">
+          <span className="rounded-full border border-[#4b312a] bg-[#140c0d] px-3 py-1 text-xs text-[#d8cbb7]">
             {roomCode}
           </span>
         ) : null}
       </div>
 
-      <div className="mt-4 h-72 overflow-y-auto rounded-2xl border border-slate-800 bg-slate-900/60 p-3">
+      <div className="mt-4 h-72 overflow-y-auto rounded-2xl border border-[#3a2621] bg-[#140c0d]/60 p-3">
         {messages.length === 0 ? (
-          <div className="text-sm text-slate-500">Nessun messaggio ancora.</div>
+          <div className="text-sm text-[#8f7e69]">Nessun messaggio ancora.</div>
         ) : (
           <div className="space-y-3">
             {messages.map((message) => {
@@ -70,7 +70,7 @@ export default function ChatPanel({
                   className={`rounded-2xl border p-3 ${
                     isOwn
                       ? "border-amber-400/20 bg-amber-400/5"
-                      : "border-slate-800 bg-slate-950/70"
+                      : "border-[#3a2621] bg-[#0b0708]/70"
                   }`}
                 >
                   <div className="flex items-center justify-between gap-3">
@@ -81,12 +81,12 @@ export default function ChatPanel({
                     >
                       {message.playerName}
                     </span>
-                    <span className="text-xs text-slate-500">
+                    <span className="text-xs text-[#8f7e69]">
                       {formatChatTime(message.createdAt)}
                     </span>
                   </div>
 
-                  <div className="mt-1 whitespace-pre-wrap break-words text-sm text-slate-200">
+                  <div className="mt-1 whitespace-pre-wrap break-words text-sm text-[#e8dcc8]">
                     {message.text}
                   </div>
                 </div>
@@ -114,18 +114,18 @@ export default function ChatPanel({
               ? "Chat temporaneamente bloccata"
               : "Scrivi un messaggio..."
           }
-          className="flex-1 rounded-2xl border border-slate-700 bg-slate-950/70 px-4 py-3 text-sm text-slate-100 outline-none transition focus:border-amber-400/60 focus:ring-2 focus:ring-amber-400/20 disabled:opacity-60"
+          className="flex-1 rounded-2xl border border-[#4b312a] bg-[#0b0708]/70 px-4 py-3 text-sm text-[#f5ecdc] outline-none transition focus:border-amber-400/60 focus:ring-2 focus:ring-amber-400/20 disabled:opacity-60"
         />
         <button
           onClick={() => void handleSend()}
           disabled={disabled || sending || !text.trim()}
-          className="rounded-2xl border border-amber-400/40 bg-amber-500/90 px-5 py-3 text-sm font-semibold text-slate-950 transition hover:bg-amber-400 disabled:cursor-not-allowed disabled:opacity-50"
+className="rounded-2xl border border-amber-400/40 bg-amber-500/90 px-5 py-3 text-sm font-semibold text-[#1a0d0c] transition hover:bg-amber-400 disabled:cursor-not-allowed disabled:opacity-50"
         >
           Invia
         </button>
       </div>
 
-      <div className="mt-2 text-xs text-slate-500">
+      <div className="mt-2 text-xs text-[#8f7e69]">
         Max 250 caratteri. Ultimi 100 messaggi salvati nella stanza.
       </div>
     </div>

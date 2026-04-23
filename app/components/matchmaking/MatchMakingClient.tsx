@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import Link from "next/link";
 import { useMemo, useState } from "react";
@@ -53,15 +53,15 @@ function getEffectiveModeLabel(
 
   if (!mode) {
     return ratingMode === "solo"
-      ? "ELO solo · numero giocatori non valido"
-      : "ELO team · servono 2, 4, 6 oppure 8 giocatori";
+      ? "ELO solo Â· numero giocatori non valido"
+      : "ELO team Â· servono 2, 4, 6 oppure 8 giocatori";
   }
 
   if (ratingMode === "solo") {
-    return "ELO solo · rating 1v1";
+    return "ELO solo Â· rating 1v1";
   }
 
-  return `ELO team · rating ${mode}`;
+  return `ELO team Â· rating ${mode}`;
 }
 
 function getBalanceVerdict(diff: number) {
@@ -76,9 +76,9 @@ function HomeButton() {
   return (
     <Link
       href="/"
-      className="inline-flex items-center gap-2 rounded-2xl border border-slate-700 bg-slate-950/70 px-4 py-2 text-sm font-semibold text-slate-200 transition hover:-translate-y-0.5 hover:border-slate-500"
+      className="inline-flex items-center gap-2 rounded-2xl border border-[#4b312a] bg-[#0b0708]/70 px-4 py-2 text-sm font-semibold text-[#e8dcc8] transition hover:-translate-y-0.5 hover:border-[#7a5b4d]"
     >
-      ← Torna alla home
+      â† Torna alla home
     </Link>
   );
 }
@@ -197,21 +197,21 @@ export default function MatchmakingClient() {
           Inserisci i nomi Steam e genera squadre bilanciate
         </h1>
 
-        <p className="mt-4 text-base leading-8 text-slate-400">
+        <p className="mt-4 text-base leading-8 text-[#bcae9a]">
           Scrivi un giocatore per riga. Il sistema cerca ogni nome su AoE4World,
-          recupera il rating corretto e propone due team il più possibile
+          recupera il rating corretto e propone due team il piÃ¹ possibile
           equilibrati.
         </p>
       </div>
 
       <div className="grid gap-8 xl:grid-cols-[1.1fr_0.9fr]">
-        <div className="rounded-[2rem] border border-slate-800 bg-slate-900/90 p-8 shadow-lg shadow-black/20">
+        <div className="rounded-[2rem] border border-[#3a2621] bg-[#140c0d]/90 p-8 shadow-lg shadow-black/20">
           <p className="text-sm font-semibold uppercase tracking-[0.3em] text-amber-300">
             Preferenze
           </p>
 
           <div className="mt-6">
-            <label className="mb-3 block text-sm font-semibold text-slate-200">
+            <label className="mb-3 block text-sm font-semibold text-[#e8dcc8]">
               Tipo di rating
             </label>
 
@@ -222,7 +222,7 @@ export default function MatchmakingClient() {
                 className={`rounded-2xl border px-4 py-3 text-sm font-semibold transition ${
                   ratingMode === "solo"
                     ? "border-amber-400 bg-amber-400/10 text-amber-300"
-                    : "border-slate-700 bg-slate-950 text-slate-200 hover:border-slate-500"
+                    : "border-[#4b312a] bg-[#0b0708] text-[#e8dcc8] hover:border-[#7a5b4d]"
                 }`}
               >
                 ELO solo
@@ -234,7 +234,7 @@ export default function MatchmakingClient() {
                 className={`rounded-2xl border px-4 py-3 text-sm font-semibold transition ${
                   ratingMode === "team"
                     ? "border-amber-400 bg-amber-400/10 text-amber-300"
-                    : "border-slate-700 bg-slate-950 text-slate-200 hover:border-slate-500"
+                    : "border-[#4b312a] bg-[#0b0708] text-[#e8dcc8] hover:border-[#7a5b4d]"
                 }`}
               >
                 ELO team
@@ -254,14 +254,14 @@ export default function MatchmakingClient() {
           </div>
 
           <div className="mt-6">
-            <label className="mb-3 block text-sm font-semibold text-slate-200">
+            <label className="mb-3 block text-sm font-semibold text-[#e8dcc8]">
               Nomi Steam
             </label>
 
             <textarea
               value={rawNames}
               onChange={(e) => setRawNames(e.target.value)}
-              className="min-h-[360px] w-full rounded-[1.5rem] border border-slate-700 bg-slate-950 px-5 py-5 text-white outline-none transition focus:border-amber-400"
+              className="min-h-[360px] w-full rounded-[1.5rem] border border-[#4b312a] bg-[#0b0708] px-5 py-5 text-white outline-none transition focus:border-amber-400"
               placeholder={`Un giocatore per riga
 ScapoloCaldo
 Paranoia
@@ -269,10 +269,10 @@ ZeneizeTV
 Tia`}
             />
 
-            <p className="mt-4 text-xs leading-6 text-slate-500">
+            <p className="mt-4 text-xs leading-6 text-[#8f7e69]">
               {ratingMode === "team"
-                ? "In modalità ELO team sono validi solo 2, 4, 6 oppure 8 giocatori."
-                : "In modalità ELO solo viene sempre usato il rating 1v1, purché i giocatori siano in numero pari."}
+                ? "In modalitÃ  ELO team sono validi solo 2, 4, 6 oppure 8 giocatori."
+                : "In modalitÃ  ELO solo viene sempre usato il rating 1v1, purchÃ© i giocatori siano in numero pari."}
             </p>
           </div>
 
@@ -281,7 +281,7 @@ Tia`}
               type="button"
               onClick={handleBalance}
               disabled={loading || !canSubmit}
-              className="rounded-2xl bg-amber-400 px-6 py-3 text-sm font-semibold text-slate-950 transition hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-60"
+className="rounded-2xl bg-amber-400 px-6 py-3 text-sm font-semibold text-[#1a0d0c] transition hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-60"
             >
               {loading ? "Bilanciamento in corso..." : "Bilancia squadre"}
             </button>
@@ -294,7 +294,7 @@ Tia`}
                 setUnresolved([]);
                 setResolvedFallback([]);
               }}
-              className="rounded-2xl border border-slate-700 bg-slate-950 px-6 py-3 text-sm font-semibold text-slate-100 transition hover:border-slate-500"
+              className="rounded-2xl border border-[#4b312a] bg-[#0b0708] px-6 py-3 text-sm font-semibold text-[#f5ecdc] transition hover:border-[#7a5b4d]"
             >
               Pulisci risultato
             </button>
@@ -319,7 +319,7 @@ Tia`}
         </div>
 
         <div className="space-y-8">
-          <div className="rounded-[2rem] border border-slate-800 bg-slate-900/90 p-8 shadow-lg shadow-black/20">
+          <div className="rounded-[2rem] border border-[#3a2621] bg-[#140c0d]/90 p-8 shadow-lg shadow-black/20">
             <div className="flex flex-wrap items-start justify-between gap-4">
               <div>
                 <p className="text-sm font-semibold uppercase tracking-[0.3em] text-amber-300">
@@ -330,24 +330,24 @@ Tia`}
                 </h2>
               </div>
 
-              <div className="rounded-2xl border border-slate-800 bg-slate-950/80 px-4 py-3 text-sm text-slate-300">
+              <div className="rounded-2xl border border-[#3a2621] bg-[#0b0708]/80 px-4 py-3 text-sm text-[#d8cbb7]">
                 {result ? getBalanceVerdict(result.diff) : "In attesa di input"}
               </div>
             </div>
 
             <div className="mt-8 grid gap-4 sm:grid-cols-2">
-              <SummaryBigCard label="Modalità" value={effectiveMode ?? "—"} />
+              <SummaryBigCard label="ModalitÃ " value={effectiveMode ?? "â€”"} />
               <SummaryBigCard
                 label="Differenza"
-                value={result ? `${result.diff} ELO` : "—"}
+                value={result ? `${result.diff} ELO` : "â€”"}
               />
               <SummaryBigCard
                 label="Media Team A"
-                value={result ? String(result.averageA) : "—"}
+                value={result ? String(result.averageA) : "â€”"}
               />
               <SummaryBigCard
                 label="Media Team B"
-                value={result ? String(result.averageB) : "—"}
+                value={result ? String(result.averageB) : "â€”"}
               />
             </div>
 
@@ -355,11 +355,11 @@ Tia`}
               <>
                 <div className="mt-6 grid gap-4 sm:grid-cols-2">
                   <SummaryBigCard
-                    label="Probabilità Team A"
+                    label="ProbabilitÃ  Team A"
                     value={`${result.teamAWinProbability}%`}
                   />
                   <SummaryBigCard
-                    label="Probabilità Team B"
+                    label="ProbabilitÃ  Team B"
                     value={`${result.teamBWinProbability}%`}
                   />
                 </div>
@@ -372,7 +372,7 @@ Tia`}
             ) : null}
           </div>
 
-          <div className="rounded-[2rem] border border-slate-800 bg-slate-900/90 p-8 shadow-lg shadow-black/20">
+          <div className="rounded-[2rem] border border-[#3a2621] bg-[#140c0d]/90 p-8 shadow-lg shadow-black/20">
             <div className="flex items-center justify-between gap-4">
               <div>
                 <p className="text-sm font-semibold uppercase tracking-[0.3em] text-amber-300">
@@ -383,14 +383,14 @@ Tia`}
                 </h3>
               </div>
 
-              <div className="rounded-xl border border-slate-800 bg-slate-950/80 px-3 py-2 text-xs text-slate-400">
+              <div className="rounded-xl border border-[#3a2621] bg-[#0b0708]/80 px-3 py-2 text-xs text-[#bcae9a]">
                 {sortedPlayers.length} risultati
               </div>
             </div>
 
-            <div className="mt-6 overflow-hidden rounded-[1.5rem] border border-slate-800">
+            <div className="mt-6 overflow-hidden rounded-[1.5rem] border border-[#3a2621]">
               {sortedPlayers.length > 0 ? (
-                <div className="divide-y divide-slate-800 bg-slate-950/70">
+<div className="divide-y divide-[#3a2621] bg-[#0b0708]/70">
                   {sortedPlayers.map((player, index) => (
                     <div
                       key={`${player.profileId}-${player.input}-${index}`}
@@ -404,10 +404,10 @@ Tia`}
                         <div className="truncate font-semibold text-white">
                           {player.name}
                         </div>
-                        <div className="mt-1 text-xs text-slate-500">
-                          input: {player.input} · ID {player.profileId}
+                        <div className="mt-1 text-xs text-[#8f7e69]">
+                          input: {player.input} Â· ID {player.profileId}
                           {player.country
-                            ? ` · ${player.country.toUpperCase()}`
+                            ? ` Â· ${player.country.toUpperCase()}`
                             : ""}
                         </div>
                       </div>
@@ -421,7 +421,7 @@ Tia`}
                   ))}
                 </div>
               ) : (
-                <div className="bg-slate-950/70 p-5 text-sm text-slate-400">
+                <div className="bg-[#0b0708]/70 p-5 text-sm text-[#bcae9a]">
                   Nessun risultato da mostrare.
                 </div>
               )}
@@ -448,14 +448,14 @@ Tia`}
               average={result.averageB}
               total={result.totalB}
               winProbability={result.teamBWinProbability}
-              accent="blue"
+              accent="crimson"
             />
           </div>
 
-<div className="mt-8 rounded-[2rem] border border-emerald-400/20 bg-emerald-400/5 p-6">
+<div className="mt-8 rounded-[2rem] border border-[#d9b265]/20 bg-[#d9b265]/[0.05] p-6">
   <div className="flex flex-wrap items-center justify-between gap-4">
     <div>
-      <p className="text-sm font-semibold uppercase tracking-[0.3em] text-emerald-300">
+      <p className="text-sm font-semibold uppercase tracking-[0.3em] text-[#f0d7a0]">
         Bilanciamento finale
       </p>
 
@@ -463,17 +463,17 @@ Tia`}
         {getBalanceVerdict(result.diff)}
       </h3>
 
-      <p className="mt-2 text-sm text-slate-300">
+      <p className="mt-2 text-sm text-[#d8cbb7]">
         Differenza totale: {result.diff} ELO
       </p>
     </div>
 
-    <div className="rounded-2xl border border-emerald-400/20 bg-slate-950/40 px-4 py-3 text-sm text-slate-200">
-      Team A {result.totalA} · Team B {result.totalB}
+    <div className="rounded-2xl border border-[#d9b265]/20 bg-[#0b0708]/40 px-4 py-3 text-sm text-[#e8dcc8]">
+      Team A {result.totalA} Â· Team B {result.totalB}
     </div>
   </div>
 
-  {/* 🔥 NUOVA BARRA */}
+  {/* ðŸ”¥ NUOVA BARRA */}
   <div className="mt-6">
     <WinProbabilityBar
       teamAProbability={result.teamAWinProbability}
@@ -499,8 +499,8 @@ function SummaryMiniCard({
   value: string;
 }) {
   return (
-    <div className="rounded-2xl border border-slate-800 bg-slate-950/70 p-4">
-      <div className="text-xs uppercase tracking-[0.2em] text-slate-500">
+    <div className="rounded-2xl border border-[#3a2621] bg-[#0b0708]/70 p-4">
+      <div className="text-xs uppercase tracking-[0.2em] text-[#8f7e69]">
         {label}
       </div>
       <div className="mt-2 text-base font-semibold text-white">{value}</div>
@@ -516,8 +516,8 @@ function SummaryBigCard({
   value: string;
 }) {
   return (
-    <div className="rounded-2xl border border-slate-800 bg-slate-950/80 p-5">
-      <div className="text-xs uppercase tracking-[0.2em] text-slate-500">
+    <div className="rounded-2xl border border-[#3a2621] bg-[#0b0708]/80 p-5">
+      <div className="text-xs uppercase tracking-[0.2em] text-[#8f7e69]">
         {label}
       </div>
       <div className="mt-3 text-3xl font-bold text-amber-300">{value}</div>
@@ -533,20 +533,20 @@ function WinProbabilityBar({
   teamBProbability: number;
 }) {
   return (
-    <div className="mt-6 rounded-2xl border border-slate-800 bg-slate-950/80 p-5">
+    <div className="mt-6 rounded-2xl border border-[#3a2621] bg-[#0b0708]/80 p-5">
       <div className="flex items-center justify-between gap-4 text-sm font-semibold">
         <div className="text-amber-300">Team A {teamAProbability}%</div>
-        <div className="text-blue-300">Team B {teamBProbability}%</div>
+        <div className="text-[#f2c7bd]">Team B {teamBProbability}%</div>
       </div>
 
-      <div className="mt-4 h-4 overflow-hidden rounded-full bg-slate-800">
+      <div className="mt-4 h-4 overflow-hidden rounded-full bg-[#241618]">
         <div className="flex h-full w-full">
           <div
             className="h-full bg-amber-400/90 transition-all duration-500"
             style={{ width: `${teamAProbability}%` }}
           />
           <div
-            className="h-full bg-blue-400/90 transition-all duration-500"
+            className="h-full bg-[#7f1517]/90 transition-all duration-500"
             style={{ width: `${teamBProbability}%` }}
           />
         </div>
@@ -568,15 +568,15 @@ function TeamCard({
   average: number;
   total: number;
   winProbability: number;
-  accent: "amber" | "blue";
+  accent: "amber" | "crimson";
 }) {
   const badgeClasses =
     accent === "amber"
       ? "border-amber-400/20 bg-amber-400/10 text-amber-300"
-      : "border-blue-400/20 bg-blue-400/10 text-blue-300";
+      : "border-[#aa221d]/20 bg-[#7f1517]/10 text-[#f2c7bd]";
 
   return (
-    <div className="rounded-[2rem] border border-slate-800 bg-slate-900/90 p-8 shadow-lg shadow-black/20">
+    <div className="rounded-[2rem] border border-[#3a2621] bg-[#140c0d]/90 p-8 shadow-lg shadow-black/20">
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
           <p className="text-sm font-semibold uppercase tracking-[0.3em] text-amber-300">
@@ -591,9 +591,9 @@ function TeamCard({
         </div>
       </div>
 
-      <div className="mt-4 rounded-2xl border border-slate-800 bg-slate-950/70 p-4">
-        <div className="text-xs uppercase tracking-[0.2em] text-slate-500">
-          Probabilità di vittoria
+      <div className="mt-4 rounded-2xl border border-[#3a2621] bg-[#0b0708]/70 p-4">
+        <div className="text-xs uppercase tracking-[0.2em] text-[#8f7e69]">
+          ProbabilitÃ  di vittoria
         </div>
         <div className="mt-2 text-2xl font-bold text-white">{winProbability}%</div>
       </div>
@@ -602,16 +602,16 @@ function TeamCard({
         {players.map((player) => (
           <div
             key={player.profileId}
-            className="rounded-2xl border border-slate-800 bg-slate-950/80 px-5 py-4"
+            className="rounded-2xl border border-[#3a2621] bg-[#0b0708]/80 px-5 py-4"
           >
             <div className="flex items-start justify-between gap-4">
               <div className="min-w-0">
                 <div className="truncate text-xl font-semibold text-white">
                   {player.name}
                 </div>
-                <div className="mt-1 text-sm text-slate-500">
+                <div className="mt-1 text-sm text-[#8f7e69]">
                   ID {player.profileId}
-                  {player.country ? ` · ${player.country.toUpperCase()}` : ""}
+                  {player.country ? ` Â· ${player.country.toUpperCase()}` : ""}
                 </div>
               </div>
 
@@ -623,10 +623,11 @@ function TeamCard({
         ))}
       </div>
 
-      <div className="mt-6 rounded-2xl border border-slate-800 bg-slate-950/80 p-5">
-        <div className="text-sm text-slate-400">Totale team</div>
+      <div className="mt-6 rounded-2xl border border-[#3a2621] bg-[#0b0708]/80 p-5">
+        <div className="text-sm text-[#bcae9a]">Totale team</div>
         <div className="mt-2 text-4xl font-bold text-white">{total}</div>
       </div>
     </div>
   );
 }
+

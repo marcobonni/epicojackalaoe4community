@@ -7,6 +7,7 @@ export const TWITCH_PARENT_DOMAINS = [
 ];
 
 export const TWITCH_STREAMER_PRIORITY = [
+  'aoe4italia_legacy',
   'EpicoJackal',
   'ScapoloCaldo667',
   'Taffuz_Gg',
@@ -22,7 +23,7 @@ export const TWITCH_STREAMERS = TWITCH_STREAMER_PRIORITY.map((name) => ({
 }));
 
 export const SERVER_CONFIG = {
-  name: "EpicoJackal's Aoe4 Community",
+  name: "AoE4 Italia Legacy",
   inviteUrl: 'https://discord.gg/7qdYf4vH8P',
   widgetServerId: '470883209614458881',
 };

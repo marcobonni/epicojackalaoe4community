@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useRouter } from "next/navigation";
 import { FormEvent, useState, useTransition } from "react";
@@ -61,7 +61,7 @@ export default function ResetPasswordForm() {
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <label htmlFor="reset-password" className="block">
-        <span className="mb-2 block text-sm font-medium text-slate-200">
+        <span className="mb-2 block text-sm font-medium text-[#e8dcc8]">
           Nuova password
         </span>
         <input
@@ -71,15 +71,15 @@ export default function ResetPasswordForm() {
           autoComplete="new-password"
           minLength={6}
           required
-          className="w-full rounded-2xl border border-slate-700 bg-slate-900 px-4 py-3 text-sm text-white outline-none transition focus:border-amber-300"
+          className="w-full rounded-2xl border border-[#4b312a] bg-[#140c0d] px-4 py-3 text-sm text-white outline-none transition focus:border-amber-300"
         />
-        <span className="mt-2 block text-xs leading-6 text-slate-500">
+        <span className="mt-2 block text-xs leading-6 text-[#8f7e69]">
           Requisiti password: {passwordPolicyItems.join(", ")}.
         </span>
       </label>
 
       <label htmlFor="reset-password-confirm" className="block">
-        <span className="mb-2 block text-sm font-medium text-slate-200">
+        <span className="mb-2 block text-sm font-medium text-[#e8dcc8]">
           Conferma nuova password
         </span>
         <input
@@ -89,7 +89,7 @@ export default function ResetPasswordForm() {
           autoComplete="new-password"
           minLength={6}
           required
-          className="w-full rounded-2xl border border-slate-700 bg-slate-900 px-4 py-3 text-sm text-white outline-none transition focus:border-amber-300"
+          className="w-full rounded-2xl border border-[#4b312a] bg-[#140c0d] px-4 py-3 text-sm text-white outline-none transition focus:border-amber-300"
         />
       </label>
 
@@ -102,10 +102,11 @@ export default function ResetPasswordForm() {
       <button
         type="submit"
         disabled={isPending}
-        className="flex w-full items-center justify-center rounded-2xl bg-amber-400 px-4 py-4 text-sm font-semibold text-slate-950 transition hover:bg-amber-300 disabled:cursor-not-allowed disabled:opacity-70"
+className="flex w-full items-center justify-center rounded-2xl bg-amber-400 px-4 py-4 text-sm font-semibold text-[#1a0d0c] transition hover:bg-amber-300 disabled:cursor-not-allowed disabled:opacity-70"
       >
         {isPending ? "Salvataggio..." : "Imposta nuova password"}
       </button>
     </form>
   );
 }
+

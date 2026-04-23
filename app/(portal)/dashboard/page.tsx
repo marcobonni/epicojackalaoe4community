@@ -1,11 +1,11 @@
-import LoadingLink from "@/app/components/LoadingLink";
+﻿import LoadingLink from "@/app/components/LoadingLink";
 import StatusBadge from "@/app/components/portal/StatusBadge";
 import { getRequiredSession, hasRole } from "@/app/lib/session";
 import { getMyTournaments } from "@/app/lib/tournaments/store";
 import { tournamentFormatLabels } from "@/app/lib/tournaments/types";
 
 export const metadata = {
-  title: "Dashboard tornei | AoE4 Community Italia",
+  title: "Dashboard tornei | AoE4 Italia Legacy",
 };
 
 export default async function DashboardPage() {
@@ -29,7 +29,7 @@ export default async function DashboardPage() {
         </div>
 
         <div className="cinematic-panel p-8">
-          <p className="cinematic-kicker text-slate-300/74">Azioni rapide</p>
+          <p className="cinematic-kicker text-[#d8cbb7]/74">Azioni rapide</p>
           <div className="mt-6 space-y-3">
             <LoadingLink href="/tournaments" className="cinematic-button-primary w-full">
               Sfoglia tornei
@@ -78,7 +78,7 @@ export default async function DashboardPage() {
 
                 <div className="mt-6 grid gap-4 sm:grid-cols-2">
                   <div className="cinematic-stat-card p-5">
-                    <p className="text-xs uppercase tracking-[0.26em] text-slate-400">
+                    <p className="text-xs uppercase tracking-[0.26em] text-[#bcae9a]">
                       Prossimo avversario
                     </p>
                     <p className="mt-4 text-xl font-semibold text-white">
@@ -87,14 +87,14 @@ export default async function DashboardPage() {
                   </div>
 
                   <div className="cinematic-stat-card p-5">
-                    <p className="text-xs uppercase tracking-[0.26em] text-slate-400">
+                    <p className="text-xs uppercase tracking-[0.26em] text-[#bcae9a]">
                       Stato match
                     </p>
                     <div className="mt-4">
                       {nextMatch ? (
                         <StatusBadge kind="match" status={nextMatch.status} />
                       ) : (
-                        <span className="text-sm text-slate-300/74">
+                        <span className="text-sm text-[#d8cbb7]/74">
                           Nessun match aperto al momento
                         </span>
                       )}
@@ -119,7 +119,7 @@ export default async function DashboardPage() {
           <h2 className="text-2xl font-semibold text-white">
             Nessun torneo personale trovato
           </h2>
-          <p className="mx-auto mt-4 max-w-2xl text-sm leading-8 text-slate-300/74">
+          <p className="mx-auto mt-4 max-w-2xl text-sm leading-8 text-[#d8cbb7]/74">
             Quando entrerai in un torneo, qui vedrai subito avversari, partite da
             giocare e aggiornamenti del tabellone.
           </p>
@@ -131,3 +131,4 @@ export default async function DashboardPage() {
     </div>
   );
 }
+

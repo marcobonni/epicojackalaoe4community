@@ -1,4 +1,4 @@
-import ChatPanel from "./ChatPanel";
+﻿import ChatPanel from "./ChatPanel";
 
 type Player = {
   id: string;
@@ -58,7 +58,7 @@ export default function LobbyView({
 }) {
   return (
     <div className="grid gap-6 lg:grid-cols-[1.4fr_1fr]">
-      <div className="space-y-6 rounded-3xl border border-amber-400/20 bg-slate-900/70 p-6 shadow-[0_0_40px_rgba(0,0,0,0.35)] backdrop-blur-sm md:p-8">
+      <div className="space-y-6 rounded-3xl border border-amber-400/20 bg-[#140c0d]/70 p-6 shadow-[0_0_40px_rgba(0,0,0,0.35)] backdrop-blur-sm md:p-8">
         <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
           <div>
             <p className="text-sm uppercase tracking-[0.2em] text-amber-300/80">
@@ -71,13 +71,13 @@ export default function LobbyView({
 
           {isHost ? (
             <button
-              className="inline-flex items-center justify-center rounded-2xl border border-amber-400/40 bg-amber-500/90 px-5 py-3 font-semibold text-slate-950 transition hover:bg-amber-400 disabled:cursor-not-allowed disabled:opacity-50"
+className="inline-flex items-center justify-center rounded-2xl border border-amber-400/40 bg-amber-500/90 px-5 py-3 font-semibold text-[#1a0d0c] transition hover:bg-amber-400 disabled:cursor-not-allowed disabled:opacity-50"
               onClick={() => void onStartGame()}
             >
               Avvia partita
             </button>
           ) : (
-            <div className="rounded-2xl border border-slate-800 bg-slate-950/40 px-4 py-3 text-sm text-slate-400">
+            <div className="rounded-2xl border border-[#3a2621] bg-[#0b0708]/40 px-4 py-3 text-sm text-[#bcae9a]">
               In attesa che l&apos;host avvii la partita.
             </div>
           )}
@@ -90,7 +90,7 @@ export default function LobbyView({
               className={`rounded-2xl border p-4 ${
                 player.id === room.hostId
                   ? "border-amber-400/30 bg-amber-400/10"
-                  : "border-slate-800 bg-slate-950/50"
+                  : "border-[#3a2621] bg-[#0b0708]/50"
               }`}
             >
               <div className="flex items-center justify-between gap-3">
@@ -99,17 +99,17 @@ export default function LobbyView({
                 <span
                   className={`rounded-full px-2 py-1 text-xs ${
                     player.connected
-                      ? "border border-emerald-400/20 bg-emerald-400/10 text-emerald-300"
-                      : "border border-slate-700 bg-slate-800 text-slate-300"
+                      ? "border border-[#d9b265]/20 bg-[#d9b265]/10 text-[#f0d7a0]"
+                      : "border border-[#4b312a] bg-[#241618] text-[#d8cbb7]"
                   }`}
                 >
                   {player.connected ? "online" : "offline"}
                 </span>
               </div>
 
-              <div className="mt-3 text-sm text-slate-400">
+              <div className="mt-3 text-sm text-[#bcae9a]">
                 Punti:{" "}
-                <span className="font-semibold text-slate-200">{player.score}</span>
+                <span className="font-semibold text-[#e8dcc8]">{player.score}</span>
               </div>
 
               {player.id === room.hostId ? (
@@ -129,9 +129,9 @@ export default function LobbyView({
         />
       </div>
 
-      <div className="rounded-3xl border border-amber-400/20 bg-slate-900/70 p-6 shadow-[0_0_40px_rgba(0,0,0,0.35)] backdrop-blur-sm md:p-8">
+      <div className="rounded-3xl border border-amber-400/20 bg-[#140c0d]/70 p-6 shadow-[0_0_40px_rgba(0,0,0,0.35)] backdrop-blur-sm md:p-8">
         <h3 className="text-xl font-bold text-white">Impostazioni</h3>
-        <p className="mt-2 text-sm text-slate-400">
+        <p className="mt-2 text-sm text-[#bcae9a]">
           Le categorie selezionate decidono il pool di domande.
         </p>
 
@@ -142,9 +142,9 @@ export default function LobbyView({
             return (
               <label
                 key={category.id}
-                className="flex cursor-pointer items-center justify-between rounded-2xl border border-slate-800 bg-slate-950/40 px-4 py-3"
+                className="flex cursor-pointer items-center justify-between rounded-2xl border border-[#3a2621] bg-[#0b0708]/40 px-4 py-3"
               >
-                <span className="text-sm font-semibold text-slate-100">
+                <span className="text-sm font-semibold text-[#f5ecdc]">
                   {category.label}
                 </span>
                 <input
@@ -160,7 +160,7 @@ export default function LobbyView({
         </div>
 
         <div className="mt-6">
-          <label className="mb-2 block text-sm font-semibold text-slate-200">
+          <label className="mb-2 block text-sm font-semibold text-[#e8dcc8]">
             Numero domande
           </label>
           <input
@@ -173,23 +173,24 @@ export default function LobbyView({
             onChange={(e) => onTotalQuestionsChange(Number(e.target.value))}
             className="w-full accent-amber-400"
           />
-          <div className="mt-2 text-sm text-slate-400">{totalQuestions} domande</div>
+          <div className="mt-2 text-sm text-[#bcae9a]">{totalQuestions} domande</div>
         </div>
 
         {isHost ? (
           <button
-            className="mt-6 inline-flex w-full items-center justify-center rounded-2xl border border-slate-700 bg-slate-800 px-5 py-3 font-semibold text-slate-100 transition hover:bg-slate-700 disabled:opacity-50"
+            className="mt-6 inline-flex w-full items-center justify-center rounded-2xl border border-[#4b312a] bg-[#241618] px-5 py-3 font-semibold text-[#f5ecdc] transition hover:bg-[#4b312a] disabled:opacity-50"
             onClick={() => void onSaveSettings()}
             disabled={savingSettings}
           >
             Salva impostazioni
           </button>
         ) : (
-          <div className="mt-6 rounded-2xl border border-slate-800 bg-slate-950/40 px-4 py-3 text-sm text-slate-400">
-            Solo l&apos;host può modificare le impostazioni.
+          <div className="mt-6 rounded-2xl border border-[#3a2621] bg-[#0b0708]/40 px-4 py-3 text-sm text-[#bcae9a]">
+            Solo l&apos;host puÃ² modificare le impostazioni.
           </div>
         )}
       </div>
     </div>
   );
 }
+

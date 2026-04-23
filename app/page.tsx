@@ -85,7 +85,7 @@ export default async function Page() {
   });
 
   return (
-    <div className="home-scale-80 min-h-screen overflow-x-hidden bg-slate-950 text-slate-100">
+    <div className="home-scale-80 min-h-screen overflow-x-hidden bg-[#050409] text-[#f5ecdc]">
       <HeroSection />
       <TwitchSection
         primaryStreamer={primaryStreamer}

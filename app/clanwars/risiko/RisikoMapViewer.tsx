@@ -709,7 +709,7 @@ export function RisikoMapViewer({
                         <input type="hidden" name="outcome" value="attacker_win" />
                         <button
                           type="submit"
-                          className="inline-flex rounded-full border border-emerald-400/20 bg-emerald-400 px-3 py-2 text-xs font-semibold text-[#120d09] transition hover:bg-emerald-300"
+                          className="inline-flex rounded-full border border-[#d9b265]/20 bg-[#d9b265] px-3 py-2 text-xs font-semibold text-[#120d09] transition hover:bg-[#f0c86e]"
                         >
                           Vince attaccante
                         </button>
@@ -940,7 +940,7 @@ export function RisikoMapViewer({
                         <input type="hidden" name="outcome" value="attacker_win" />
                         <button
                           type="submit"
-                          className="inline-flex rounded-full border border-emerald-400/20 bg-emerald-400 px-3 py-2 text-xs font-semibold text-[#120d09] transition hover:bg-emerald-300"
+                          className="inline-flex rounded-full border border-[#d9b265]/20 bg-[#d9b265] px-3 py-2 text-xs font-semibold text-[#120d09] transition hover:bg-[#f0c86e]"
                         >
                           Vince attaccante
                         </button>

@@ -1,4 +1,4 @@
-const SERVER_CONFIG = {
+﻿const SERVER_CONFIG = {
   name: 'Age of Empires Hub',
   inviteUrl: 'https://discord.gg/7qdYf4vH8P',
   widgetServerId: '470883209614458881',
@@ -51,7 +51,7 @@ export default async function AoeDiscordLandingPage() {
     },
     {
       title: 'Guide e strategia',
-      desc: 'Condividi build order, consigli, replay e discussioni sulle civiltà con altri appassionati.',
+      desc: 'Condividi build order, consigli, replay e discussioni sulle civiltÃ  con altri appassionati.',
     },
     {
       title: 'Community italiana',
@@ -66,8 +66,8 @@ export default async function AoeDiscordLandingPage() {
   ];
 
   const liveStats = [
-    { value: totalMembers ?? '—', label: 'Utenti visibili nel widget' },
-    { value: onlineMembers ?? '—', label: 'Online ora' },
+    { value: totalMembers ?? 'â€”', label: 'Utenti visibili nel widget' },
+    { value: onlineMembers ?? 'â€”', label: 'Online ora' },
     { value: '3', label: 'Eventi in arrivo' },
   ];
 
@@ -96,9 +96,9 @@ export default async function AoeDiscordLandingPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100">
+    <div className="min-h-screen bg-[#0b0708] text-[#f5ecdc]">
       <section className="relative overflow-hidden border-b border-amber-500/20">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(245,158,11,0.18),transparent_35%),radial-gradient(circle_at_bottom_right,rgba(59,130,246,0.14),transparent_30%)]" />
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(217,178,101,0.18),transparent_35%),radial-gradient(circle_at_bottom_right,rgba(127,21,23,0.16),transparent_30%)]" />
         <div className="relative mx-auto max-w-7xl px-6 py-24 lg:px-8">
           <div className="grid items-center gap-12 lg:grid-cols-2">
             <div>
@@ -108,39 +108,39 @@ export default async function AoeDiscordLandingPage() {
               <h1 className="max-w-2xl text-4xl font-bold tracking-tight text-white sm:text-6xl">
                 La tua community Discord per vivere Age of Empires ogni giorno
               </h1>
-              <p className="mt-6 max-w-xl text-lg leading-8 text-slate-300">
+              <p className="mt-6 max-w-xl text-lg leading-8 text-[#d8cbb7]">
                 Un server pensato per appassionati di Age of Empires: partite, eventi, tornei, consigli strategici e una community con cui giocare davvero.
               </p>
               <div className="mt-8 flex flex-wrap gap-4">
                 <a rel="noopener noreferrer"                   href="https://discord.gg/pjAakCz9"
-                  className="rounded-2xl bg-amber-400 px-6 py-3 text-base font-semibold text-slate-950 shadow-lg shadow-amber-500/20 transition hover:-translate-y-0.5"
+                  className="rounded-2xl bg-amber-400 px-6 py-3 text-base font-semibold text-[#1a0d0c] shadow-lg shadow-amber-500/20 transition hover:-translate-y-0.5"
                 >
                   Entra nel server
                 </a>
                 <a rel="noopener noreferrer"                   href="#events"
-                  className="rounded-2xl border border-slate-700 bg-slate-900/70 px-6 py-3 text-base font-semibold text-slate-100 transition hover:border-slate-500"
+                  className="rounded-2xl border border-[#4b312a] bg-[#140c0d]/70 px-6 py-3 text-base font-semibold text-[#f5ecdc] transition hover:border-[#7a5b4d]"
                 >
                   Vedi gli eventi
                 </a>
                 <a target="_blank" rel="noopener noreferrer"                   href="https://aoeitalia.com/classifiche/aoe4"
-                  className="rounded-2xl bg-blue-600 px-6 py-3 text-base font-semibold text-white shadow-lg transition hover:-translate-y-0.5"
+                  className="rounded-2xl bg-[#7f1517] px-6 py-3 text-base font-semibold text-white shadow-lg transition hover:-translate-y-0.5"
                 >
                                     <span className="inline-flex items-center gap-2"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M20.317 4.369A19.791 19.791 0 0 0 15.126 3c-.23.41-.5.965-.684 1.396a18.27 18.27 0 0 0-4.884 0A13.87 13.87 0 0 0 8.873 3a19.736 19.736 0 0 0-5.19 1.369C.533 9.046-.32 13.579.099 18.057A19.9 19.9 0 0 0 6.13 21c.487-.667.92-1.372 1.294-2.11-.712-.27-1.39-.61-2.022-1.01.17-.125.337-.255.5-.389 3.905 1.82 8.14 1.82 12.001 0 .164.134.331.264.5.389-.633.4-1.312.74-2.025 1.01.375.738.808 1.443 1.295 2.11a19.86 19.86 0 0 0 6.03-2.943c.49-5.177-.84-9.67-3.386-13.688ZM8.02 15.331c-1.183 0-2.156-1.085-2.156-2.419 0-1.333.954-2.418 2.156-2.418 1.211 0 2.175 1.095 2.156 2.418 0 1.334-.954 2.419-2.156 2.419Zm7.974 0c-1.183 0-2.156-1.085-2.156-2.419 0-1.333.954-2.418 2.156-2.418 1.211 0 2.175 1.095 2.156 2.418 0 1.334-.945 2.419-2.156 2.419Z"/></svg>Iscriviti alle classifiche</span>
                 </a>
                 <a target="_blank" rel="noopener noreferrer"                   href="https://discord.com/channels/470883209614458881/VOCALE_ZOZZA_CHANNEL_ID"
-                  className="rounded-2xl bg-purple-600 px-6 py-3 text-base font-semibold text-white shadow-lg transition hover:-translate-y-0.5"
+                  className="rounded-2xl bg-[#7f1517] px-6 py-3 text-base font-semibold text-white shadow-lg transition hover:-translate-y-0.5"
                 >
                   Gioca una zozza con il nostro bot!
                 </a>
                                 <a target="_blank" rel="noopener noreferrer"                   href="https://aoeitalia.com/ruota"
-                  className="rounded-2xl bg-red-600 px-6 py-3 text-base font-semibold text-white shadow-lg transition hover:-translate-y-0.5"
+className="rounded-2xl bg-[#7f1517] px-6 py-3 text-base font-semibold text-white shadow-lg transition hover:-translate-y-0.5"
                 >
                   Ruota delle civ
                 </a>
               </div>
             </div>
 
-            <div className="rounded-[2rem] border border-slate-800 bg-slate-900/80 p-6 shadow-2xl shadow-black/30 backdrop-blur">
+            <div className="rounded-[2rem] border border-[#3a2621] bg-[#140c0d]/80 p-6 shadow-2xl shadow-black/30 backdrop-blur">
               <div className="mb-4 flex items-center justify-between">
                 <div>
                   <p className="text-sm uppercase tracking-[0.3em] text-amber-300">{serverName}</p>
@@ -150,23 +150,23 @@ export default async function AoeDiscordLandingPage() {
                 </div>
               </div>
               <div className="space-y-4">
-                <div className="rounded-2xl border border-slate-800 bg-slate-950/80 p-4">
-                  <p className="text-sm text-slate-400">Canali principali</p>
-                  <div className="mt-3 space-y-2 text-sm text-slate-200">
+                <div className="rounded-2xl border border-[#3a2621] bg-[#0b0708]/80 p-4">
+                  <p className="text-sm text-[#bcae9a]">Canali principali</p>
+                  <div className="mt-3 space-y-2 text-sm text-[#e8dcc8]">
                     {visibleChannels.length > 0 ? (
                       visibleChannels.map((channel) => (
                         <div key={channel.id}># {channel.name}</div>
                       ))
                     ) : (
-                      <div className="text-slate-500">Verifica server ID e widget Discord se non vedi ancora i canali.</div>
+                      <div className="text-[#8f7e69]">Verifica server ID e widget Discord se non vedi ancora i canali.</div>
                     )}
                   </div>
                 </div>
                 <div className="grid gap-4 sm:grid-cols-3">
                   {stats.map((stat) => (
-                    <div key={stat.label} className="rounded-2xl border border-slate-800 bg-slate-950/80 p-4 text-center">
+                    <div key={stat.label} className="rounded-2xl border border-[#3a2621] bg-[#0b0708]/80 p-4 text-center">
                       <div className="text-2xl font-bold text-amber-300">{stat.value}</div>
-                      <div className="mt-1 text-sm text-slate-400">{stat.label}</div>
+                      <div className="mt-1 text-sm text-[#bcae9a]">{stat.label}</div>
                     </div>
                   ))}
                 </div>
@@ -178,19 +178,19 @@ export default async function AoeDiscordLandingPage() {
 
       <section className="mx-auto max-w-7xl px-6 py-20 lg:px-8">
         <div className="grid gap-6 lg:grid-cols-2">
-          <div className="rounded-[2rem] border border-slate-800 bg-slate-900 p-8 shadow-lg shadow-black/20">
+          <div className="rounded-[2rem] border border-[#3a2621] bg-[#140c0d] p-8 shadow-lg shadow-black/20">
             <div className="flex items-center justify-between gap-4">
               <div>
                 <p className="text-sm font-semibold uppercase tracking-[0.3em] text-amber-300">Live del Discord</p>
               </div>
               <a target="_blank" rel="noopener noreferrer"                 href={inviteUrl}
-                className="hidden rounded-2xl bg-amber-400 px-5 py-3 text-sm font-semibold text-slate-950 transition hover:-translate-y-0.5 md:inline-flex"
+                className="hidden rounded-2xl bg-amber-400 px-5 py-3 text-sm font-semibold text-[#1a0d0c] transition hover:-translate-y-0.5 md:inline-flex"
               >
                 Apri Discord
               </a>
             </div>
 
-            <div className="mt-6 overflow-hidden rounded-[1.5rem] border border-slate-800 bg-slate-950/70">
+            <div className="mt-6 overflow-hidden rounded-[1.5rem] border border-[#3a2621] bg-[#0b0708]/70">
               <iframe
                 title="Discord Server Widget"
                 src={`https://discord.com/widget?id=${SERVER_CONFIG.widgetServerId}&theme=dark`}
@@ -202,18 +202,18 @@ export default async function AoeDiscordLandingPage() {
             </div>
           </div>
 
-          <div className="rounded-[2rem] border border-slate-800 bg-slate-900 p-8 shadow-lg shadow-black/20">
+          <div className="rounded-[2rem] border border-[#3a2621] bg-[#140c0d] p-8 shadow-lg shadow-black/20">
             <p className="text-sm font-semibold uppercase tracking-[0.3em] text-amber-300">Stato del server</p>
             <h2 className="mt-3 text-3xl font-bold text-white">Numeri che danno fiducia</h2>
-            <p className="mt-3 text-sm leading-7 text-slate-400">
+            <p className="mt-3 text-sm leading-7 text-[#bcae9a]">
               I dati qui sotto sono dei giocatori della nostra community!
             </p>
 
             <div className="mt-8 grid gap-4 sm:grid-cols-2">
               {liveStats.map((item) => (
-                <div key={item.label} className="rounded-2xl border border-slate-800 bg-slate-950/80 p-5">
+                <div key={item.label} className="rounded-2xl border border-[#3a2621] bg-[#0b0708]/80 p-5">
                   <div className="text-3xl font-bold text-amber-300">{item.value}</div>
-                  <div className="mt-2 text-sm text-slate-400">{item.label}</div>
+                  <div className="mt-2 text-sm text-[#bcae9a]">{item.label}</div>
                 </div>
               ))}
             </div>
@@ -222,8 +222,8 @@ export default async function AoeDiscordLandingPage() {
               <div className="flex items-center justify-between gap-4">
                 <div>
                   <p className="text-sm font-semibold text-emerald-300">Presenza live</p>
-                  <p className="mt-1 text-sm text-slate-300">
-                    {onlineMembers ?? '—'} membri online in questo momento.
+                  <p className="mt-1 text-sm text-[#d8cbb7]">
+                    {onlineMembers ?? 'â€”'} membri online in questo momento.
                   </p>
                 </div>
                 <div className="rounded-full border border-emerald-400/30 bg-emerald-400/10 px-3 py-1 text-sm text-emerald-300">
@@ -239,16 +239,16 @@ export default async function AoeDiscordLandingPage() {
 
       <section id="features" className="mx-auto max-w-7xl px-6 py-20 lg:px-8">
         <div className="max-w-2xl">
-          <p className="text-sm font-semibold uppercase tracking-[0.3em] text-amber-300">Perché unirti</p>
+          <p className="text-sm font-semibold uppercase tracking-[0.3em] text-amber-300">PerchÃ© unirti</p>
           <h2 className="mt-4 text-3xl font-bold text-white sm:text-4xl">
             Un server Discord costruito per chi ama davvero Age of Empires
           </h2>
         </div>
         <div className="mt-12 grid gap-6 md:grid-cols-2 xl:grid-cols-4">
           {features.map((feature) => (
-            <div key={feature.title} className="rounded-[2rem] border border-slate-800 bg-slate-900 p-6 shadow-lg shadow-black/20">
+            <div key={feature.title} className="rounded-[2rem] border border-[#3a2621] bg-[#140c0d] p-6 shadow-lg shadow-black/20">
               <h3 className="text-xl font-semibold text-white">{feature.title}</h3>
-              <p className="mt-3 text-sm leading-7 text-slate-400">{feature.desc}</p>
+              <p className="mt-3 text-sm leading-7 text-[#bcae9a]">{feature.desc}</p>
             </div>
           ))}
         </div>
@@ -260,15 +260,15 @@ export default async function AoeDiscordLandingPage() {
             <h2 className="mt-4 text-3xl font-bold text-white sm:text-4xl">
               Guarda gli streamer della community direttamente dal sito
             </h2>
-            <p className="mt-3 text-sm leading-7 text-slate-400">
-              Inserisci i nomi degli streamer nella configurazione del file. Per l'embed Twitch devi anche aggiungere i domini reali del sito dentro <code className="rounded bg-slate-800 px-1 py-0.5 text-slate-200">TWITCH_PARENT_DOMAINS</code>.
+            <p className="mt-3 text-sm leading-7 text-[#bcae9a]">
+              Inserisci i nomi degli streamer nella configurazione del file. Per l'embed Twitch devi anche aggiungere i domini reali del sito dentro <code className="rounded bg-[#241618] px-1 py-0.5 text-[#e8dcc8]">TWITCH_PARENT_DOMAINS</code>.
             </p>
           </div>
         </div>
                 <div className="mt-10 grid gap-6 lg:grid-cols-2 xl:grid-cols-3">
           {liveStreams.length > 0 ? (
             liveStreams.map((streamer) => (
-              <div key={streamer} className="overflow-hidden rounded-[2rem] border border-slate-800 bg-slate-900 p-4 shadow-lg shadow-black/20">
+              <div key={streamer} className="overflow-hidden rounded-[2rem] border border-[#3a2621] bg-[#140c0d] p-4 shadow-lg shadow-black/20">
                 <div className="mb-4 flex items-center justify-between gap-4">
                   <div>
                     <p className="text-sm font-semibold uppercase tracking-[0.2em] text-purple-300">Twitch Stream</p>
@@ -278,12 +278,12 @@ export default async function AoeDiscordLandingPage() {
                     target="_blank"
                     rel="noopener noreferrer"
                     href={`https://www.twitch.tv/${streamer}`}
-                    className="rounded-xl bg-purple-600 px-4 py-2 text-sm font-semibold text-white transition hover:-translate-y-0.5"
+                    className="rounded-xl bg-[#7f1517] px-4 py-2 text-sm font-semibold text-white transition hover:-translate-y-0.5"
                   >
                     Apri su Twitch
                   </a>
                 </div>
-                <div className="overflow-hidden rounded-[1.5rem] border border-slate-800 bg-black">
+                <div className="overflow-hidden rounded-[1.5rem] border border-[#3a2621] bg-black">
                   <iframe
                     title={`Twitch player ${streamer}`}
                     src={`https://player.twitch.tv/?channel=${streamer}&parent=${TWITCH_PARENT_DOMAINS.join('&parent=')}`}
@@ -295,8 +295,8 @@ export default async function AoeDiscordLandingPage() {
               </div>
             ))
           ) : (
-            <div className="rounded-[2rem] border border-slate-800 bg-slate-900 p-8 text-sm text-slate-400 lg:col-span-2 xl:col-span-3">
-              Aggiungi i nomi degli streamer dentro <code className="rounded bg-slate-800 px-1 py-0.5 text-slate-200">TWITCH_STREAMERS</code> per mostrare qui le live della community.
+            <div className="rounded-[2rem] border border-[#3a2621] bg-[#140c0d] p-8 text-sm text-[#bcae9a] lg:col-span-2 xl:col-span-3">
+              Aggiungi i nomi degli streamer dentro <code className="rounded bg-[#241618] px-1 py-0.5 text-[#e8dcc8]">TWITCH_STREAMERS</code> per mostrare qui le live della community.
             </div>
           )}
         </div>
@@ -311,7 +311,7 @@ export default async function AoeDiscordLandingPage() {
             </h2>
           </div>
           <a target="_blank" rel="noopener noreferrer"             href={inviteUrl}
-            className="inline-flex rounded-2xl border border-slate-700 bg-slate-900/70 px-5 py-3 text-sm font-semibold text-slate-100 transition hover:border-slate-500"
+            className="inline-flex rounded-2xl border border-[#4b312a] bg-[#140c0d]/70 px-5 py-3 text-sm font-semibold text-[#f5ecdc] transition hover:border-[#7a5b4d]"
           >
             Partecipa agli eventi
           </a>
@@ -319,18 +319,18 @@ export default async function AoeDiscordLandingPage() {
 
         <div className="mt-10 grid gap-6 lg:grid-cols-3">
           {upcomingEvents.map((event) => (
-            <div key={event.title} className="rounded-[2rem] border border-slate-800 bg-slate-900 p-6 shadow-lg shadow-black/20">
+            <div key={event.title} className="rounded-[2rem] border border-[#3a2621] bg-[#140c0d] p-6 shadow-lg shadow-black/20">
               <div className="flex items-start justify-between gap-4">
                 <div>
                   <div className="text-sm font-semibold uppercase tracking-[0.2em] text-amber-300">{event.day}</div>
                   <h3 className="mt-3 text-xl font-semibold text-white">{event.title}</h3>
                 </div>
-                <div className="rounded-xl border border-slate-700 bg-slate-950/70 px-3 py-1 text-sm text-slate-300">
+                <div className="rounded-xl border border-[#4b312a] bg-[#0b0708]/70 px-3 py-1 text-sm text-[#d8cbb7]">
                   {event.type}
                 </div>
               </div>
-              <p className="mt-4 text-sm text-slate-400">Ore {event.time}</p>
-              <p className="mt-4 text-sm leading-7 text-slate-300">{event.desc}</p>
+              <p className="mt-4 text-sm text-[#bcae9a]">Ore {event.time}</p>
+              <p className="mt-4 text-sm leading-7 text-[#d8cbb7]">{event.desc}</p>
             </div>
           ))}
         </div>
@@ -338,10 +338,10 @@ export default async function AoeDiscordLandingPage() {
 
       <section className="mx-auto max-w-7xl px-6 pb-20 lg:px-8">
         <div className="grid gap-6 lg:grid-cols-3">
-          <div className="rounded-[2rem] border border-slate-800 bg-slate-900 p-8 lg:col-span-2">
+          <div className="rounded-[2rem] border border-[#3a2621] bg-[#140c0d] p-8 lg:col-span-2">
             <p className="text-sm font-semibold uppercase tracking-[0.3em] text-amber-300">Cosa trovi dentro</p>
-            <ul className="mt-6 space-y-4 text-slate-300">
-              <li>Canali dedicati alle civiltà, alle strategie e ai replay (NO RAION)</li>
+            <ul className="mt-6 space-y-4 text-[#d8cbb7]">
+              <li>Canali dedicati alle civiltÃ , alle strategie e ai replay (NO RAION)</li>
               <li>Eventi community per giocare insieme e conoscere nuovi player</li>
               <li>Spazio per creator, clip, meme e discussioni competitive (NO MARCOTAMBY)</li>
               <li>Organizzazione semplice per tornei, team game e serate speciali (NO ORGANIZZATI DA COOP)</li>
@@ -354,16 +354,18 @@ export default async function AoeDiscordLandingPage() {
              Clicca qui e inizia a giocare subito! 
             </p>
             <a target="_blank" rel="noopener noreferrer"               href={inviteUrl}
-              className="mt-6 inline-flex rounded-2xl bg-white px-5 py-3 font-semibold text-slate-950 transition hover:-translate-y-0.5"
+className="mt-6 inline-flex rounded-2xl bg-amber-400 px-5 py-3 font-semibold text-[#1a0d0c] transition hover:-translate-y-0.5"
             >
               Vai al Discord!
             </a>
           </div>
         </div>
       </section>
-            <footer className="border-t border-slate-800 bg-slate-950 py-8 text-center text-xs text-slate-400">
-        Produced by EpicoJackal™ , all right reserved. Ogni fatto o riferimenti a personaggi della vita vera sono puramente casuali. Sito per memare Aoe4italia
+            <footer className="border-t border-[#3a2621] bg-[#0b0708] py-8 text-center text-xs text-[#bcae9a]">
+        Produced by EpicoJackalâ„¢ , all right reserved. Ogni fatto o riferimenti a personaggi della vita vera sono puramente casuali. Sito per memare Aoe4italia
       </footer>
     </div>
   );
 }
+
+

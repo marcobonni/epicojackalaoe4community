@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import {
   FormEvent,
@@ -593,7 +593,7 @@ function getReliabilityTier(games: number | null) {
     return {
       label: "Assente",
       tone:
-        "border-slate-700 bg-slate-950/70 text-slate-300",
+        "border-[#5a3a31] bg-[#0b0708]/70 text-[#d8cbb7]",
       description: "Nessun campione utile.",
     };
   }
@@ -602,7 +602,7 @@ function getReliabilityTier(games: number | null) {
     return {
       label: "Alta",
       tone:
-        "border-emerald-500/30 bg-emerald-500/10 text-emerald-200",
+    "border-[#d9b265]/30 bg-[#d9b265]/10 text-[#f8edd7]",
       description: "Campione molto solido.",
     };
   }
@@ -610,7 +610,7 @@ function getReliabilityTier(games: number | null) {
   if (games >= 35) {
     return {
       label: "Buona",
-      tone: "border-blue-500/30 bg-blue-500/10 text-blue-200",
+    tone: "border-[#aa221d]/30 bg-[#7f1517]/10 text-[#fde8e1]",
       description: "Trend gia abbastanza leggibile.",
     };
   }
@@ -1010,7 +1010,7 @@ export default function PlayerAdvancedInsights({
   return (
     <div className="space-y-6">
       {recentState.loading ? (
-        <div className="flex items-center gap-3 rounded-[1.75rem] border border-slate-800 bg-slate-950/80 px-4 py-3 text-sm text-slate-300">
+        <div className="flex items-center gap-3 rounded-[1.75rem] border border-[#3a2621] bg-[#0b0708]/80 px-4 py-3 text-sm text-[#d8cbb7]">
           <Loader2 className="h-4 w-4 animate-spin text-amber-300" />
           Aggiornamento partite recenti in corso...
         </div>
@@ -1023,14 +1023,14 @@ export default function PlayerAdvancedInsights({
       ) : null}
 
       <div className="grid gap-6 xl:grid-cols-1">
-        <section className="rounded-[2rem] border border-slate-800 bg-slate-900 p-6 shadow-lg shadow-black/20">
+        <section className="rounded-[2rem] border border-[#3a2621] bg-[#140c0d] p-6 shadow-lg shadow-black/20">
           <p className="text-sm font-semibold uppercase tracking-[0.3em] text-amber-300">
             Affidabilita
           </p>
           <h2 className="mt-2 text-3xl font-bold text-white">
             Qualita del campione
           </h2>
-          <p className="mt-3 text-sm leading-7 text-slate-400">
+          <p className="mt-3 text-sm leading-7 text-[#bcae9a]">
             Qui separiamo i numeri molto leggibili dai numeri ancora fragili:
             piu match hai dietro, piu il dato e realmente utile.
           </p>
@@ -1060,7 +1060,7 @@ export default function PlayerAdvancedInsights({
             ].map((item) => (
               <div
                 key={item.title}
-                className="rounded-2xl border border-slate-800 bg-slate-950/80 p-4"
+                className="rounded-2xl border border-[#3a2621] bg-[#0b0708]/80 p-4"
               >
                 <div className="flex items-center justify-between gap-4">
                   <div className="text-sm font-semibold text-white">
@@ -1068,17 +1068,17 @@ export default function PlayerAdvancedInsights({
                   </div>
                   <ReliabilityChip games={item.games} />
                 </div>
-                <div className="mt-2 text-sm text-slate-400">
+                <div className="mt-2 text-sm text-[#bcae9a]">
                   {formatNumber(item.games)} match utili
                 </div>
-                <p className="mt-3 text-sm leading-6 text-slate-400">
+                <p className="mt-3 text-sm leading-6 text-[#bcae9a]">
                   {item.description}
                 </p>
               </div>
             ))}
           </div>
 
-          <div className="mt-4 rounded-2xl border border-slate-800 bg-slate-950/80 p-4 text-sm leading-7 text-slate-400">
+          <div className="mt-4 rounded-2xl border border-[#3a2621] bg-[#0b0708]/80 p-4 text-sm leading-7 text-[#bcae9a]">
             Regola pratica: sotto le 5-10 partite una lettura forte su mappe o
             matchup puo essere fuorviante. Sopra le 30 inizia a diventare molto
             piu credibile.
@@ -1086,7 +1086,7 @@ export default function PlayerAdvancedInsights({
         </section>
       </div>
 
-      <section className="rounded-[2rem] border border-slate-800 bg-slate-900 p-6 shadow-lg shadow-black/20">
+      <section className="rounded-[2rem] border border-[#3a2621] bg-[#140c0d] p-6 shadow-lg shadow-black/20">
         <div className="flex flex-col gap-5 xl:flex-row xl:items-end xl:justify-between">
           <div>
             <p className="text-sm font-semibold uppercase tracking-[0.3em] text-amber-300">
@@ -1095,7 +1095,7 @@ export default function PlayerAdvancedInsights({
             <h2 className="mt-2 text-3xl font-bold text-white">
               Confronta con un altro player
             </h2>
-            <p className="mt-3 max-w-3xl text-sm leading-7 text-slate-400">
+            <p className="mt-3 max-w-3xl text-sm leading-7 text-[#bcae9a]">
               Cerca un secondo player e confronta subito ELO, winrate,
               volume, trend, top civ e scontri diretti.
             </p>
@@ -1114,7 +1114,7 @@ export default function PlayerAdvancedInsights({
                 aria-controls={suggestionsId}
                 className="relative flex-1"
               >
-                <Search className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500" />
+                <Search className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-[#8f7e69]" />
                 <input
                   id={compareInputId}
                   type="text"
@@ -1140,7 +1140,7 @@ export default function PlayerAdvancedInsights({
                   }}
                   onKeyDown={handleInputKeyDown}
                   placeholder="Cerca un player da confrontare..."
-                  className="w-full rounded-2xl border border-white/10 bg-slate-950/80 py-3.5 pl-11 pr-12 text-sm text-white outline-none transition placeholder:text-slate-500 focus:border-amber-400/50 focus:bg-slate-950"
+                    className="w-full rounded-2xl border border-white/10 bg-[#0b0708]/80 py-3.5 pl-11 pr-12 text-sm text-white outline-none transition placeholder:text-[#8f7e69] focus:border-[#d9b265]/50 focus:bg-[#0b0708]"
                 />
 
                 {isAutocompleteLoading ? (
@@ -1172,14 +1172,14 @@ export default function PlayerAdvancedInsights({
                             className={`flex w-full items-center justify-between gap-3 px-4 py-3 text-left transition ${
                               isHighlighted
                                 ? "bg-amber-400/10 text-white"
-                                : "text-slate-200 hover:bg-white/5"
+                                : "text-[#e8dcc8] hover:bg-white/5"
                             }`}
                           >
                             <span className="min-w-0">
                               <span className="block truncate text-sm font-medium">
                                 {suggestion.name ?? `Player ${suggestion.profileId}`}
                               </span>
-                              <span className="mt-1 block text-xs text-slate-400">
+                              <span className="mt-1 block text-xs text-[#bcae9a]">
                                 Profile ID {suggestion.profileId}
                               </span>
                             </span>
@@ -1190,9 +1190,9 @@ export default function PlayerAdvancedInsights({
                         );
                       })
                     ) : (
-                      <div className="px-4 py-4 text-sm text-slate-400">
+                      <div className="px-4 py-4 text-sm text-[#bcae9a]">
                         Nessun suggerimento trovato per{" "}
-                        <span className="text-slate-200">
+                        <span className="text-[#e8dcc8]">
                           {compareQuery.trim()}
                         </span>
                         .
@@ -1205,7 +1205,7 @@ export default function PlayerAdvancedInsights({
               <button
                 type="submit"
                 disabled={compareState.loading}
-                className="inline-flex min-h-[52px] items-center justify-center gap-2 rounded-2xl bg-[linear-gradient(180deg,#facc15,#f59e0b)] px-5 py-3 text-sm font-semibold text-slate-950 shadow-[0_10px_30px_rgba(245,158,11,0.25)] transition hover:-translate-y-0.5 hover:shadow-[0_16px_40px_rgba(245,158,11,0.32)] disabled:cursor-not-allowed disabled:opacity-70 sm:min-w-[156px]"
+                className="inline-flex min-h-[52px] items-center justify-center gap-2 rounded-2xl bg-[linear-gradient(180deg,#facc15,#f59e0b)] px-5 py-3 text-sm font-semibold text-[#1a0d0c] shadow-[0_10px_30px_rgba(245,158,11,0.25)] transition hover:-translate-y-0.5 hover:shadow-[0_16px_40px_rgba(245,158,11,0.32)] disabled:cursor-not-allowed disabled:opacity-70 sm:min-w-[156px]"
               >
                 {compareState.loading ? (
                   <>
@@ -1239,7 +1239,7 @@ export default function PlayerAdvancedInsights({
                   className={`rounded-[1.75rem] border p-5 ${
                     index === 0
                       ? "border-amber-500/25 bg-[radial-gradient(circle_at_top,rgba(245,158,11,0.12),transparent_36%),#020617]"
-                      : "border-slate-800 bg-slate-950/80"
+                      : "border-[#3a2621] bg-[#0b0708]/80"
                   }`}
                 >
                   <div className="flex items-start justify-between gap-4">
@@ -1250,20 +1250,20 @@ export default function PlayerAdvancedInsights({
                       <div className="mt-3 text-2xl font-bold text-white">
                         {summary.name}
                       </div>
-                      <div className="mt-2 flex flex-wrap gap-2 text-xs text-slate-300">
-                        <span className="rounded-full border border-slate-700 bg-slate-900 px-3 py-1">
+                      <div className="mt-2 flex flex-wrap gap-2 text-xs text-[#d8cbb7]">
+                        <span className="rounded-full border border-[#5a3a31] bg-[#140c0d] px-3 py-1">
                           {summary.rankLevel}
                         </span>
                         {summary.country ? (
-                          <span className="rounded-full border border-slate-700 bg-slate-900 px-3 py-1 uppercase">
+                          <span className="rounded-full border border-[#5a3a31] bg-[#140c0d] px-3 py-1 uppercase">
                             {summary.country}
                           </span>
                         ) : null}
                       </div>
                     </div>
 
-                    <div className="rounded-2xl border border-slate-800 bg-slate-900/80 px-4 py-3 text-right">
-                      <div className="text-xs uppercase tracking-[0.18em] text-slate-500">
+                    <div className="rounded-2xl border border-[#3a2621] bg-[#140c0d]/80 px-4 py-3 text-right">
+                      <div className="text-xs uppercase tracking-[0.18em] text-[#8f7e69]">
                         1v1 ELO
                       </div>
                       <div className="mt-1 text-2xl font-bold text-white">
@@ -1276,7 +1276,7 @@ export default function PlayerAdvancedInsights({
             </div>
 
             <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_340px]">
-              <div className="rounded-[1.75rem] border border-slate-800 bg-slate-950/80 p-5">
+              <div className="rounded-[1.75rem] border border-[#3a2621] bg-[#0b0708]/80 p-5">
                 <div className="text-xs font-semibold uppercase tracking-[0.22em] text-amber-300">
                   Metriche a confronto
                 </div>
@@ -1284,18 +1284,18 @@ export default function PlayerAdvancedInsights({
                   {compareMetrics.map((metric) => (
                     <div
                       key={metric.label}
-                      className="grid gap-3 rounded-2xl border border-slate-800 bg-slate-900/70 p-4 md:grid-cols-[1fr_1fr_1fr]"
+                      className="grid gap-3 rounded-2xl border border-[#3a2621] bg-[#140c0d]/70 p-4 md:grid-cols-[1fr_1fr_1fr]"
                     >
                       <div className="text-sm font-semibold text-white">
                         {metric.label}
                       </div>
-                      <div className="text-sm text-slate-300">
+                      <div className="text-sm text-[#d8cbb7]">
                         {currentSummary.name}:{" "}
                         <span className="font-semibold text-white">
                           {metric.current}
                         </span>
                       </div>
-                      <div className="text-sm text-slate-300">
+                      <div className="text-sm text-[#d8cbb7]">
                         {compareSummary.name}:{" "}
                         <span className="font-semibold text-white">
                           {metric.other}
@@ -1306,15 +1306,15 @@ export default function PlayerAdvancedInsights({
                 </div>
               </div>
 
-              <div className="rounded-[1.75rem] border border-slate-800 bg-slate-950/80 p-5">
+              <div className="rounded-[1.75rem] border border-[#3a2621] bg-[#0b0708]/80 p-5">
                 <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.22em] text-amber-300">
                   <Swords className="h-4 w-4" />
                   Head to head
                 </div>
 
                 <div className="mt-5 grid grid-cols-2 gap-3">
-                  <div className="rounded-2xl border border-emerald-500/20 bg-emerald-500/10 p-4">
-                    <div className="text-xs uppercase tracking-[0.16em] text-emerald-300">
+          <div className="rounded-2xl border border-[#d9b265]/20 bg-[#d9b265]/10 p-4">
+            <div className="text-xs uppercase tracking-[0.16em] text-[#f0d7a0]">
                       Wins
                     </div>
                     <div className="mt-2 text-2xl font-bold text-white">
@@ -1332,7 +1332,7 @@ export default function PlayerAdvancedInsights({
                   </div>
                 </div>
 
-                <div className="mt-4 rounded-2xl border border-slate-800 bg-slate-900/70 p-4 text-sm text-slate-300">
+                <div className="mt-4 rounded-2xl border border-[#3a2621] bg-[#140c0d]/70 p-4 text-sm text-[#d8cbb7]">
                   <div>
                     Match trovati:{" "}
                     <span className="font-semibold text-white">
@@ -1356,7 +1356,7 @@ export default function PlayerAdvancedInsights({
             </div>
           </div>
         ) : (
-          <div className="mt-6 rounded-2xl border border-slate-800 bg-slate-950/80 p-5 text-sm leading-7 text-slate-400">
+          <div className="mt-6 rounded-2xl border border-[#3a2621] bg-[#0b0708]/80 p-5 text-sm leading-7 text-[#bcae9a]">
             Nessun player confrontato ancora. Cerca un nome Steam e apri il
             confronto diretto su ELO, winrate, volume, trend e scontri
             incrociati.
@@ -1366,3 +1366,4 @@ export default function PlayerAdvancedInsights({
     </div>
   );
 }
+

@@ -1,4 +1,4 @@
-import LoadingLink from "@/app/components/LoadingLink";
+﻿import LoadingLink from "@/app/components/LoadingLink";
 import SignOutButton from "@/app/components/auth/SignOutButton";
 import { getTranslations } from "@/app/lib/i18n";
 import { hasRole, type PortalSession } from "@/app/lib/session";
@@ -30,18 +30,18 @@ export default async function PortalShell({
   const shell = messages.portalShell;
 
   return (
-    <div className="min-h-screen bg-[radial-gradient(circle_at_top,rgba(245,158,11,0.18),transparent_26%),radial-gradient(circle_at_bottom_right,rgba(59,130,246,0.08),transparent_20%),linear-gradient(180deg,#030611_0%,#09101f_48%,#030611_100%)] text-slate-100">
-      <header className="sticky top-0 z-40 border-b border-white/8 bg-[rgba(4,7,18,0.72)] backdrop-blur-xl">
+    <div className="min-h-screen bg-[radial-gradient(circle_at_top,rgba(217,178,101,0.16),transparent_26%),radial-gradient(circle_at_bottom_right,rgba(127,21,23,0.16),transparent_24%),linear-gradient(180deg,#050409_0%,#10090b_48%,#040305_100%)] text-[#f5ecdc]">
+      <header className="sticky top-0 z-40 border-b border-white/8 bg-[rgba(8,5,7,0.74)] backdrop-blur-xl">
         <div className="mx-auto flex max-w-[1500px] flex-col gap-5 px-4 py-4 sm:px-6 lg:px-10">
           <div className="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
             <div className="max-w-2xl">
               <LoadingLink
                 href="/"
-                className="inline-flex items-center rounded-full border border-amber-300/18 bg-amber-300/10 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.38em] text-amber-200"
+                className="inline-flex items-center rounded-full border border-[#d9b265]/18 bg-[#d9b265]/10 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.38em] text-[#f0d7a0]"
               >
-                AoE4 Community
+                AoE4 Italia Legacy
               </LoadingLink>
-              <p className="mt-4 max-w-xl text-sm leading-7 text-slate-300/78">
+              <p className="mt-4 max-w-xl text-sm leading-7 text-[#d8cbb7]/78">
                 {shell.tagline}
               </p>
             </div>
@@ -49,7 +49,7 @@ export default async function PortalShell({
             <div className="cinematic-panel-soft flex items-center gap-3 rounded-[1.7rem] px-4 py-3">
               {session?.user ? (
                 <>
-                  <div className="hidden rounded-full border border-white/10 bg-white/[0.04] px-4 py-2 text-sm text-slate-200 sm:block">
+                  <div className="hidden rounded-full border border-white/10 bg-white/[0.04] px-4 py-2 text-sm text-[#e8dcc8] sm:block">
                     {session.user.name}
                   </div>
                   <SignOutButton />
@@ -80,3 +80,4 @@ export default async function PortalShell({
     </div>
   );
 }
+

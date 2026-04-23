@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useEffect, useRef, useState } from "react";
 import { useTranslations } from "@/app/components/LanguageProvider";
@@ -139,14 +139,14 @@ export default function CoachingSection({
                     </div>
 
                     {coach.role ? (
-                      <p className="mt-4 text-sm font-semibold text-slate-100/88">{coach.role}</p>
+                      <p className="mt-4 text-sm font-semibold text-[#f5ecdc]/88">{coach.role}</p>
                     ) : null}
 
                     {coach.description ? (
                       <p className="cinematic-body mt-4 text-sm">{coach.description}</p>
                     ) : null}
 
-                    <div className="mt-6 space-y-3 text-sm text-slate-200/84">
+                    <div className="mt-6 space-y-3 text-sm text-[#e8dcc8]/84">
                       {coach.specialty ? (
                         <div className="cinematic-card-grid rounded-[1.4rem] p-4">
                           <span className="font-semibold text-white">{section.focus}:</span>{" "}
@@ -202,7 +202,7 @@ export default function CoachingSection({
             </div>
           </>
         ) : (
-          <div className="cinematic-empty-state p-8 text-sm text-slate-300/74">
+          <div className="cinematic-empty-state p-8 text-sm text-[#d8cbb7]/74">
             {section.empty}
           </div>
         )}
@@ -210,3 +210,4 @@ export default function CoachingSection({
     </section>
   );
 }
+

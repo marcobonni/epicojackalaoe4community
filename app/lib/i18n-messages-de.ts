@@ -4,15 +4,15 @@ import type { Dictionary } from "@/app/lib/i18n-schema";
 export const deMessages: Dictionary = {
   ...enMessages,
   metadata: {
-    siteTitle: "Aoe4 Community - Ranglisten, Quiz und Matchmaking",
+    siteTitle: "AoE4 Italia Legacy - Ranglisten, Quiz und Matchmaking",
     siteDescription:
       "Eine Age of Empires 4 Community mit Ranglisten, kompetitiven Quiz und ausgeglichenem Matchmaking.",
-    homeTitle: "Aoe4 Community - Ranglisten, Streams und Quiz",
+    homeTitle: "AoE4 Italia Legacy - Ranglisten, Streams und Quiz",
     homeDescription:
       "Tritt der AoE4 Community fur Ranglisten, Quiz und automatisches Matchmaking bei.",
-    loginTitle: "Turnier Login | AoE4 Community",
-    registerTitle: "Turnier Registrierung | AoE4 Community",
-    tournamentsTitle: "Turniere | AoE4 Community",
+    loginTitle: "Turnier Login | AoE4 Italia Legacy",
+    registerTitle: "Turnier Registrierung | AoE4 Italia Legacy",
+    tournamentsTitle: "Turniere | AoE4 Italia Legacy",
   },
   languageSwitcher: { label: "Seitensprache", shortLabel: "Sprache" },
   common: {
@@ -25,7 +25,7 @@ export const deMessages: Dictionary = {
     ...enMessages.home,
     hero: {
       ...enMessages.home.hero,
-      statsHeading: "AoE4 Community Hub",
+      statsHeading: "AoE4 Italia Legacy",
       title: "Deine Discord-Community fur Age of Empires an jedem Tag",
       description:
         "Ein Server fur Age of Empires Fans: Spiele, Events, Turniere, Strategietipps und eine echte Community zum gemeinsamen Spielen.",

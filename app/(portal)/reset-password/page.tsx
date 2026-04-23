@@ -1,8 +1,8 @@
-import LoadingLink from "@/app/components/LoadingLink";
+﻿import LoadingLink from "@/app/components/LoadingLink";
 import ResetPasswordForm from "@/app/components/auth/ResetPasswordForm";
 
 export const metadata = {
-  title: "Nuova password | AoE4 Community Italia",
+  title: "Nuova password | AoE4 Italia Legacy",
 };
 
 export default function ResetPasswordPage() {
@@ -16,22 +16,22 @@ export default function ResetPasswordPage() {
 
   return (
     <div className="grid gap-8 lg:grid-cols-[1.05fr_0.95fr]">
-      <section className="rounded-[2rem] border border-amber-400/20 bg-slate-950/70 p-8 shadow-2xl shadow-black/30">
+      <section className="rounded-[2rem] border border-amber-400/20 bg-[#0b0708]/70 p-8 shadow-2xl shadow-black/30">
         <p className="text-sm uppercase tracking-[0.3em] text-amber-300">
           Recupero account
         </p>
         <h1 className="mt-4 max-w-2xl text-4xl font-bold tracking-tight text-white sm:text-5xl">
           Imposta una nuova password e torna subito nel portale.
         </h1>
-        <p className="mt-4 max-w-2xl text-base leading-7 text-slate-300">
+        <p className="mt-4 max-w-2xl text-base leading-7 text-[#d8cbb7]">
           Questa pagina funziona dopo aver aperto il link ricevuto via email. Una
           volta salvata la nuova password verrai rimandato al login.
         </p>
       </section>
 
-      <section className="rounded-[2rem] border border-slate-800 bg-slate-950/80 p-8 shadow-2xl shadow-black/30">
+      <section className="rounded-[2rem] border border-[#3a2621] bg-[#0b0708]/80 p-8 shadow-2xl shadow-black/30">
         <h2 className="text-2xl font-semibold text-white">Nuova password</h2>
-        <p className="mt-3 text-sm leading-6 text-slate-400">
+        <p className="mt-3 text-sm leading-6 text-[#bcae9a]">
           Scegli una password nuova semplice, con almeno 6 caratteri.
         </p>
 
@@ -44,12 +44,12 @@ export default function ResetPasswordPage() {
             </div>
           )}
 
-          <div className="rounded-2xl border border-slate-800 bg-slate-900/70 p-4 text-sm leading-6 text-slate-300">
+          <div className="rounded-2xl border border-[#3a2621] bg-[#140c0d]/70 p-4 text-sm leading-6 text-[#d8cbb7]">
             Hai gia recuperato l&apos;account?
             <LoadingLink
               href="/login"
               prefetch={false}
-              className="mt-3 flex items-center justify-center rounded-xl border border-slate-700 px-4 py-3 font-semibold text-slate-100 transition hover:border-amber-300 hover:text-amber-200"
+              className="mt-3 flex items-center justify-center rounded-xl border border-[#4b312a] px-4 py-3 font-semibold text-[#f5ecdc] transition hover:border-amber-300 hover:text-amber-200"
             >
               Torna al login
             </LoadingLink>
@@ -59,3 +59,4 @@ export default function ResetPasswordPage() {
     </div>
   );
 }
+

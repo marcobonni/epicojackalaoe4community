@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useTranslations } from "@/app/components/LanguageProvider";
 
@@ -41,7 +41,7 @@ export default function DiscordOverviewSection({
                 <div className="text-4xl font-semibold tracking-[-0.04em] text-white">
                   {item.value}
                 </div>
-                <div className="mt-3 text-sm leading-6 text-slate-300/76">
+                <div className="mt-3 text-sm leading-6 text-[#d8cbb7]/76">
                   {item.label}
                 </div>
               </div>
@@ -58,20 +58,20 @@ export default function DiscordOverviewSection({
               </p>
             </div>
 
-            <div className="rounded-full border border-emerald-300/24 bg-emerald-300/10 px-4 py-2 text-xs font-semibold uppercase tracking-[0.26em] text-emerald-100">
+            <div className="rounded-full border border-[#d9b265]/24 bg-[#d9b265]/10 px-4 py-2 text-xs font-semibold uppercase tracking-[0.26em] text-[#f8edd7]">
               {messages.common.live}
             </div>
           </div>
 
           <div className="mt-8 grid gap-4 md:grid-cols-[1.05fr_0.95fr]">
             <div className="cinematic-card-grid p-6">
-              <p className="text-xs font-semibold uppercase tracking-[0.24em] text-emerald-200/88">
+              <p className="text-xs font-semibold uppercase tracking-[0.24em] text-[#f0d7a0]/88">
                 {section.presenceTitle}
               </p>
               <p className="mt-5 text-5xl font-semibold tracking-[-0.05em] text-white">
                 {onlineMembers ?? messages.common.noData}
               </p>
-              <p className="mt-3 text-sm leading-7 text-slate-300/76">
+              <p className="mt-3 text-sm leading-7 text-[#d8cbb7]/76">
                 {section.presenceText}
               </p>
             </div>
@@ -82,7 +82,7 @@ export default function DiscordOverviewSection({
                   {section.selectedRoom}
                 </p>
                 <div className="mt-5 h-px w-16 bg-gradient-to-r from-amber-200/60 to-transparent" />
-                <p className="mt-5 text-sm leading-7 text-slate-300/76">
+                <p className="mt-5 text-sm leading-7 text-[#d8cbb7]/76">
                   {section.serverDescription}
                 </p>
               </div>
@@ -93,3 +93,4 @@ export default function DiscordOverviewSection({
     </section>
   );
 }
+

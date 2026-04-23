@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { SERVER_CONFIG } from "@/app/config/site";
 import { useTranslations } from "@/app/components/LanguageProvider";
@@ -12,7 +12,7 @@ export default function JoinSection() {
       <div className="grid gap-6 lg:grid-cols-[minmax(0,1.2fr)_minmax(320px,0.8fr)]">
         <div className="cinematic-panel p-8 sm:p-10">
           <p className="cinematic-kicker">{section.listBadge}</p>
-          <ul className="mt-8 grid gap-4 text-slate-200/88 sm:grid-cols-2">
+          <ul className="mt-8 grid gap-4 text-[#e8dcc8]/88 sm:grid-cols-2">
             {section.items.map((item, index) => (
               <li
                 key={item}
@@ -49,3 +49,4 @@ export default function JoinSection() {
     </section>
   );
 }
+

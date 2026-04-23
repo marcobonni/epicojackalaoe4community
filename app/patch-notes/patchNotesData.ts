@@ -1,4 +1,4 @@
-import { civIcons } from "@/app/lib/aoe4world";
+﻿import { civIcons } from "@/app/lib/aoe4world";
 
 export type CivilizationId =
   | "abbasid_dynasty"
@@ -115,7 +115,7 @@ export const civilizationDefinitions: CivilizationDefinition[] = [
   {
     id: "jeanne_darc",
     name: "Jeanne d'Arc",
-    aliases: ["Jeanne d'Arc", "Jeanne d’Arc"],
+    aliases: ["Jeanne d'Arc", "Jeanne dâ€™Arc"],
   },
   {
     id: "knights_templar",
@@ -165,7 +165,7 @@ export const civilizationDefinitions: CivilizationDefinition[] = [
   {
     id: "zhu_xis_legacy",
     name: "Zhu Xi's Legacy",
-    aliases: ["Zhu Xi's Legacy", "Zhu Xi’s Legacy"],
+    aliases: ["Zhu Xi's Legacy", "Zhu Xiâ€™s Legacy"],
   },
 ];
 
@@ -180,9 +180,9 @@ export const patchBannerStateConfig: Record<
 > = {
   buff: {
     label: "Buff",
-    badge: "border-emerald-300/24 bg-emerald-300/10 text-emerald-100",
-    glow: "bg-emerald-300/18 text-emerald-100 ring-1 ring-inset ring-emerald-300/28",
-    accent: "from-emerald-300/70 via-emerald-200/24 to-transparent",
+    badge: "border-[#d9b265]/24 bg-[#d9b265]/10 text-[#f8edd7]",
+    glow: "bg-[#d9b265]/18 text-[#f8edd7] ring-1 ring-inset ring-[#d9b265]/28",
+    accent: "from-[#d9b265]/70 via-[#f0d7a0]/24 to-transparent",
   },
   nerf: {
     label: "Nerf",
@@ -192,12 +192,13 @@ export const patchBannerStateConfig: Record<
   },
   rework: {
     label: "No Mention",
-    badge: "border-slate-300/18 bg-slate-300/10 text-slate-100",
-    glow: "bg-slate-300/14 text-slate-100 ring-1 ring-inset ring-slate-300/22",
-    accent: "from-slate-300/50 via-slate-200/16 to-transparent",
+    badge: "border-[#d8cbb7]/18 bg-[#d8cbb7]/10 text-[#f5ecdc]",
+    glow: "bg-[#d8cbb7]/14 text-[#f5ecdc] ring-1 ring-inset ring-[#d8cbb7]/22",
+    accent: "from-[#d8cbb7]/50 via-[#f0c86e]/16 to-transparent",
   },
 };
 
 export function getCivilizationBannerSrc(civilizationId: CivilizationId) {
   return civIcons[civilizationId] ?? "/images/civs/generic_flag.png";
 }
+

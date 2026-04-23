@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState } from "react";
 import { Download, Loader2 } from "lucide-react";
@@ -268,7 +268,7 @@ export default function PlayerSummaryDownloadButton({
           pillY += 48;
         }
         fillRoundedRect(ctx, pillX, pillY, width, 40, 20, "rgba(17,24,39,0.88)");
-        strokeRoundedRect(ctx, pillX, pillY, width, 40, 20, "rgba(59,130,246,0.35)");
+  strokeRoundedRect(ctx, pillX, pillY, width, 40, 20, "rgba(127,21,23,0.35)");
         ctx.fillStyle = "#dbeafe";
         ctx.font = "600 20px sans-serif";
         ctx.fillText(pill, pillX + 17, pillY + 9);
@@ -285,7 +285,7 @@ export default function PlayerSummaryDownloadButton({
       metricCards.forEach((card, index) => {
         const x = 840 + index * 170;
         fillRoundedRect(ctx, x, 84, 148, 122, 26, "rgba(2, 6, 23, 0.9)");
-        strokeRoundedRect(ctx, x, 84, 148, 122, 26, "rgba(59,130,246,0.22)");
+    strokeRoundedRect(ctx, x, 84, 148, 122, 26, "rgba(127,21,23,0.22)");
         ctx.fillStyle = card.tone;
         ctx.font = "700 24px sans-serif";
         drawFittedText(ctx, card.value, x + 16, 108, 116, 24, 16, card.tone, 700);
@@ -317,7 +317,7 @@ export default function PlayerSummaryDownloadButton({
         ctx.fillText(row.label, x + 24, y + 24);
 
         fillRoundedRect(ctx, x + 250, y + 20, 86, 36, 18, "rgba(17,24,39,0.9)");
-        strokeRoundedRect(ctx, x + 250, y + 20, 86, 36, 18, "rgba(59,130,246,0.35)");
+    strokeRoundedRect(ctx, x + 250, y + 20, 86, 36, 18, "rgba(127,21,23,0.35)");
         ctx.fillStyle = "#dbeafe";
         ctx.font = "700 18px sans-serif";
         ctx.fillText(formatPercent(row.winRate), x + 268, y + 30);
@@ -334,7 +334,7 @@ export default function PlayerSummaryDownloadButton({
           const by = y + 76 + Math.floor(blockIndex / 2) * 74;
           fillRoundedRect(ctx, bx, by, 132, 60, 20, "rgba(15, 23, 42, 0.95)");
           strokeRoundedRect(ctx, bx, by, 132, 60, 20, "rgba(51,65,85,0.9)");
-          ctx.fillStyle = "#64748b";
+          ctx.fillStyle = "#b9855f";
           ctx.font = "500 15px sans-serif";
           ctx.fillText(block.label, bx + 16, by + 12);
           ctx.fillStyle = "#ffffff";
@@ -422,7 +422,7 @@ export default function PlayerSummaryDownloadButton({
       ctx.fillStyle = "rgba(148,163,184,0.9)";
       ctx.font = "500 16px sans-serif";
       ctx.fillText(
-        `Generato da aoe4community il ${new Intl.DateTimeFormat("it-IT", {
+      `Generato da AoE4 Italia Legacy il ${new Intl.DateTimeFormat("it-IT", {
           day: "2-digit",
           month: "2-digit",
           year: "numeric",
@@ -445,7 +445,7 @@ export default function PlayerSummaryDownloadButton({
       type="button"
       onClick={handleDownload}
       disabled={isExporting}
-      className="inline-flex items-center gap-2 rounded-2xl border border-slate-700 bg-slate-900/80 px-5 py-3 text-sm font-semibold text-slate-100 transition hover:-translate-y-0.5 hover:border-slate-500 disabled:cursor-not-allowed disabled:opacity-70"
+      className="inline-flex items-center gap-2 rounded-2xl border border-[#5a3a31] bg-[#140c0d]/80 px-5 py-3 text-sm font-semibold text-[#f5ecdc] transition hover:-translate-y-0.5 hover:border-[#8c5a4c] disabled:cursor-not-allowed disabled:opacity-70"
     >
       {isExporting ? (
         <>
@@ -461,3 +461,4 @@ export default function PlayerSummaryDownloadButton({
     </button>
   );
 }
+

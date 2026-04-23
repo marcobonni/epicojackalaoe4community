@@ -1,4 +1,4 @@
-import { notFound } from "next/navigation";
+﻿import { notFound } from "next/navigation";
 import {
   confirmMatchResultAction,
   disputeMatchResultAction,
@@ -103,7 +103,7 @@ export default async function TournamentDetailPage({
       <section className="grid gap-6 lg:grid-cols-[1.15fr_0.85fr]">
         <div className="cinematic-panel-strong p-8 sm:p-10">
           {tournament.banner_url ? (
-            <div className="mb-6 overflow-hidden rounded-[1.75rem] border border-slate-800">
+            <div className="mb-6 overflow-hidden rounded-[1.75rem] border border-[#3a2621]">
               <img
                 src={tournament.banner_url}
                 alt={`Banner ${tournament.title}`}
@@ -131,7 +131,7 @@ export default async function TournamentDetailPage({
 
           <div className="mt-6 grid gap-4 sm:grid-cols-3">
             <div className="cinematic-stat-card p-5">
-              <p className="text-xs uppercase tracking-[0.26em] text-slate-500">
+              <p className="text-xs uppercase tracking-[0.26em] text-[#8f7e69]">
                 Partecipanti
               </p>
               <p className="mt-3 text-2xl font-semibold text-white">
@@ -140,16 +140,16 @@ export default async function TournamentDetailPage({
             </div>
 
             <div className="cinematic-stat-card p-5">
-              <p className="text-xs uppercase tracking-[0.26em] text-slate-500">
+              <p className="text-xs uppercase tracking-[0.26em] text-[#8f7e69]">
                 Modalita
               </p>
               <p className="mt-3 text-base font-semibold text-white">
-                {tournament.participant_mode} • BO{tournament.best_of}
+                {tournament.participant_mode} â€¢ BO{tournament.best_of}
               </p>
             </div>
 
             <div className="cinematic-stat-card p-5">
-              <p className="text-xs uppercase tracking-[0.26em] text-slate-500">
+              <p className="text-xs uppercase tracking-[0.26em] text-[#8f7e69]">
                 Iscrizione
               </p>
               <p className="mt-3 text-base font-semibold text-white">
@@ -160,21 +160,21 @@ export default async function TournamentDetailPage({
 
           <div className="mt-4 grid gap-4 sm:grid-cols-3">
             <div className="cinematic-stat-card p-5">
-              <p className="text-xs uppercase tracking-[0.26em] text-slate-500">
+              <p className="text-xs uppercase tracking-[0.26em] text-[#8f7e69]">
                 Conferma risultati
               </p>
               <p className="mt-3 text-base font-semibold text-white">{resultModeLabel}</p>
             </div>
 
             <div className="cinematic-stat-card p-5">
-              <p className="text-xs uppercase tracking-[0.26em] text-slate-500">
+              <p className="text-xs uppercase tracking-[0.26em] text-[#8f7e69]">
                 Scheduling
               </p>
               <p className="mt-3 text-base font-semibold text-white">{schedulingModeLabel}</p>
             </div>
 
             <div className="cinematic-stat-card p-5">
-              <p className="text-xs uppercase tracking-[0.26em] text-slate-500">
+              <p className="text-xs uppercase tracking-[0.26em] text-[#8f7e69]">
                 Tie-breaker
               </p>
               <p className="mt-3 text-base font-semibold text-white">{tieBreakerLabel}</p>
@@ -183,13 +183,13 @@ export default async function TournamentDetailPage({
         </div>
 
         <div className="cinematic-panel p-8 sm:p-10">
-          <p className="cinematic-kicker text-slate-300/74">
+          <p className="cinematic-kicker text-[#d8cbb7]/74">
             Il tuo riepilogo
           </p>
 
           <div className="mt-6 space-y-4">
             <div className="cinematic-stat-card p-5">
-              <p className="text-xs uppercase tracking-[0.26em] text-slate-500">
+              <p className="text-xs uppercase tracking-[0.26em] text-[#8f7e69]">
                 Prossimo avversario
               </p>
               <p className="mt-3 text-xl font-semibold text-white">
@@ -198,14 +198,14 @@ export default async function TournamentDetailPage({
             </div>
 
             <div className="cinematic-stat-card p-5">
-              <p className="text-xs uppercase tracking-[0.26em] text-slate-500">
+              <p className="text-xs uppercase tracking-[0.26em] text-[#8f7e69]">
                 Stato del tuo match
               </p>
               <div className="mt-3">
                 {personalSummary.nextMatch ? (
                   <StatusBadge kind="match" status={personalSummary.nextMatch.status} />
                 ) : (
-                  <span className="text-sm text-slate-300">
+                  <span className="text-sm text-[#d8cbb7]">
                     Nessuna partita da gestire al momento
                   </span>
                 )}
@@ -234,10 +234,10 @@ export default async function TournamentDetailPage({
       ) : null}
 
       {personalSummary.nextMatch ? (
-        <section className="cinematic-panel-strong rounded-[2rem] border border-emerald-500/20 p-7">
+        <section className="cinematic-panel-strong rounded-[2rem] border border-[#d9b265]/20 p-7">
           <div className="flex flex-wrap items-center justify-between gap-4">
             <div>
-              <p className="cinematic-kicker text-emerald-200">
+              <p className="cinematic-kicker text-[#f0d7a0]">
                 Match personale
               </p>
               <h2 className="mt-3 text-2xl font-semibold text-white">
@@ -319,7 +319,7 @@ export default async function TournamentDetailPage({
                 <PendingSubmitButton
                   idleLabel="Conferma risultato"
                   pendingLabel="Conferma in corso..."
-                  className="rounded-2xl bg-emerald-500 px-5 py-3 text-sm font-semibold text-white transition hover:bg-emerald-400"
+                  className="rounded-2xl bg-[#b9855f] px-5 py-3 text-sm font-semibold text-white transition hover:bg-[#c9956c]"
                 />
               </form>
 
@@ -346,7 +346,7 @@ export default async function TournamentDetailPage({
       <section className="cinematic-panel p-7">
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div>
-            <p className="cinematic-kicker text-slate-300/74">
+            <p className="cinematic-kicker text-[#d8cbb7]/74">
               Bracket
             </p>
             <h2 className="mt-3 text-2xl font-semibold text-white">
@@ -387,14 +387,14 @@ export default async function TournamentDetailPage({
                         className="cinematic-card-grid p-5"
                       >
                         <div className="flex items-center justify-between gap-3">
-                          <span className="text-sm font-semibold text-slate-200">
+                          <span className="text-sm font-semibold text-[#e8dcc8]">
                             Match {match.match_number}
                           </span>
                           <StatusBadge kind="match" status={match.status} />
                         </div>
 
                         <div className="mt-4 space-y-3">
-                          <div className="rounded-2xl border border-white/8 bg-black/16 px-4 py-3 text-sm text-slate-200">
+                          <div className="rounded-2xl border border-white/8 bg-black/16 px-4 py-3 text-sm text-[#e8dcc8]">
                             {perspective.playerOneName}
                             {match.player1_wins != null ? (
                               <span className="float-right font-semibold text-white">
@@ -403,7 +403,7 @@ export default async function TournamentDetailPage({
                             ) : null}
                           </div>
 
-                          <div className="rounded-2xl border border-white/8 bg-black/16 px-4 py-3 text-sm text-slate-200">
+                          <div className="rounded-2xl border border-white/8 bg-black/16 px-4 py-3 text-sm text-[#e8dcc8]">
                             {perspective.playerTwoName}
                             {match.player2_wins != null ? (
                               <span className="float-right font-semibold text-white">
@@ -414,7 +414,7 @@ export default async function TournamentDetailPage({
                         </div>
 
                         {match.winner_id ? (
-                          <p className="mt-4 text-sm text-emerald-200">
+                          <p className="mt-4 text-sm text-[#f0d7a0]">
                             Vincitore: {perspective.winnerName}
                           </p>
                         ) : null}
@@ -426,7 +426,7 @@ export default async function TournamentDetailPage({
                         ) : null}
 
                         {match.report_evidence ? (
-                          <p className="mt-4 text-sm leading-6 text-slate-400">
+                          <p className="mt-4 text-sm leading-6 text-[#bcae9a]">
                             Prova allegata: {match.report_evidence}
                           </p>
                         ) : null}
@@ -505,7 +505,7 @@ export default async function TournamentDetailPage({
           </div>
         ) : (
           <div className="cinematic-empty-state mt-8 p-8 text-center">
-            <p className="text-base text-slate-300">
+            <p className="text-base text-[#d8cbb7]">
               La struttura del torneo non e ancora stata generata.
             </p>
           </div>
@@ -517,7 +517,7 @@ export default async function TournamentDetailPage({
           <div className="flex flex-wrap items-center justify-between gap-4">
             <div>
               <h2 className="text-2xl font-semibold text-white">Classifica live</h2>
-              <p className="mt-2 text-sm leading-6 text-slate-300/74">
+              <p className="mt-2 text-sm leading-6 text-[#d8cbb7]/74">
                 Ordinata usando il tie-breaker selezionato dall&apos;admin: {tieBreakerLabel}.
               </p>
             </div>
@@ -528,9 +528,9 @@ export default async function TournamentDetailPage({
           </div>
 
           <div className="mt-6 overflow-x-auto">
-            <table className="min-w-full border-separate border-spacing-y-3 text-left text-sm text-slate-200">
+            <table className="min-w-full border-separate border-spacing-y-3 text-left text-sm text-[#e8dcc8]">
               <thead>
-                <tr className="text-xs uppercase tracking-[0.22em] text-slate-500">
+                <tr className="text-xs uppercase tracking-[0.22em] text-[#8f7e69]">
                   <th className="px-4">#</th>
                   <th className="px-4">Partecipante</th>
                   <th className="px-4">W-L</th>
@@ -575,16 +575,16 @@ export default async function TournamentDetailPage({
               payload.participants.map((participant) => (
                 <div
                   key={participant.id}
-                  className="cinematic-card-grid flex items-center justify-between rounded-[1.4rem] px-4 py-3 text-sm text-slate-200"
+                  className="cinematic-card-grid flex items-center justify-between rounded-[1.4rem] px-4 py-3 text-sm text-[#e8dcc8]"
                 >
                   <span>{participant.profile?.display_name ?? "Player"}</span>
-                  <span className="text-slate-400">
+                  <span className="text-[#bcae9a]">
                     Seed {getParticipantSeedLabel(participant)}
                   </span>
                 </div>
               ))
             ) : (
-              <p className="text-sm text-slate-300/74">Ancora nessun partecipante.</p>
+              <p className="text-sm text-[#d8cbb7]/74">Ancora nessun partecipante.</p>
             )}
           </div>
         </div>
@@ -599,22 +599,22 @@ export default async function TournamentDetailPage({
                 return (
                   <div
                     key={match.id}
-                    className="cinematic-card-grid rounded-[1.4rem] p-4 text-sm text-slate-200"
+                    className="cinematic-card-grid rounded-[1.4rem] p-4 text-sm text-[#e8dcc8]"
                   >
                     <div className="flex flex-wrap items-center justify-between gap-3">
                       <p>
-                        Round {match.round_number} • Match {match.match_number}
+                        Round {match.round_number} â€¢ Match {match.match_number}
                       </p>
                       <StatusBadge kind="match" status={match.status} />
                     </div>
-                    <p className="mt-2 leading-6 text-slate-300">
+                    <p className="mt-2 leading-6 text-[#d8cbb7]">
                       {perspective.playerOneName} vs {perspective.playerTwoName}
                     </p>
                   </div>
                 );
               })
             ) : (
-              <p className="text-sm text-slate-300/74">
+              <p className="text-sm text-[#d8cbb7]/74">
                 Lo storico apparira qui appena il torneo parte.
               </p>
             )}
@@ -624,3 +624,4 @@ export default async function TournamentDetailPage({
     </div>
   );
 }
+

@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useRouter } from "next/navigation";
 import { FormEvent, useState, useTransition } from "react";
@@ -129,7 +129,7 @@ export default function EmailPasswordRegisterForm({
           required
           className="cinematic-input text-sm"
         />
-        <span className="mt-2 block text-xs leading-6 text-slate-400/74">
+        <span className="mt-2 block text-xs leading-6 text-[#bcae9a]/74">
           {messages.auth.passwordRequirementsPrefix}: {passwordPolicyItems.join(", ")}.
         </span>
       </label>
@@ -169,13 +169,13 @@ export default function EmailPasswordRegisterForm({
       ) : null}
 
       {successMessage ? (
-        <div className="cinematic-panel-soft rounded-[1.8rem] border border-emerald-500/28 bg-emerald-500/10 p-5 text-sm leading-6 text-emerald-100">
+        <div className="cinematic-panel-soft rounded-[1.8rem] border border-[#d9b265]/28 bg-[#d9b265]/10 p-5 text-sm leading-6 text-[#f8edd7]">
           <p className="text-base font-semibold text-white">
             {messages.auth.registerSuccessTitle}
           </p>
           <p className="mt-2">{successMessage}</p>
           {registeredEmail ? (
-            <p className="mt-3 rounded-2xl border border-emerald-400/20 bg-slate-950/40 px-4 py-3 font-mono text-xs text-emerald-100">
+          <p className="mt-3 rounded-2xl border border-[#d9b265]/20 bg-[#0b0708]/40 px-4 py-3 font-mono text-xs text-[#f8edd7]">
               {registeredEmail}
             </p>
           ) : null}
@@ -199,3 +199,4 @@ export default function EmailPasswordRegisterForm({
     </form>
   );
 }
+

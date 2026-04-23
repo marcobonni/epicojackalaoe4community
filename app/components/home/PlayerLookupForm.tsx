@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import {
   FormEvent,
@@ -325,7 +325,7 @@ export default function PlayerLookupForm({
       aria-controls={suggestionsId}
       className="group relative flex-1"
     >
-      <Search className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500 transition group-focus-within:text-amber-300" />
+      <Search className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-[#8f7e69] transition group-focus-within:text-amber-300" />
       <input
         id={inputId}
         type="text"
@@ -353,7 +353,7 @@ export default function PlayerLookupForm({
         placeholder={
           isCompact ? copy.compactPlaceholder : copy.defaultPlaceholder
         }
-        className={`w-full rounded-2xl border border-white/10 bg-[rgba(14,23,40,0.92)] text-sm text-white outline-none transition placeholder:text-slate-500 focus:border-amber-400/50 focus:bg-[rgba(20,31,52,0.96)] ${
+        className={`w-full rounded-2xl border border-white/10 bg-[rgba(14,23,40,0.92)] text-sm text-white outline-none transition placeholder:text-[#8f7e69] focus:border-amber-400/50 focus:bg-[rgba(20,31,52,0.96)] ${
           isCompact ? "py-3.5 pl-11 pr-12" : "py-4 pl-11 pr-12"
         }`}
       />
@@ -385,14 +385,14 @@ export default function PlayerLookupForm({
                   className={`flex w-full items-center justify-between gap-3 px-4 py-3 text-left transition ${
                     isHighlighted
                       ? "bg-amber-400/10 text-white"
-                      : "text-slate-200 hover:bg-white/5"
+                      : "text-[#e8dcc8] hover:bg-white/5"
                   }`}
                 >
                   <span className="min-w-0">
                     <span className="block truncate text-sm font-medium">
                       {suggestion.name ?? `Player ${suggestion.profileId}`}
                     </span>
-                    <span className="mt-1 block text-xs text-slate-400">
+                    <span className="mt-1 block text-xs text-[#bcae9a]">
                       Profile ID {suggestion.profileId}
                     </span>
                   </span>
@@ -404,9 +404,9 @@ export default function PlayerLookupForm({
               );
             })
           ) : (
-            <div className="px-4 py-4 text-sm text-slate-400">
+            <div className="px-4 py-4 text-sm text-[#bcae9a]">
               {copy.suggestionEmptyPrefix}{" "}
-              <span className="text-slate-200">{query.trim()}</span>.
+              <span className="text-[#e8dcc8]">{query.trim()}</span>.
             </div>
           )}
         </div>
@@ -418,7 +418,7 @@ export default function PlayerLookupForm({
     <button
       type="submit"
       disabled={isBusy}
-      className={`inline-flex items-center justify-center gap-2 rounded-2xl bg-[linear-gradient(180deg,#facc15,#f59e0b)] text-sm font-semibold text-slate-950 shadow-[0_10px_30px_rgba(245,158,11,0.25)] transition hover:-translate-y-0.5 hover:shadow-[0_16px_40px_rgba(245,158,11,0.32)] disabled:cursor-not-allowed disabled:opacity-70 ${
+className={`inline-flex items-center justify-center gap-2 rounded-2xl bg-[linear-gradient(180deg,#facc15,#f59e0b)] text-sm font-semibold text-[#1a0d0c] shadow-[0_10px_30px_rgba(245,158,11,0.25)] transition hover:-translate-y-0.5 hover:shadow-[0_16px_40px_rgba(245,158,11,0.32)] disabled:cursor-not-allowed disabled:opacity-70 ${
         isCompact
           ? "min-h-[52px] px-5 py-3 sm:min-w-[150px]"
           : "min-h-[56px] px-6 py-4 sm:min-w-[176px]"
@@ -466,7 +466,7 @@ export default function PlayerLookupForm({
   return (
     <section className="mx-auto max-w-[1720px] px-8 pb-16 lg:px-14 lg:pb-20 xl:px-16">
       <div className="relative overflow-hidden rounded-[2.25rem] border border-amber-300/18 bg-[linear-gradient(135deg,rgba(18,28,47,0.98),rgba(25,37,59,0.96)_50%,rgba(70,39,24,0.84))] shadow-[0_30px_100px_rgba(0,0,0,0.3)]">
-        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(245,158,11,0.18),transparent_34%),radial-gradient(circle_at_top_right,rgba(59,130,246,0.12),transparent_30%),radial-gradient(circle_at_bottom_right,rgba(249,115,22,0.14),transparent_28%)]" />
+        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(217,178,101,0.18),transparent_34%),radial-gradient(circle_at_top_right,rgba(127,21,23,0.14),transparent_30%),radial-gradient(circle_at_bottom_right,rgba(170,34,29,0.14),transparent_28%)]" />
         <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-amber-200/60 to-transparent" />
 
         <div className="relative grid gap-8 px-6 py-7 md:px-8 lg:grid-cols-[minmax(0,1.08fr)_minmax(430px,0.92fr)] lg:items-center lg:gap-10 lg:px-10 lg:py-9 xl:px-12">
@@ -479,11 +479,11 @@ export default function PlayerLookupForm({
               {copy.title}
             </h2>
 
-            <p className="mt-4 max-w-lg text-sm leading-7 text-slate-300 sm:text-base">
+            <p className="mt-4 max-w-lg text-sm leading-7 text-[#d8cbb7] sm:text-base">
               {copy.description}
             </p>
 
-            <div className="mt-6 flex flex-wrap gap-3 text-xs text-slate-300">
+            <div className="mt-6 flex flex-wrap gap-3 text-xs text-[#d8cbb7]">
               <span className="rounded-full border border-amber-300/20 bg-amber-400/10 px-3 py-1.5">
                 {copy.chipSearch}
               </span>
@@ -511,7 +511,7 @@ export default function PlayerLookupForm({
                 </div>
               </div>
 
-              <p className="mt-4 text-xs leading-6 text-slate-400">{copy.helper}</p>
+              <p className="mt-4 text-xs leading-6 text-[#bcae9a]">{copy.helper}</p>
 
               {error ? (
                 <p aria-live="polite" className="mt-3 text-sm text-rose-300">
@@ -525,3 +525,4 @@ export default function PlayerLookupForm({
     </section>
   );
 }
+

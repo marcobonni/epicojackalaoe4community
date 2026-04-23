@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+﻿import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { redirect } from "next/navigation";
@@ -11,7 +11,7 @@ import { getPatchArchive, getPatchDetail } from "@/app/patch-notes/patchNotesApi
 import { normalizePatchDisplayLine } from "@/app/patch-notes/patchNotesTranslations";
 
 export const metadata: Metadata = {
-  title: "AoE4 Patch Archive | AoE4 Community Italia",
+  title: "AoE4 Patch Archive | AoE4 Italia Legacy",
   description:
     "Archivio patch ufficiali di Age of Empires IV con selezione della patch e testo civ-specifico ufficiale, quando presente.",
 };
@@ -95,10 +95,10 @@ export default async function PatchNotesPage({ searchParams }: PageProps) {
   const reworkCount = patchDetail.civilizations.filter((entry) => entry.state === "rework").length;
 
   return (
-    <main className="min-h-screen overflow-hidden bg-slate-950 text-slate-100">
+    <main className="min-h-screen overflow-hidden bg-[#050409] text-[#f5ecdc]">
       <section className="relative isolate overflow-hidden border-b border-white/8">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(250,204,21,0.18),transparent_24%),radial-gradient(circle_at_82%_18%,rgba(52,211,153,0.12),transparent_18%),linear-gradient(180deg,rgba(4,7,20,0.92),rgba(4,7,20,0.74)_54%,rgba(4,7,20,1))]" />
-        <div className="absolute inset-0 bg-[linear-gradient(120deg,rgba(15,23,42,0.28),transparent_36%,rgba(15,23,42,0.46))]" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(217,178,101,0.18),transparent_24%),radial-gradient(circle_at_82%_18%,rgba(127,21,23,0.16),transparent_20%),linear-gradient(180deg,rgba(5,4,9,0.94),rgba(10,7,10,0.78)_54%,rgba(5,4,9,1))]" />
+        <div className="absolute inset-0 bg-[linear-gradient(120deg,rgba(127,21,23,0.14),transparent_36%,rgba(16,9,12,0.42))]" />
 
         <div className="relative mx-auto flex w-full max-w-[1380px] flex-col gap-10 px-4 py-16 sm:px-6 lg:px-10 lg:py-20">
           <div className="max-w-4xl">
@@ -116,7 +116,7 @@ export default async function PatchNotesPage({ searchParams }: PageProps) {
               Patch notes di Age of Empires IV
             </h1>
 
-            <p className="mt-5 max-w-2xl text-base leading-8 text-slate-300/86 sm:text-lg">
+            <p className="mt-5 max-w-2xl text-base leading-8 text-[#d8cbb7]/86 sm:text-lg">
               Scegli una patch, apri la civilta che ti interessa e leggi subito le note
               ufficiali dedicate a quel popolo.
             </p>
@@ -147,7 +147,7 @@ export default async function PatchNotesPage({ searchParams }: PageProps) {
               <p className="mt-3 text-4xl font-semibold tracking-[-0.05em] text-white">
                 {patchDetail.patch.versionLabel}
               </p>
-              <p className="mt-2 text-sm leading-7 text-slate-300/76">
+              <p className="mt-2 text-sm leading-7 text-[#d8cbb7]/76">
                  Pubblicata il {patchDetail.patch.publishedAt}.
               </p>
             </div>
@@ -159,7 +159,7 @@ export default async function PatchNotesPage({ searchParams }: PageProps) {
               <p className="mt-3 text-4xl font-semibold tracking-[-0.05em] text-white">
                 {buffCount}
               </p>
-              <p className="mt-2 text-sm leading-7 text-slate-300/76">
+              <p className="mt-2 text-sm leading-7 text-[#d8cbb7]/76">
                  Civilta con miglioramenti in questa patch.
               </p>
             </div>
@@ -171,7 +171,7 @@ export default async function PatchNotesPage({ searchParams }: PageProps) {
               <p className="mt-3 text-4xl font-semibold tracking-[-0.05em] text-white">
                 {nerfCount}
               </p>
-              <p className="mt-2 text-sm leading-7 text-slate-300/76">
+              <p className="mt-2 text-sm leading-7 text-[#d8cbb7]/76">
                  Civilta con riduzioni o indebolimenti in questa patch.
               </p>
             </div>
@@ -183,7 +183,7 @@ export default async function PatchNotesPage({ searchParams }: PageProps) {
               <p className="mt-3 text-4xl font-semibold tracking-[-0.05em] text-white">
                 {reworkCount}
               </p>
-              <p className="mt-2 text-sm leading-7 text-slate-300/76">
+              <p className="mt-2 text-sm leading-7 text-[#d8cbb7]/76">
                  Civilta ritoccate, ribilanciate o non citate nelle note dedicate.
               </p>
             </div>
@@ -200,7 +200,7 @@ export default async function PatchNotesPage({ searchParams }: PageProps) {
                 Scegli la patch da visualizzare
               </h2>
             </div>
-            <p className="max-w-xl text-sm leading-7 text-slate-300/78">
+            <p className="max-w-xl text-sm leading-7 text-[#d8cbb7]/78">
                Scegli la patch che vuoi consultare. In questo momento stai guardando{" "}
                <span className="font-semibold text-white">{patchDetail.patch.title}</span>.
             </p>
@@ -221,7 +221,7 @@ export default async function PatchNotesPage({ searchParams }: PageProps) {
                 className="cinematic-input min-h-[3.6rem] flex-1 appearance-none pr-4"
               >
                 {archive.map((item) => (
-                  <option key={item.slug} value={item.slug} className="bg-slate-950 text-slate-100">
+                  <option key={item.slug} value={item.slug} className="bg-[#0b0708] text-[#f5ecdc]">
                     {item.versionLabel} - {item.publishedAt}
                   </option>
                 ))}
@@ -274,7 +274,7 @@ export default async function PatchNotesPage({ searchParams }: PageProps) {
                     <div className={`absolute inset-x-0 top-0 h-px bg-gradient-to-r ${config.accent}`} />
                     <div className="grid gap-4 px-4 py-4 sm:px-5 lg:grid-cols-[auto_minmax(0,1fr)_auto] lg:items-center lg:gap-6 lg:px-6 lg:py-5">
                       <div className="flex items-center gap-4">
-                        <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-2xl border border-white/12 bg-slate-950/70 shadow-[0_16px_34px_rgba(0,0,0,0.22)]">
+                        <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-2xl border border-white/12 bg-[#0b0708]/70 shadow-[0_16px_34px_rgba(0,0,0,0.22)]">
                           <Image
                             src={entry.bannerSrc}
                             alt={`${entry.name} banner`}
@@ -301,7 +301,7 @@ export default async function PatchNotesPage({ searchParams }: PageProps) {
                       {entry.hasOfficialEntry ? (
                         <div className="hidden lg:block" />
                       ) : (
-                        <p className="max-w-2xl text-sm leading-7 text-slate-300/78">
+                        <p className="max-w-2xl text-sm leading-7 text-[#d8cbb7]/78">
                            Nessuna nota dedicata a questa civilta in questa patch.
                         </p>
                       )}
@@ -312,7 +312,7 @@ export default async function PatchNotesPage({ searchParams }: PageProps) {
                         >
                           <PatchStateIcon state={entry.state} />
                         </div>
-                        <span className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.24em] text-slate-300/70">
+                        <span className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.24em] text-[#d8cbb7]/70">
                           Apri dettagli
                           <svg
                             viewBox="0 0 24 24"
@@ -339,7 +339,7 @@ export default async function PatchNotesPage({ searchParams }: PageProps) {
                     <p className="text-xs font-semibold uppercase tracking-[0.28em] text-amber-100/80">
                        Note ufficiali
                     </p>
-                    <ul className="mt-3 space-y-3 text-sm leading-7 text-slate-300/84">
+                    <ul className="mt-3 space-y-3 text-sm leading-7 text-[#d8cbb7]/84">
                       {entry.officialText.map((line) => (
                         <li key={line} className="flex gap-3">
                           <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-amber-200/90" />
@@ -357,3 +357,4 @@ export default async function PatchNotesPage({ searchParams }: PageProps) {
     </main>
   );
 }
+

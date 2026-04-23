@@ -4,15 +4,15 @@ import type { Dictionary } from "@/app/lib/i18n-schema";
 export const plMessages: Dictionary = {
   ...enMessages,
   metadata: {
-    siteTitle: "Aoe4 Community - Rankingi, Quiz i Matchmaking",
+    siteTitle: "AoE4 Italia Legacy - Rankingi, Quiz i Matchmaking",
     siteDescription:
       "Spolecznosc Age of Empires 4 z rankingami, quizami i wywazonym matchmakingiem.",
-    homeTitle: "Aoe4 Community - Rankingi, Streamy i Quiz",
+    homeTitle: "AoE4 Italia Legacy - Rankingi, Streamy i Quiz",
     homeDescription:
       "Dolacz do spolecznosci AoE4 po rankingi, quiz i automatyczny matchmaking.",
-    loginTitle: "Logowanie Turniejowe | AoE4 Community",
-    registerTitle: "Rejestracja Turniejowa | AoE4 Community",
-    tournamentsTitle: "Turnieje | AoE4 Community",
+    loginTitle: "Logowanie Turniejowe | AoE4 Italia Legacy",
+    registerTitle: "Rejestracja Turniejowa | AoE4 Italia Legacy",
+    tournamentsTitle: "Turnieje | AoE4 Italia Legacy",
   },
   languageSwitcher: { label: "Jezyk strony", shortLabel: "Jezyk" },
   common: {

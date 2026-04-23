@@ -8,7 +8,7 @@ type LeaderboardPageProps = {
   }>;
 };
 export const metadata: Metadata = {
-   title: "Classifica Italiana AoE4 - Ranking 1v1 aggiornato",
+   title: "Classifica Italiana AoE4 | AoE4 Italia Legacy",
 description: "Scopri i migliori giocatori italiani di Age of Empires 4. Ranking aggiornato 1v1, 2v2, 3v3 e 4v4."
 };
 export default async function LeaderboardPage({

@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useBeasty } from "@/app/lib/beasty/useBeasty";
@@ -524,15 +524,15 @@ export default function BeastyPage() {
 
   if (!connected) {
     return (
-      <div className="min-h-screen bg-[#020617] text-slate-100">
+      <div className="min-h-screen bg-[#050409] text-[#f5ecdc]">
         <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(circle_at_top,rgba(245,158,11,0.10),transparent_30%)]" />
         <div className="relative mx-auto flex min-h-screen max-w-6xl items-center justify-center px-6">
-          <div className="w-full max-w-md rounded-3xl border border-amber-400/20 bg-slate-900/70 px-8 py-10 text-center shadow-[0_0_40px_rgba(0,0,0,0.35)] backdrop-blur-sm">
+          <div className="w-full max-w-md rounded-3xl border border-amber-400/20 bg-[#140c0d]/70 px-8 py-10 text-center shadow-[0_0_40px_rgba(0,0,0,0.35)] backdrop-blur-sm">
             <div className="mx-auto mb-4 h-10 w-10 animate-spin rounded-full border-2 border-amber-400/30 border-t-amber-400" />
             <h2 className="text-2xl font-bold text-white">
               Connessione al server
             </h2>
-            <p className="mt-2 text-slate-400">
+            <p className="mt-2 text-[#bcae9a]">
               Sto preparando la lobby multiplayer.
             </p>
           </div>
@@ -543,7 +543,7 @@ export default function BeastyPage() {
 
   if (room && gameFinished) {
     return (
-      <div className="min-h-screen bg-[#020617] text-slate-100">
+      <div className="min-h-screen bg-[#050409] text-[#f5ecdc]">
         <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(circle_at_top,rgba(245,158,11,0.10),transparent_30%)]" />
         <div className="relative mx-auto max-w-7xl px-6 py-12">
           <HeroHeader
@@ -577,7 +577,7 @@ export default function BeastyPage() {
 
   if (room && room.state === "reveal" && question && reveal) {
     return (
-      <div className="min-h-screen bg-[#020617] text-slate-100">
+      <div className="min-h-screen bg-[#050409] text-[#f5ecdc]">
         <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(circle_at_top,rgba(245,158,11,0.10),transparent_30%)]" />
         <div className="relative mx-auto max-w-6xl px-6 py-12">
           <HeroHeader
@@ -618,12 +618,12 @@ export default function BeastyPage() {
 
   if (room && question) {
     return (
-      <div className="min-h-screen bg-[#020617] text-slate-100">
+      <div className="min-h-screen bg-[#050409] text-[#f5ecdc]">
         <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(circle_at_top,rgba(245,158,11,0.10),transparent_30%)]" />
         <div className="relative mx-auto max-w-6xl px-6 py-12">
           <HeroHeader
             title="Who Wants to Be Beasty?"
-            description="Sfida live i tuoi amici. Rispondi più velocemente degli altri e scala la classifica."
+            description="Sfida live i tuoi amici. Rispondi piÃ¹ velocemente degli altri e scala la classifica."
           />
 
           {actionError ? (
@@ -662,7 +662,7 @@ export default function BeastyPage() {
 
   if (room) {
     return (
-      <div className="min-h-screen bg-[#020617] text-slate-100">
+      <div className="min-h-screen bg-[#050409] text-[#f5ecdc]">
         <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(circle_at_top,rgba(245,158,11,0.10),transparent_30%)]" />
         <div className="relative mx-auto max-w-6xl px-6 py-12">
           <HeroHeader
@@ -698,7 +698,7 @@ export default function BeastyPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#020617] text-slate-100">
+    <div className="min-h-screen bg-[#050409] text-[#f5ecdc]">
       <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(circle_at_top,rgba(245,158,11,0.10),transparent_30%)]" />
       <div className="relative mx-auto max-w-6xl px-6 py-12">
         <HeroHeader

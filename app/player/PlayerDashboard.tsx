@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState, useTransition } from "react";
 import Link from "next/link";
@@ -52,20 +52,20 @@ type PlayerDashboardProps = {
 const DEFAULT_CIV_ICON = "/images/civs/generic.png";
 
 function formatNumber(value?: number | null) {
-  if (typeof value !== "number" || Number.isNaN(value)) return "—";
+  if (typeof value !== "number" || Number.isNaN(value)) return "â€”";
   return new Intl.NumberFormat("it-IT").format(value);
 }
 
 function formatPercent(value?: number | null) {
-  if (typeof value !== "number" || Number.isNaN(value)) return "—";
+  if (typeof value !== "number" || Number.isNaN(value)) return "â€”";
   return `${value.toFixed(1)}%`;
 }
 
 function formatDate(value?: string | null) {
-  if (!value) return "—";
+  if (!value) return "â€”";
 
   const date = new Date(value);
-  if (Number.isNaN(date.getTime())) return "—";
+  if (Number.isNaN(date.getTime())) return "â€”";
 
   return new Intl.DateTimeFormat("it-IT", {
     day: "2-digit",
@@ -75,10 +75,10 @@ function formatDate(value?: string | null) {
 }
 
 function formatShortDate(value?: string | null) {
-  if (!value) return "—";
+  if (!value) return "â€”";
 
   const date = new Date(value);
-  if (Number.isNaN(date.getTime())) return "—";
+  if (Number.isNaN(date.getTime())) return "â€”";
 
   return new Intl.DateTimeFormat("it-IT", {
     day: "2-digit",
@@ -104,16 +104,16 @@ function getRankLabel(rankLevel?: string | null) {
 }
 
 function getWinRateTone(winRate: number | null) {
-  if (winRate === null) return "border-slate-700 bg-slate-950/70 text-slate-300";
+  if (winRate === null) return "border-[#5a3a31] bg-[#0b0708]/70 text-[#d8cbb7]";
   if (winRate >= 85) return "border-amber-400/30 bg-amber-400/10 text-amber-200";
-  if (winRate >= 70) return "border-emerald-400/30 bg-emerald-400/10 text-emerald-200";
-  if (winRate >= 50) return "border-blue-400/30 bg-blue-400/10 text-blue-200";
+  if (winRate >= 70) return "border-[#d9b265]/30 bg-[#d9b265]/10 text-[#f8edd7]";
+  if (winRate >= 50) return "border-[#aa221d]/30 bg-[#7f1517]/10 text-[#fde8e1]";
   return "border-rose-400/30 bg-rose-400/10 text-rose-200";
 }
 
 function getStreakTone(streak: number | null) {
-  if (streak === null || streak === 0) return "text-slate-300";
-  if (streak > 0) return "text-emerald-300";
+  if (streak === null || streak === 0) return "text-[#d8cbb7]";
+  if (streak > 0) return "text-[#f0d7a0]";
   return "text-rose-300";
 }
 
@@ -256,8 +256,8 @@ function getTeamVsSoloInsight(rows: PerformanceRow[]) {
   const teamAvg =
     teamRows.reduce((sum, row) => sum + (row.winRate ?? 0), 0) / teamRows.length;
 
-  if (teamAvg - solo.winRate >= 8) return "Player più forte in team game che in solo.";
-  if (solo.winRate - teamAvg >= 8) return "Player più forte in solo queue che in team game.";
+  if (teamAvg - solo.winRate >= 8) return "Player piÃ¹ forte in team game che in solo.";
+  if (solo.winRate - teamAvg >= 8) return "Player piÃ¹ forte in solo queue che in team game.";
 
   return "Performance abbastanza equilibrata tra solo e team game.";
 }
@@ -358,14 +358,14 @@ function getModeColor(label: string) {
     case "2v2":
       return {
         solid: "rgb(59 130 246)",
-        fill: "rgba(59,130,246,0.18)",
-        className: "bg-blue-500",
+      fill: "rgba(127,21,23,0.18)",
+      className: "bg-[#7f1517]",
       };
     case "3v3":
       return {
         solid: "rgb(34 197 94)",
         fill: "rgba(34,197,94,0.18)",
-        className: "bg-emerald-500",
+      className: "bg-[#b9855f]",
       };
     case "4v4":
       return {
@@ -377,7 +377,7 @@ function getModeColor(label: string) {
       return {
         solid: "rgb(148 163 184)",
         fill: "rgba(148,163,184,0.18)",
-        className: "bg-slate-400",
+        className: "bg-[#b9855f]",
       };
   }
 }
@@ -447,7 +447,7 @@ function EloLineChart({
 }) {
   if (data.length === 0) {
     return (
-      <div className="rounded-[1.5rem] border border-slate-800 bg-slate-950/70 p-6 text-sm text-slate-400">
+      <div className="rounded-[1.5rem] border border-[#3a2621] bg-[#0b0708]/70 p-6 text-sm text-[#bcae9a]">
         Nessuno storico rating disponibile per {title}.
       </div>
     );
@@ -477,7 +477,7 @@ function EloLineChart({
   const last = data[data.length - 1];
 
   return (
-    <div className="rounded-[2rem] border border-slate-800 bg-slate-900 p-6 shadow-lg shadow-black/20">
+    <div className="rounded-[2rem] border border-[#3a2621] bg-[#140c0d] p-6 shadow-lg shadow-black/20">
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
           <p className="text-sm font-semibold uppercase tracking-[0.2em] text-amber-300">
@@ -487,25 +487,25 @@ function EloLineChart({
         </div>
 
         <div className="grid gap-2 sm:grid-cols-3">
-          <div className="rounded-2xl border border-slate-800 bg-slate-950/80 px-4 py-3">
-            <div className="text-xs uppercase tracking-[0.2em] text-slate-500">Inizio</div>
+          <div className="rounded-2xl border border-[#3a2621] bg-[#0b0708]/80 px-4 py-3">
+            <div className="text-xs uppercase tracking-[0.2em] text-[#8f7e69]">Inizio</div>
             <div className="mt-1 text-sm font-semibold text-white">
               {formatNumber(first.rating)}
             </div>
           </div>
 
-          <div className="rounded-2xl border border-slate-800 bg-slate-950/80 px-4 py-3">
-            <div className="text-xs uppercase tracking-[0.2em] text-slate-500">Fine</div>
+          <div className="rounded-2xl border border-[#3a2621] bg-[#0b0708]/80 px-4 py-3">
+            <div className="text-xs uppercase tracking-[0.2em] text-[#8f7e69]">Fine</div>
             <div className="mt-1 text-sm font-semibold text-white">
               {formatNumber(last.rating)}
             </div>
           </div>
 
-          <div className="rounded-2xl border border-slate-800 bg-slate-950/80 px-4 py-3">
-            <div className="text-xs uppercase tracking-[0.2em] text-slate-500">Delta</div>
+          <div className="rounded-2xl border border-[#3a2621] bg-[#0b0708]/80 px-4 py-3">
+            <div className="text-xs uppercase tracking-[0.2em] text-[#8f7e69]">Delta</div>
             <div
               className={`mt-1 text-sm font-semibold ${
-                last.rating - first.rating >= 0 ? "text-emerald-300" : "text-rose-300"
+    last.rating - first.rating >= 0 ? "text-[#f0d7a0]" : "text-rose-300"
               }`}
             >
               {last.rating - first.rating >= 0 ? "+" : ""}
@@ -515,7 +515,7 @@ function EloLineChart({
         </div>
       </div>
 
-      <div className="mt-6 overflow-hidden rounded-[1.5rem] border border-slate-800 bg-slate-950/80 p-4">
+      <div className="mt-6 overflow-hidden rounded-[1.5rem] border border-[#3a2621] bg-[#0b0708]/80 p-4">
         <svg viewBox={`0 0 ${width} ${height}`} className="h-72 w-full">
           {[0, 0.25, 0.5, 0.75, 1].map((step) => {
             const y = padding + step * (height - padding * 2);
@@ -528,10 +528,10 @@ function EloLineChart({
                   y1={y}
                   x2={width - padding}
                   y2={y}
-                  className="stroke-slate-800"
+                  className="stroke-[#3a2621]"
                   strokeWidth="1"
                 />
-                <text x={8} y={y + 4} className="fill-slate-500 text-[12px]">
+                <text x={8} y={y + 4} className="fill-[#8f7e69] text-[12px]">
                   {label}
                 </text>
               </g>
@@ -556,7 +556,7 @@ function EloLineChart({
                 <title>
                   {`${formatShortDate(
                     new Date(point.ts * 1000).toISOString()
-                  )} • ${point.rating} ELO`}
+                  )} â€¢ ${point.rating} ELO`}
                 </title>
               </g>
             );
@@ -578,7 +578,7 @@ function MiniSparkline({
 }) {
   if (data.length < 2) {
     return (
-      <div className="mt-5 rounded-2xl border border-slate-800 bg-slate-900/70 px-4 py-3 text-xs text-slate-500">
+      <div className="mt-5 rounded-2xl border border-[#3a2621] bg-[#140c0d]/70 px-4 py-3 text-xs text-[#8f7e69]">
         Storico insufficiente per {title.toLowerCase()}.
       </div>
     );
@@ -607,13 +607,13 @@ function MiniSparkline({
   const lastDataPoint = data[data.length - 1];
 
   return (
-    <div className="mt-5 overflow-hidden rounded-2xl border border-slate-800 bg-slate-900/70 p-3">
-      <div className="mb-2 flex items-center justify-between gap-3 text-[11px] uppercase tracking-[0.18em] text-slate-500">
+    <div className="mt-5 overflow-hidden rounded-2xl border border-[#3a2621] bg-[#140c0d]/70 p-3">
+      <div className="mb-2 flex items-center justify-between gap-3 text-[11px] uppercase tracking-[0.18em] text-[#8f7e69]">
         <span>{title}</span>
         <span
           className={
             lastDataPoint.rating - firstPoint.rating >= 0
-              ? "text-emerald-300"
+      ? "text-[#f0d7a0]"
               : "text-rose-300"
           }
         >
@@ -644,14 +644,14 @@ function ModeShareDonutChart({ rows }: { rows: PerformanceRow[] }) {
 
   if (validRows.length === 0) {
     return (
-      <div className="rounded-[2rem] border border-slate-800 bg-slate-900 p-6 shadow-lg shadow-black/20">
+      <div className="rounded-[2rem] border border-[#3a2621] bg-[#140c0d] p-6 shadow-lg shadow-black/20">
         <p className="text-sm font-semibold uppercase tracking-[0.2em] text-amber-300">
           Distribuzione volume
         </p>
         <h3 className="mt-2 text-2xl font-semibold text-white">
           Dove gioca di piu
         </h3>
-        <div className="mt-6 rounded-2xl border border-slate-800 bg-slate-950/80 p-4 text-sm text-slate-400">
+        <div className="mt-6 rounded-2xl border border-[#3a2621] bg-[#0b0708]/80 p-4 text-sm text-[#bcae9a]">
           Nessun volume partite disponibile.
         </div>
       </div>
@@ -677,7 +677,7 @@ function ModeShareDonutChart({ rows }: { rows: PerformanceRow[] }) {
   });
 
   return (
-    <div className="rounded-[2rem] border border-slate-800 bg-slate-900 p-6 shadow-lg shadow-black/20">
+    <div className="rounded-[2rem] border border-[#3a2621] bg-[#140c0d] p-6 shadow-lg shadow-black/20">
       <p className="text-sm font-semibold uppercase tracking-[0.2em] text-amber-300">
         Distribuzione volume
       </p>
@@ -686,7 +686,7 @@ function ModeShareDonutChart({ rows }: { rows: PerformanceRow[] }) {
       </h3>
 
       <div className="mt-6 space-y-5">
-        <div className="overflow-hidden rounded-[1.5rem] border border-slate-800 bg-slate-950/80 p-4">
+        <div className="overflow-hidden rounded-[1.5rem] border border-[#3a2621] bg-[#0b0708]/80 p-4">
           <svg viewBox="0 0 240 240" className="mx-auto w-full max-w-[240px]">
             <circle
               cx="120"
@@ -712,7 +712,7 @@ function ModeShareDonutChart({ rows }: { rows: PerformanceRow[] }) {
               x="120"
               y="114"
               textAnchor="middle"
-              className="fill-slate-400 text-[12px] uppercase tracking-[0.2em]"
+              className="fill-[#bcae9a] text-[12px] uppercase tracking-[0.2em]"
             >
               Totale
             </text>
@@ -731,7 +731,7 @@ function ModeShareDonutChart({ rows }: { rows: PerformanceRow[] }) {
           {slices.map((slice) => (
             <div
               key={slice.label}
-              className="rounded-2xl border border-slate-800 bg-slate-950/80 p-4"
+              className="rounded-2xl border border-[#3a2621] bg-[#0b0708]/80 p-4"
             >
               <div className="flex items-center justify-between gap-4">
                 <div className="flex items-center gap-3">
@@ -743,7 +743,7 @@ function ModeShareDonutChart({ rows }: { rows: PerformanceRow[] }) {
                   </span>
                 </div>
 
-                <div className="text-sm text-slate-300">
+                <div className="text-sm text-[#d8cbb7]">
                   {slice.share * 100 >= 10
                     ? `${slice.share.toLocaleString("it-IT", {
                         style: "percent",
@@ -756,7 +756,7 @@ function ModeShareDonutChart({ rows }: { rows: PerformanceRow[] }) {
                 </div>
               </div>
 
-              <div className="mt-2 text-sm text-slate-400">
+              <div className="mt-2 text-sm text-[#bcae9a]">
                 {formatNumber(slice.games)} partite nella modalita {slice.label}.
               </div>
             </div>
@@ -777,14 +777,14 @@ function WinLossSplitChart({ rows }: { rows: PerformanceRow[] }) {
 
   if (validRows.length === 0) {
     return (
-      <div className="rounded-[2rem] border border-slate-800 bg-slate-900 p-6 shadow-lg shadow-black/20">
+      <div className="rounded-[2rem] border border-[#3a2621] bg-[#140c0d] p-6 shadow-lg shadow-black/20">
         <p className="text-sm font-semibold uppercase tracking-[0.2em] text-amber-300">
           Match outcome
         </p>
         <h3 className="mt-2 text-2xl font-semibold text-white">
           Wins vs losses
         </h3>
-        <div className="mt-6 rounded-2xl border border-slate-800 bg-slate-950/80 p-4 text-sm text-slate-400">
+        <div className="mt-6 rounded-2xl border border-[#3a2621] bg-[#0b0708]/80 p-4 text-sm text-[#bcae9a]">
           Nessun dato di vittorie e sconfitte disponibile.
         </div>
       </div>
@@ -792,7 +792,7 @@ function WinLossSplitChart({ rows }: { rows: PerformanceRow[] }) {
   }
 
   return (
-    <div className="rounded-[2rem] border border-slate-800 bg-slate-900 p-6 shadow-lg shadow-black/20">
+    <div className="rounded-[2rem] border border-[#3a2621] bg-[#140c0d] p-6 shadow-lg shadow-black/20">
       <p className="text-sm font-semibold uppercase tracking-[0.2em] text-amber-300">
         Match outcome
       </p>
@@ -808,14 +808,14 @@ function WinLossSplitChart({ rows }: { rows: PerformanceRow[] }) {
             <div key={row.key}>
               <div className="mb-2 flex items-center justify-between gap-4 text-sm">
                 <span className="font-semibold text-white">{row.label}</span>
-                <span className="text-slate-300">
+                <span className="text-[#d8cbb7]">
                   {formatNumber(row.wins)}W / {formatNumber(row.losses)}L
                 </span>
               </div>
 
-              <div className="flex h-4 overflow-hidden rounded-full border border-slate-800 bg-slate-950/80">
+              <div className="flex h-4 overflow-hidden rounded-full border border-[#3a2621] bg-[#0b0708]/80">
                 <div
-                  className="h-full bg-emerald-500"
+              className="h-full bg-[#b9855f]"
                   style={{ width: winsWidth }}
                 />
                 <div
@@ -824,7 +824,7 @@ function WinLossSplitChart({ rows }: { rows: PerformanceRow[] }) {
                 />
               </div>
 
-              <div className="mt-2 flex items-center justify-between gap-3 text-xs text-slate-400">
+              <div className="mt-2 flex items-center justify-between gap-3 text-xs text-[#bcae9a]">
                 <span>{formatPercent((row.wins / total) * 100)}</span>
                 <span>{formatNumber(total)} match tracciati</span>
                 <span>{formatPercent((row.losses / total) * 100)}</span>
@@ -848,14 +848,14 @@ function ModeRatingRangeChart({ rows }: { rows: PerformanceRow[] }) {
 
   if (validRows.length === 0) {
     return (
-      <div className="rounded-[2rem] border border-slate-800 bg-slate-900 p-6 shadow-lg shadow-black/20">
+      <div className="rounded-[2rem] border border-[#3a2621] bg-[#140c0d] p-6 shadow-lg shadow-black/20">
         <p className="text-sm font-semibold uppercase tracking-[0.2em] text-amber-300">
           Rating envelope
         </p>
         <h3 className="mt-2 text-2xl font-semibold text-white">
           Current vs peak
         </h3>
-        <div className="mt-6 rounded-2xl border border-slate-800 bg-slate-950/80 p-4 text-sm text-slate-400">
+        <div className="mt-6 rounded-2xl border border-[#3a2621] bg-[#0b0708]/80 p-4 text-sm text-[#bcae9a]">
           Nessun confronto rating disponibile.
         </div>
       </div>
@@ -865,7 +865,7 @@ function ModeRatingRangeChart({ rows }: { rows: PerformanceRow[] }) {
   const maxPeak = Math.max(...validRows.map((row) => row.maxRating), 1);
 
   return (
-    <div className="rounded-[2rem] border border-slate-800 bg-slate-900 p-6 shadow-lg shadow-black/20">
+    <div className="rounded-[2rem] border border-[#3a2621] bg-[#140c0d] p-6 shadow-lg shadow-black/20">
       <p className="text-sm font-semibold uppercase tracking-[0.2em] text-amber-300">
         Rating envelope
       </p>
@@ -885,20 +885,20 @@ function ModeRatingRangeChart({ rows }: { rows: PerformanceRow[] }) {
               <div className="mb-2 flex items-center justify-between gap-4">
                 <div>
                   <div className="text-sm font-semibold text-white">{row.label}</div>
-                  <div className="mt-1 text-xs text-slate-400">
+                  <div className="mt-1 text-xs text-[#bcae9a]">
                     Gap dal peak {formatSignedNumber(deltaToPeak)}
                   </div>
                 </div>
 
-                <div className="text-right text-sm text-slate-300">
+                <div className="text-right text-sm text-[#d8cbb7]">
                   <div>Now {formatNumber(row.rating)}</div>
-                  <div className="text-xs text-slate-500">
+                  <div className="text-xs text-[#8f7e69]">
                     Peak {formatNumber(row.maxRating)}
                   </div>
                 </div>
               </div>
 
-              <div className="relative h-5 overflow-hidden rounded-full border border-slate-800 bg-slate-950/80">
+              <div className="relative h-5 overflow-hidden rounded-full border border-[#3a2621] bg-[#0b0708]/80">
                 <div
                   className="absolute inset-y-0 left-0 rounded-full bg-white/10"
                   style={{ width: peakWidth }}
@@ -930,12 +930,12 @@ function RecentDeltaChart({
 
   if (deltas.length === 0) {
     return (
-      <div className="rounded-[2rem] border border-slate-800 bg-slate-900 p-6 shadow-lg shadow-black/20">
+      <div className="rounded-[2rem] border border-[#3a2621] bg-[#140c0d] p-6 shadow-lg shadow-black/20">
         <p className="text-sm font-semibold uppercase tracking-[0.2em] text-amber-300">
           Momentum
         </p>
         <h3 className="mt-2 text-2xl font-semibold text-white">{title}</h3>
-        <div className="mt-6 rounded-2xl border border-slate-800 bg-slate-950/80 p-4 text-sm text-slate-400">
+        <div className="mt-6 rounded-2xl border border-[#3a2621] bg-[#0b0708]/80 p-4 text-sm text-[#bcae9a]">
           Servono almeno due punti di storico per mostrare i delta recenti.
         </div>
       </div>
@@ -952,20 +952,20 @@ function RecentDeltaChart({
   const barWidth = chartWidth / deltas.length - 10;
 
   return (
-    <div className="rounded-[2rem] border border-slate-800 bg-slate-900 p-6 shadow-lg shadow-black/20">
+    <div className="rounded-[2rem] border border-[#3a2621] bg-[#140c0d] p-6 shadow-lg shadow-black/20">
       <p className="text-sm font-semibold uppercase tracking-[0.2em] text-amber-300">
         Momentum
       </p>
       <h3 className="mt-2 text-2xl font-semibold text-white">{title}</h3>
 
-      <div className="mt-6 overflow-hidden rounded-[1.5rem] border border-slate-800 bg-slate-950/80 p-4">
+      <div className="mt-6 overflow-hidden rounded-[1.5rem] border border-[#3a2621] bg-[#0b0708]/80 p-4">
         <svg viewBox={`0 0 ${width} ${height}`} className="h-72 w-full">
           <line
             x1={padding}
             y1={baseline}
             x2={width - padding}
             y2={baseline}
-            className="stroke-slate-700"
+            className="stroke-[#5a3a31]"
             strokeWidth="1.5"
           />
 
@@ -994,7 +994,7 @@ function RecentDeltaChart({
                     x={x + barWidth / 2}
                     y={height - 10}
                     textAnchor="middle"
-                    className="fill-slate-500 text-[11px]"
+                    className="fill-[#8f7e69] text-[11px]"
                   >
                     {formatShortDate(new Date(item.ts * 1000).toISOString())}
                   </text>
@@ -1020,14 +1020,14 @@ function SeasonActivityChart({ seasons }: { seasons: PreviousSeason[] }) {
 
   if (validSeasons.length === 0) {
     return (
-      <div className="rounded-[2rem] border border-slate-800 bg-slate-900 p-6 shadow-lg shadow-black/20">
+      <div className="rounded-[2rem] border border-[#3a2621] bg-[#140c0d] p-6 shadow-lg shadow-black/20">
         <p className="text-sm font-semibold uppercase tracking-[0.2em] text-amber-300">
           Season activity
         </p>
         <h3 className="mt-2 text-2xl font-semibold text-white">
           Volume e winrate
         </h3>
-        <div className="mt-6 rounded-2xl border border-slate-800 bg-slate-950/80 p-4 text-sm text-slate-400">
+        <div className="mt-6 rounded-2xl border border-[#3a2621] bg-[#0b0708]/80 p-4 text-sm text-[#bcae9a]">
           Nessuna season con volume partite disponibile.
         </div>
       </div>
@@ -1063,7 +1063,7 @@ function SeasonActivityChart({ seasons }: { seasons: PreviousSeason[] }) {
     .join(" ");
 
   return (
-    <div className="rounded-[2rem] border border-slate-800 bg-slate-900 p-6 shadow-lg shadow-black/20">
+    <div className="rounded-[2rem] border border-[#3a2621] bg-[#140c0d] p-6 shadow-lg shadow-black/20">
       <p className="text-sm font-semibold uppercase tracking-[0.2em] text-amber-300">
         Season activity
       </p>
@@ -1071,7 +1071,7 @@ function SeasonActivityChart({ seasons }: { seasons: PreviousSeason[] }) {
         Volume e winrate
       </h3>
 
-      <div className="mt-6 overflow-hidden rounded-[1.5rem] border border-slate-800 bg-slate-950/80 p-4">
+      <div className="mt-6 overflow-hidden rounded-[1.5rem] border border-[#3a2621] bg-[#0b0708]/80 p-4">
         <svg viewBox={`0 0 ${width} ${height}`} className="h-72 w-full">
           {[0, 0.25, 0.5, 0.75, 1].map((step) => {
             const y = padding + step * (height - padding * 2);
@@ -1083,7 +1083,7 @@ function SeasonActivityChart({ seasons }: { seasons: PreviousSeason[] }) {
                 y1={y}
                 x2={width - padding}
                 y2={y}
-                className="stroke-slate-800"
+                className="stroke-[#3a2621]"
                 strokeWidth="1"
               />
             );
@@ -1109,7 +1109,7 @@ function SeasonActivityChart({ seasons }: { seasons: PreviousSeason[] }) {
                   x={x + barWidth / 2}
                   y={height - 10}
                   textAnchor="middle"
-                  className="fill-slate-400 text-[12px]"
+                  className="fill-[#bcae9a] text-[12px]"
                 >
                   S{season.season}
                 </text>
@@ -1173,14 +1173,14 @@ function CivilizationScatterChart({ civs }: { civs: CivilizationStat[] }) {
 
   if (validCivs.length === 0) {
     return (
-      <div className="rounded-[2rem] border border-slate-800 bg-slate-900 p-6 shadow-lg shadow-black/20">
+      <div className="rounded-[2rem] border border-[#3a2621] bg-[#140c0d] p-6 shadow-lg shadow-black/20">
         <p className="text-sm font-semibold uppercase tracking-[0.2em] text-amber-300">
           Civilization map
         </p>
         <h3 className="mt-2 text-2xl font-semibold text-white">
           Pick rate vs winrate
         </h3>
-        <div className="mt-6 rounded-2xl border border-slate-800 bg-slate-950/80 p-4 text-sm text-slate-400">
+        <div className="mt-6 rounded-2xl border border-[#3a2621] bg-[#0b0708]/80 p-4 text-sm text-[#bcae9a]">
           Servono pick rate e winrate validi per mostrare la mappa civ.
         </div>
       </div>
@@ -1193,7 +1193,7 @@ function CivilizationScatterChart({ civs }: { civs: CivilizationStat[] }) {
   const maxGames = Math.max(...validCivs.map((civ) => civ.games_count), 1);
 
   return (
-    <div className="rounded-[2rem] border border-slate-800 bg-slate-900 p-6 shadow-lg shadow-black/20">
+    <div className="rounded-[2rem] border border-[#3a2621] bg-[#140c0d] p-6 shadow-lg shadow-black/20">
       <p className="text-sm font-semibold uppercase tracking-[0.2em] text-amber-300">
         Civilization map
       </p>
@@ -1201,7 +1201,7 @@ function CivilizationScatterChart({ civs }: { civs: CivilizationStat[] }) {
         Pick rate vs winrate
       </h3>
 
-      <div className="mt-6 overflow-hidden rounded-[1.5rem] border border-slate-800 bg-slate-950/80 p-4">
+      <div className="mt-6 overflow-hidden rounded-[1.5rem] border border-[#3a2621] bg-[#0b0708]/80 p-4">
         <svg viewBox={`0 0 ${width} ${height}`} className="w-full">
           {[0, 25, 50, 75, 100].map((step) => {
             const y =
@@ -1215,7 +1215,7 @@ function CivilizationScatterChart({ civs }: { civs: CivilizationStat[] }) {
                   y1={y}
                   x2={width - padding}
                   y2={y}
-                  className="stroke-slate-800"
+                  className="stroke-[#3a2621]"
                   strokeWidth="1"
                 />
                 <line
@@ -1223,7 +1223,7 @@ function CivilizationScatterChart({ civs }: { civs: CivilizationStat[] }) {
                   y1={padding}
                   x2={x}
                   y2={height - padding}
-                  className="stroke-slate-900"
+                  className="stroke-[#140c0d]"
                   strokeWidth="1"
                 />
               </g>
@@ -1276,7 +1276,7 @@ function CivilizationScatterChart({ civs }: { civs: CivilizationStat[] }) {
             x={width / 2}
             y={height - 8}
             textAnchor="middle"
-            className="fill-slate-400 text-[12px]"
+            className="fill-[#bcae9a] text-[12px]"
           >
             Pick rate
           </text>
@@ -1285,7 +1285,7 @@ function CivilizationScatterChart({ civs }: { civs: CivilizationStat[] }) {
             y={height / 2}
             transform={`rotate(-90 18 ${height / 2})`}
             textAnchor="middle"
-            className="fill-slate-400 text-[12px]"
+            className="fill-[#bcae9a] text-[12px]"
           >
             Winrate
           </text>
@@ -1317,12 +1317,12 @@ function ComparisonBarChart({
 
   if (validItems.length === 0) {
     return (
-      <div className="rounded-[2rem] border border-slate-800 bg-slate-900 p-6 shadow-lg shadow-black/20">
+      <div className="rounded-[2rem] border border-[#3a2621] bg-[#140c0d] p-6 shadow-lg shadow-black/20">
         <p className="text-sm font-semibold uppercase tracking-[0.2em] text-amber-300">
           {title}
         </p>
         <h3 className="mt-2 text-2xl font-semibold text-white">{subtitle}</h3>
-        <div className="mt-6 rounded-2xl border border-slate-800 bg-slate-950/80 p-4 text-sm text-slate-400">
+        <div className="mt-6 rounded-2xl border border-[#3a2621] bg-[#0b0708]/80 p-4 text-sm text-[#bcae9a]">
           Nessun dato disponibile.
         </div>
       </div>
@@ -1335,7 +1335,7 @@ function ComparisonBarChart({
       : Math.max(...validItems.map((item) => item.value), 1);
 
   return (
-    <div className="rounded-[2rem] border border-slate-800 bg-slate-900 p-6 shadow-lg shadow-black/20">
+    <div className="rounded-[2rem] border border-[#3a2621] bg-[#140c0d] p-6 shadow-lg shadow-black/20">
       <p className="text-sm font-semibold uppercase tracking-[0.2em] text-amber-300">
         {title}
       </p>
@@ -1349,15 +1349,15 @@ function ComparisonBarChart({
             <div key={item.label}>
               <div className="mb-2 flex items-center justify-between gap-4 text-sm">
                 <span className="font-semibold text-white">{item.label}</span>
-                <span className="text-slate-300">
+                <span className="text-[#d8cbb7]">
                   {item.value.toFixed(decimals)}
                   {suffix}
                 </span>
               </div>
 
-              <div className="h-4 overflow-hidden rounded-full border border-slate-800 bg-slate-950/80">
+              <div className="h-4 overflow-hidden rounded-full border border-[#3a2621] bg-[#0b0708]/80">
                 <div
-                  className="h-full rounded-full bg-[linear-gradient(90deg,rgba(59,130,246,0.85),rgba(245,158,11,0.95))]"
+                className="h-full rounded-full bg-[linear-gradient(90deg,rgba(127,21,23,0.92),rgba(217,178,101,0.95))]"
                   style={{ width }}
                 />
               </div>
@@ -1377,12 +1377,12 @@ function SeasonsRatingChart({ seasons }: { seasons: PreviousSeason[] }) {
 
   if (validSeasons.length === 0) {
     return (
-      <div className="rounded-[2rem] border border-slate-800 bg-slate-900 p-6 shadow-lg shadow-black/20">
+      <div className="rounded-[2rem] border border-[#3a2621] bg-[#140c0d] p-6 shadow-lg shadow-black/20">
         <p className="text-sm font-semibold uppercase tracking-[0.2em] text-amber-300">
           Trend stagioni
         </p>
         <h3 className="mt-2 text-2xl font-semibold text-white">Rating per season</h3>
-        <div className="mt-6 rounded-2xl border border-slate-800 bg-slate-950/80 p-4 text-sm text-slate-400">
+        <div className="mt-6 rounded-2xl border border-[#3a2621] bg-[#0b0708]/80 p-4 text-sm text-[#bcae9a]">
           Nessuna season con rating disponibile.
         </div>
       </div>
@@ -1410,13 +1410,13 @@ function SeasonsRatingChart({ seasons }: { seasons: PreviousSeason[] }) {
   const polyline = points.map((point) => `${point.x},${point.y}`).join(" ");
 
   return (
-    <div className="rounded-[2rem] border border-slate-800 bg-slate-900 p-6 shadow-lg shadow-black/20">
+    <div className="rounded-[2rem] border border-[#3a2621] bg-[#140c0d] p-6 shadow-lg shadow-black/20">
       <p className="text-sm font-semibold uppercase tracking-[0.2em] text-amber-300">
         Trend stagioni
       </p>
       <h3 className="mt-2 text-2xl font-semibold text-white">Rating per season</h3>
 
-      <div className="mt-6 overflow-hidden rounded-[1.5rem] border border-slate-800 bg-slate-950/80 p-4">
+      <div className="mt-6 overflow-hidden rounded-[1.5rem] border border-[#3a2621] bg-[#0b0708]/80 p-4">
         <svg viewBox={`0 0 ${width} ${height}`} className="h-72 w-full">
           {[0, 0.25, 0.5, 0.75, 1].map((step) => {
             const y = padding + step * (height - padding * 2);
@@ -1429,10 +1429,10 @@ function SeasonsRatingChart({ seasons }: { seasons: PreviousSeason[] }) {
                   y1={y}
                   x2={width - padding}
                   y2={y}
-                  className="stroke-slate-800"
+                  className="stroke-[#3a2621]"
                   strokeWidth="1"
                 />
-                <text x={6} y={y + 4} className="fill-slate-500 text-[12px]">
+                <text x={6} y={y + 4} className="fill-[#8f7e69] text-[12px]">
                   {label}
                 </text>
               </g>
@@ -1455,11 +1455,11 @@ function SeasonsRatingChart({ seasons }: { seasons: PreviousSeason[] }) {
                 x={point.x}
                 y={height - 10}
                 textAnchor="middle"
-                className="fill-slate-400 text-[12px]"
+                className="fill-[#bcae9a] text-[12px]"
               >
                 S{point.season}
               </text>
-              <title>{`Season ${point.season} • ${point.rating}`}</title>
+              <title>{`Season ${point.season} â€¢ ${point.rating}`}</title>
             </g>
           ))}
         </svg>
@@ -1483,15 +1483,15 @@ function CivilizationRadarChart({
 
   if (validCivs.length < 3) {
     return (
-      <div className="rounded-[2rem] border border-slate-800 bg-slate-900 p-6 shadow-lg shadow-black/20">
+      <div className="rounded-[2rem] border border-[#3a2621] bg-[#140c0d] p-6 shadow-lg shadow-black/20">
         <p className="text-sm font-semibold uppercase tracking-[0.2em] text-amber-300">
           Aerogramma civ
         </p>
         <h3 className="mt-2 text-2xl font-semibold text-white">
-          Civilizzazioni più giocate
+          Civilizzazioni piÃ¹ giocate
         </h3>
-        <div className="mt-6 rounded-2xl border border-slate-800 bg-slate-950/80 p-4 text-sm text-slate-400">
-          Servono almeno 3 civiltà con statistiche valide per mostrare l&apos;aerogramma.
+        <div className="mt-6 rounded-2xl border border-[#3a2621] bg-[#0b0708]/80 p-4 text-sm text-[#bcae9a]">
+          Servono almeno 3 civiltÃ  con statistiche valide per mostrare l&apos;aerogramma.
         </div>
       </div>
     );
@@ -1532,16 +1532,16 @@ function CivilizationRadarChart({
     .join(" ");
 
   return (
-    <div className="rounded-[2rem] border border-slate-800 bg-slate-900 p-6 shadow-lg shadow-black/20">
+    <div className="rounded-[2rem] border border-[#3a2621] bg-[#140c0d] p-6 shadow-lg shadow-black/20">
       <p className="text-sm font-semibold uppercase tracking-[0.2em] text-amber-300">
         Aerogramma civ
       </p>
       <h3 className="mt-2 text-2xl font-semibold text-white">
-        Civilizzazioni più giocate
+        Civilizzazioni piÃ¹ giocate
       </h3>
 
       <div className="mt-6 grid gap-6 xl:grid-cols-[1.25fr_0.75fr]">
-        <div className="overflow-hidden rounded-[1.5rem] border border-slate-800 bg-slate-950/80 p-4">
+        <div className="overflow-hidden rounded-[1.5rem] border border-[#3a2621] bg-[#0b0708]/80 p-4">
           <svg viewBox={`0 0 ${width} ${height}`} className="w-full">
             {levelPolygons.map((polygon, index) => (
               <polygon
@@ -1571,7 +1571,7 @@ function CivilizationRadarChart({
                     x={getPoint(index, 1.14).x}
                     y={getPoint(index, 1.14).y}
                     textAnchor="middle"
-                    className="fill-slate-300 text-[12px]"
+                    className="fill-[#d8cbb7] text-[12px]"
                   >
                     {prettifyCivilizationName(civ.civilization)}
                   </text>
@@ -1592,7 +1592,7 @@ function CivilizationRadarChart({
               return (
                 <g key={`${civ.civilization}-point`}>
                   <circle cx={point.x} cy={point.y} r="5" fill="white" />
-                  <title>{`${prettifyCivilizationName(civ.civilization)} • ${civ.games_count} partite`}</title>
+                  <title>{`${prettifyCivilizationName(civ.civilization)} â€¢ ${civ.games_count} partite`}</title>
                 </g>
               );
             })}
@@ -1603,18 +1603,18 @@ function CivilizationRadarChart({
           {validCivs.map((civ) => (
             <div
               key={civ.civilization}
-              className="rounded-2xl border border-slate-800 bg-slate-950/80 p-4"
+              className="rounded-2xl border border-[#3a2621] bg-[#0b0708]/80 p-4"
             >
               <div className="text-sm font-semibold text-white">
                 {prettifyCivilizationName(civ.civilization)}
               </div>
-              <div className="mt-2 text-sm text-slate-400">
+              <div className="mt-2 text-sm text-[#bcae9a]">
                 Partite: {formatNumber(civ.games_count)}
               </div>
-              <div className="mt-1 text-sm text-slate-400">
+              <div className="mt-1 text-sm text-[#bcae9a]">
                 Pick rate: {formatPercent(civ.pick_rate)}
               </div>
-              <div className="mt-1 text-sm text-slate-400">
+              <div className="mt-1 text-sm text-[#bcae9a]">
                 Winrate: {formatPercent(civ.win_rate)}
               </div>
             </div>
@@ -1663,7 +1663,7 @@ export default function PlayerDashboard({
 
   const insights = [
     bestMode
-      ? `Modalità migliore: ${bestMode.label} (${formatPercent(bestMode.winRate)} winrate).`
+      ? `ModalitÃ  migliore: ${bestMode.label} (${formatPercent(bestMode.winRate)} winrate).`
       : null,
     peak !== null
       ? `Peak rating registrato: ${formatNumber(peak.rating)} in ${peak.mode}.`
@@ -1697,14 +1697,14 @@ export default function PlayerDashboard({
           <div className="flex flex-wrap gap-3">
             <Link
               href="/"
-              className="inline-flex rounded-2xl border border-slate-700 bg-slate-900/80 px-5 py-3 text-sm font-semibold text-slate-100 transition hover:-translate-y-0.5 hover:border-slate-500"
+              className="inline-flex rounded-2xl border border-[#5a3a31] bg-[#140c0d]/80 px-5 py-3 text-sm font-semibold text-[#f5ecdc] transition hover:-translate-y-0.5 hover:border-[#8c5a4c]"
             >
-              ← Torna alla home
+              â† Torna alla home
             </Link>
 
             <Link
               href="/leaderboard"
-              className="inline-flex rounded-2xl bg-amber-400 px-5 py-3 text-sm font-semibold text-slate-950 transition hover:-translate-y-0.5"
+              className="inline-flex rounded-2xl bg-amber-400 px-5 py-3 text-sm font-semibold text-[#1a0d0c] transition hover:-translate-y-0.5"
             >
               Vai alla leaderboard
             </Link>
@@ -1727,7 +1727,7 @@ export default function PlayerDashboard({
               type="button"
               onClick={handleRefreshPage}
               disabled={isRefreshingPage}
-              className="inline-flex items-center gap-2 rounded-2xl border border-slate-700 bg-slate-900/80 px-5 py-3 text-sm font-semibold text-slate-100 transition hover:-translate-y-0.5 hover:border-slate-500 disabled:cursor-not-allowed disabled:opacity-70"
+              className="inline-flex items-center gap-2 rounded-2xl border border-[#5a3a31] bg-[#140c0d]/80 px-5 py-3 text-sm font-semibold text-[#f5ecdc] transition hover:-translate-y-0.5 hover:border-[#8c5a4c] disabled:cursor-not-allowed disabled:opacity-70"
             >
               {isRefreshingPage ? (
                 <>
@@ -1746,17 +1746,17 @@ export default function PlayerDashboard({
           <PlayerLookupForm variant="compact" />
         </div>
 
-        <div className="rounded-[2rem] border border-amber-500/20 bg-[radial-gradient(circle_at_top,rgba(245,158,11,0.12),transparent_35%),#0f172a] p-8 shadow-2xl shadow-black/30">
+        <div className="rounded-[2rem] border border-amber-500/20 bg-[radial-gradient(circle_at_top,rgba(245,158,11,0.12),transparent_35%),#140c0d] p-8 shadow-2xl shadow-black/30">
           <div className="flex flex-col gap-8 lg:flex-row lg:items-center lg:justify-between">
             <div className="flex items-center gap-5">
               {player.avatars?.full || player.avatars?.medium || player.avatars?.small ? (
                 <img
                   src={player.avatars.full || player.avatars.medium || player.avatars.small || ""}
                   alt={player.name ?? "Player avatar"}
-                  className="h-20 w-20 rounded-2xl border border-slate-700 object-cover"
+                  className="h-20 w-20 rounded-2xl border border-[#5a3a31] object-cover"
                 />
               ) : (
-                <div className="flex h-20 w-20 items-center justify-center rounded-2xl border border-slate-700 bg-slate-900 text-2xl font-bold text-amber-300">
+                <div className="flex h-20 w-20 items-center justify-center rounded-2xl border border-[#5a3a31] bg-[#140c0d] text-2xl font-bold text-amber-300">
                   {getInitials(player.name ?? "Player")}
                 </div>
               )}
@@ -1770,21 +1770,21 @@ export default function PlayerDashboard({
                   {player.name ?? "Giocatore"}
                 </h1>
 
-                <div className="mt-3 flex flex-wrap items-center gap-3 text-sm text-slate-300">
-                  <span className="rounded-full border border-slate-700 bg-slate-900 px-3 py-1">
+                <div className="mt-3 flex flex-wrap items-center gap-3 text-sm text-[#d8cbb7]">
+                  <span className="rounded-full border border-[#5a3a31] bg-[#140c0d] px-3 py-1">
                     {summary.rankLevel}
                   </span>
 
-                  <span className="rounded-full border border-slate-700 bg-slate-900 px-3 py-1">
+                  <span className="rounded-full border border-[#5a3a31] bg-[#140c0d] px-3 py-1">
                     Rank #{formatNumber(summary.currentRank)}
                   </span>
 
-                  <span className="rounded-full border border-slate-700 bg-slate-900 px-3 py-1">
+                  <span className="rounded-full border border-[#5a3a31] bg-[#140c0d] px-3 py-1">
                     1v1 ELO {formatNumber(summary.currentRating)}
                   </span>
 
                   {player.country ? (
-                    <span className="rounded-full border border-slate-700 bg-slate-900 px-3 py-1 uppercase">
+                    <span className="rounded-full border border-[#5a3a31] bg-[#140c0d] px-3 py-1 uppercase">
                       {player.country}
                     </span>
                   ) : null}
@@ -1793,44 +1793,44 @@ export default function PlayerDashboard({
             </div>
 
             <div className="grid gap-4 sm:grid-cols-4">
-              <div className="rounded-2xl border border-slate-800 bg-slate-950/80 p-4 text-center">
+              <div className="rounded-2xl border border-[#3a2621] bg-[#0b0708]/80 p-4 text-center">
                 <div className={`text-2xl font-bold ${getStreakTone(summary.streak ?? null)}`}>
                   {typeof summary.streak === "number"
                     ? `${summary.streak > 0 ? "+" : ""}${summary.streak}`
-                    : "—"}
+                    : "â€”"}
                 </div>
-                <div className="mt-1 text-sm text-slate-400">Streak</div>
+                <div className="mt-1 text-sm text-[#bcae9a]">Streak</div>
               </div>
 
-              <div className="rounded-2xl border border-slate-800 bg-slate-950/80 p-4 text-center">
+              <div className="rounded-2xl border border-[#3a2621] bg-[#0b0708]/80 p-4 text-center">
                 <div className="text-2xl font-bold text-amber-300">
                   {formatNumber(summary.totalGames)}
                 </div>
-                <div className="mt-1 text-sm text-slate-400">Partite 1v1</div>
+                <div className="mt-1 text-sm text-[#bcae9a]">Partite 1v1</div>
               </div>
 
-              <div className="rounded-2xl border border-slate-800 bg-slate-950/80 p-4 text-center">
+              <div className="rounded-2xl border border-[#3a2621] bg-[#0b0708]/80 p-4 text-center">
                 <div className="text-2xl font-bold text-white">{formatDate(summary.lastGameAt)}</div>
-                <div className="mt-1 text-sm text-slate-400">Ultima partita</div>
+                <div className="mt-1 text-sm text-[#bcae9a]">Ultima partita</div>
               </div>
 
-              <div className="rounded-2xl border border-slate-800 bg-slate-950/80 p-4 text-center">
+              <div className="rounded-2xl border border-[#3a2621] bg-[#0b0708]/80 p-4 text-center">
                 <div className="text-2xl font-bold text-amber-300">
-                  {peak !== null ? formatNumber(peak.rating) : "—"}
+                  {peak !== null ? formatNumber(peak.rating) : "â€”"}
                 </div>
-                <div className="mt-1 text-sm text-slate-400">Peak ELO</div>
+                <div className="mt-1 text-sm text-[#bcae9a]">Peak ELO</div>
               </div>
             </div>
           </div>
         </div>
 
-        <div className="rounded-[2rem] border border-slate-800 bg-slate-900 p-6 shadow-lg shadow-black/20">
+        <div className="rounded-[2rem] border border-[#3a2621] bg-[#140c0d] p-6 shadow-lg shadow-black/20">
           <div className="flex items-end justify-between gap-4">
             <div>
               <p className="text-sm font-semibold uppercase tracking-[0.3em] text-amber-300">
                 Performance
               </p>
-              <h2 className="mt-2 text-3xl font-bold text-white">Prestazioni per modalità</h2>
+              <h2 className="mt-2 text-3xl font-bold text-white">Prestazioni per modalitÃ </h2>
             </div>
           </div>
 
@@ -1838,7 +1838,7 @@ export default function PlayerDashboard({
             {rows.map((row) => (
               <div
                 key={row.key}
-                className="rounded-[1.75rem] border border-slate-800 bg-slate-950/80 p-5"
+                className="rounded-[1.75rem] border border-[#3a2621] bg-[#0b0708]/80 p-5"
               >
                 <div className="flex items-center justify-between gap-3">
                   <h3 className="text-xl font-semibold text-white">{row.label}</h3>
@@ -1852,37 +1852,37 @@ export default function PlayerDashboard({
                 </div>
 
                 <div className="mt-5 grid grid-cols-2 gap-3">
-                  <div className="rounded-2xl border border-slate-800 bg-slate-900 px-4 py-3">
-                    <div className="text-xs uppercase tracking-[0.2em] text-slate-500">ELO</div>
+                  <div className="rounded-2xl border border-[#3a2621] bg-[#140c0d] px-4 py-3">
+                    <div className="text-xs uppercase tracking-[0.2em] text-[#8f7e69]">ELO</div>
                     <div className="mt-1 text-lg font-bold text-white">{formatNumber(row.rating)}</div>
                   </div>
 
-                  <div className="rounded-2xl border border-slate-800 bg-slate-900 px-4 py-3">
-                    <div className="text-xs uppercase tracking-[0.2em] text-slate-500">Rank</div>
+                  <div className="rounded-2xl border border-[#3a2621] bg-[#140c0d] px-4 py-3">
+                    <div className="text-xs uppercase tracking-[0.2em] text-[#8f7e69]">Rank</div>
                     <div className="mt-1 text-lg font-bold text-white">#{formatNumber(row.rank)}</div>
                   </div>
 
-                  <div className="rounded-2xl border border-slate-800 bg-slate-900 px-4 py-3">
-                    <div className="text-xs uppercase tracking-[0.2em] text-slate-500">Streak</div>
+                  <div className="rounded-2xl border border-[#3a2621] bg-[#140c0d] px-4 py-3">
+                    <div className="text-xs uppercase tracking-[0.2em] text-[#8f7e69]">Streak</div>
                     <div className={`mt-1 text-lg font-bold ${getStreakTone(row.streak)}`}>
                       {typeof row.streak === "number"
                         ? `${row.streak > 0 ? "+" : ""}${row.streak}`
-                        : "—"}
+                        : "â€”"}
                     </div>
                   </div>
 
-                  <div className="rounded-2xl border border-slate-800 bg-slate-900 px-4 py-3">
-                    <div className="text-xs uppercase tracking-[0.2em] text-slate-500">Partite</div>
+                  <div className="rounded-2xl border border-[#3a2621] bg-[#140c0d] px-4 py-3">
+                    <div className="text-xs uppercase tracking-[0.2em] text-[#8f7e69]">Partite</div>
                     <div className="mt-1 text-lg font-bold text-white">{formatNumber(row.games)}</div>
                   </div>
                 </div>
 
                 <div className="mt-4 flex flex-wrap gap-2 text-xs">
-                  <span className="rounded-full border border-slate-700 bg-slate-900 px-3 py-1 text-slate-300">
+                  <span className="rounded-full border border-[#5a3a31] bg-[#140c0d] px-3 py-1 text-[#d8cbb7]">
                     Peak {formatNumber(row.maxRating)}
                   </span>
                   {row.wins !== null ? (
-                    <span className="rounded-full border border-emerald-500/20 bg-emerald-500/10 px-3 py-1 text-emerald-200">
+              <span className="rounded-full border border-[#d9b265]/20 bg-[#d9b265]/10 px-3 py-1 text-[#f8edd7]">
                       {formatNumber(row.wins)}W
                     </span>
                   ) : null}
@@ -1899,7 +1899,7 @@ export default function PlayerDashboard({
                   color={getModeColor(row.label).solid}
                 />
 
-                <p className="mt-4 text-sm text-slate-400">
+                <p className="mt-4 text-sm text-[#bcae9a]">
                   Ultima partita: {formatDate(row.lastGameAt)}
                 </p>
               </div>
@@ -1920,8 +1920,8 @@ export default function PlayerDashboard({
 
         <div className="grid gap-6 xl:grid-cols-2">
           <ComparisonBarChart
-            title="Confronto modalità"
-            subtitle="Winrate per modalità"
+            title="Confronto modalitÃ "
+            subtitle="Winrate per modalitÃ "
             items={rows.map((row) => ({
               label: row.label,
               value: row.winRate,
@@ -1933,7 +1933,7 @@ export default function PlayerDashboard({
 
           <ComparisonBarChart
             title="Volume di gioco"
-            subtitle="Partite per modalità"
+            subtitle="Partite per modalitÃ "
             items={rows.map((row) => ({
               label: row.label,
               value: row.games,
@@ -1957,7 +1957,7 @@ export default function PlayerDashboard({
         />
 
         <div className="grid gap-6 lg:grid-cols-2">
-          <div className="rounded-[2rem] border border-slate-800 bg-slate-900 p-6 shadow-lg shadow-black/20">
+          <div className="rounded-[2rem] border border-[#3a2621] bg-[#140c0d] p-6 shadow-lg shadow-black/20">
             <p className="text-sm font-semibold uppercase tracking-[0.3em] text-amber-300">
               Analisi
             </p>
@@ -1968,55 +1968,55 @@ export default function PlayerDashboard({
                 insights.map((insight, index) => (
                   <div
                     key={`${insight}-${index}`}
-                    className="rounded-2xl border border-slate-800 bg-slate-950/80 p-4 text-sm leading-7 text-slate-300"
+                    className="rounded-2xl border border-[#3a2621] bg-[#0b0708]/80 p-4 text-sm leading-7 text-[#d8cbb7]"
                   >
                     {insight}
                   </div>
                 ))
               ) : (
-                <div className="rounded-2xl border border-slate-800 bg-slate-950/80 p-4 text-sm text-slate-400">
+                <div className="rounded-2xl border border-[#3a2621] bg-[#0b0708]/80 p-4 text-sm text-[#bcae9a]">
                   Dati insufficienti per generare insight.
                 </div>
               )}
             </div>
           </div>
 
-          <div className="rounded-[2rem] border border-slate-800 bg-slate-900 p-6 shadow-lg shadow-black/20">
+          <div className="rounded-[2rem] border border-[#3a2621] bg-[#140c0d] p-6 shadow-lg shadow-black/20">
             <p className="text-sm font-semibold uppercase tracking-[0.3em] text-amber-300">
               Playstyle
             </p>
             <h2 className="mt-2 text-3xl font-bold text-white">Profilo giocatore</h2>
 
             <div className="mt-6 grid gap-3">
-              <div className="rounded-2xl border border-slate-800 bg-slate-950/80 p-4">
+              <div className="rounded-2xl border border-[#3a2621] bg-[#0b0708]/80 p-4">
                 <div className="text-sm font-semibold text-white">
                   {bestMode?.label !== "1v1" ? "Stratega da team game" : "Specialista del solo"}
                 </div>
-                <p className="mt-2 text-sm leading-7 text-slate-400">
+                <p className="mt-2 text-sm leading-7 text-[#bcae9a]">
                   {teamVsSoloInsight ?? "Profilo in definizione."}
                 </p>
               </div>
 
-              <div className="rounded-2xl border border-slate-800 bg-slate-950/80 p-4">
+              <div className="rounded-2xl border border-[#3a2621] bg-[#0b0708]/80 p-4">
                 <div className="text-sm font-semibold text-white">
                   {summary.totalGames !== null && summary.totalGames >= 500
                     ? "Grinder esperto"
                     : "Sample ridotto"}
                 </div>
-                <p className="mt-2 text-sm leading-7 text-slate-400">
+                <p className="mt-2 text-sm leading-7 text-[#bcae9a]">
                   {summary.totalGames !== null && summary.totalGames >= 500
-                    ? "Grande volume di partite, dati molto più affidabili della media."
-                    : "Servono più partite per descrivere il profilo con precisione."}
+                    ? "Grande volume di partite, dati molto piÃ¹ affidabili della media."
+                    : "Servono piÃ¹ partite per descrivere il profilo con precisione."}
                 </p>
               </div>
 
-              <div className="rounded-2xl border border-slate-800 bg-slate-950/80 p-4">
+              <div className="rounded-2xl border border-[#3a2621] bg-[#0b0708]/80 p-4">
                 <div className="text-sm font-semibold text-white">
                   {worstDrop !== null && worstDrop <= -100
                     ? "Rischio tilt recente"
                     : "Andamento abbastanza stabile"}
                 </div>
-                <p className="mt-2 text-sm leading-7 text-slate-400">
+                <p className="mt-2 text-sm leading-7 text-[#bcae9a]">
                   {worstDrop !== null && worstDrop <= -100
                     ? `Nello storico 1v1 compare un calo brusco di ${formatNumber(worstDrop)} ELO.`
                     : "Non emergono crolli recenti particolarmente pesanti nello storico disponibile."}
@@ -2027,7 +2027,7 @@ export default function PlayerDashboard({
         </div>
 
         <div className="grid gap-6 xl:grid-cols-2">
-          <div className="rounded-[2rem] border border-slate-800 bg-slate-900 p-6 shadow-lg shadow-black/20">
+          <div className="rounded-[2rem] border border-[#3a2621] bg-[#140c0d] p-6 shadow-lg shadow-black/20">
             <p className="text-sm font-semibold uppercase tracking-[0.3em] text-amber-300">
               Stagioni
             </p>
@@ -2038,40 +2038,40 @@ export default function PlayerDashboard({
                 seasons.map((season) => (
                   <div
                     key={season.season}
-                    className="flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-slate-800 bg-slate-950/80 p-4"
+                    className="flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-[#3a2621] bg-[#0b0708]/80 p-4"
                   >
                     <div>
                       <div className="text-sm font-semibold text-white">
                         Season {season.season}
                       </div>
-                      <div className="mt-1 text-sm text-slate-400">
-                        {getRankLabel(season.rank_level)} • Ultima partita{" "}
+                      <div className="mt-1 text-sm text-[#bcae9a]">
+                        {getRankLabel(season.rank_level)} â€¢ Ultima partita{" "}
                         {formatDate(season.last_game_at)}
                       </div>
                     </div>
 
                     <div className="flex flex-wrap items-center gap-3 text-sm">
-                      <span className="rounded-full border border-slate-700 bg-slate-900 px-3 py-1 text-slate-200">
+                      <span className="rounded-full border border-[#5a3a31] bg-[#140c0d] px-3 py-1 text-[#e8dcc8]">
                         Rating {formatNumber(season.rating)}
                       </span>
-                      <span className="rounded-full border border-slate-700 bg-slate-900 px-3 py-1 text-slate-200">
+                      <span className="rounded-full border border-[#5a3a31] bg-[#140c0d] px-3 py-1 text-[#e8dcc8]">
                         Rank #{formatNumber(season.rank)}
                       </span>
-                      <span className="rounded-full border border-slate-700 bg-slate-900 px-3 py-1 text-slate-200">
+                      <span className="rounded-full border border-[#5a3a31] bg-[#140c0d] px-3 py-1 text-[#e8dcc8]">
                         WR {formatPercent(season.win_rate)}
                       </span>
                     </div>
                   </div>
                 ))
               ) : (
-                <div className="rounded-2xl border border-slate-800 bg-slate-950/80 p-4 text-sm text-slate-400">
+                <div className="rounded-2xl border border-[#3a2621] bg-[#0b0708]/80 p-4 text-sm text-[#bcae9a]">
                   Nessuna season storica disponibile.
                 </div>
               )}
             </div>
           </div>
 
-          <div className="rounded-[2rem] border border-slate-800 bg-slate-900 p-6 shadow-lg shadow-black/20">
+          <div className="rounded-[2rem] border border-[#3a2621] bg-[#140c0d] p-6 shadow-lg shadow-black/20">
             <p className="text-sm font-semibold uppercase tracking-[0.3em] text-amber-300">
               Civilizzazioni
             </p>
@@ -2085,30 +2085,30 @@ export default function PlayerDashboard({
                   return (
                     <div
                       key={civ.civilization}
-                      className="flex items-center justify-between gap-4 rounded-2xl border border-slate-800 bg-slate-950/80 p-4"
+                      className="flex items-center justify-between gap-4 rounded-2xl border border-[#3a2621] bg-[#0b0708]/80 p-4"
                     >
                       <div className="flex items-center gap-4">
                         <img
                           src={icon}
                           alt={civ.civilization}
-                          className="h-12 w-12 rounded-xl border border-slate-800 bg-slate-900 object-contain p-1"
+                          className="h-12 w-12 rounded-xl border border-[#3a2621] bg-[#140c0d] object-contain p-1"
                         />
 
                         <div>
                           <div className="text-sm font-semibold text-white">
                             {prettifyCivilizationName(civ.civilization)}
                           </div>
-                          <div className="mt-1 text-sm text-slate-400">
+                          <div className="mt-1 text-sm text-[#bcae9a]">
                             {formatNumber(civ.games_count)} partite
                           </div>
                         </div>
                       </div>
 
                       <div className="flex flex-wrap gap-3 text-sm">
-                        <span className="rounded-full border border-slate-700 bg-slate-900 px-3 py-1 text-slate-200">
+                        <span className="rounded-full border border-[#5a3a31] bg-[#140c0d] px-3 py-1 text-[#e8dcc8]">
                           WR {formatPercent(civ.win_rate)}
                         </span>
-                        <span className="rounded-full border border-slate-700 bg-slate-900 px-3 py-1 text-slate-200">
+                        <span className="rounded-full border border-[#5a3a31] bg-[#140c0d] px-3 py-1 text-[#e8dcc8]">
                           Pick {formatPercent(civ.pick_rate)}
                         </span>
                       </div>
@@ -2116,7 +2116,7 @@ export default function PlayerDashboard({
                   );
                 })
               ) : (
-                <div className="rounded-2xl border border-slate-800 bg-slate-950/80 p-4 text-sm text-slate-400">
+                <div className="rounded-2xl border border-[#3a2621] bg-[#0b0708]/80 p-4 text-sm text-[#bcae9a]">
                   Nessuna statistica civ disponibile.
                 </div>
               )}
@@ -2130,7 +2130,7 @@ export default function PlayerDashboard({
               href={player.site_url}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex rounded-2xl bg-amber-400 px-5 py-3 text-sm font-semibold text-slate-950 transition hover:-translate-y-0.5"
+              className="inline-flex rounded-2xl bg-amber-400 px-5 py-3 text-sm font-semibold text-[#1a0d0c] transition hover:-translate-y-0.5"
             >
               Apri profilo AoE4World
             </a>
@@ -2140,3 +2140,4 @@ export default function PlayerDashboard({
     </section>
   );
 }
+

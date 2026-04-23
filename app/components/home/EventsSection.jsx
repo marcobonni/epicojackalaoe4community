@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { SERVER_CONFIG } from "@/app/config/site.js";
 import { useTranslations } from "@/app/components/LanguageProvider";
@@ -44,7 +44,7 @@ export default function EventsSection() {
                 </h3>
               </div>
 
-              <div className="rounded-full border border-white/10 bg-white/[0.05] px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.2em] text-slate-200">
+              <div className="rounded-full border border-white/10 bg-white/[0.05] px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.2em] text-[#e8dcc8]">
                 {event.type}
               </div>
             </div>
@@ -60,3 +60,4 @@ export default function EventsSection() {
     </section>
   );
 }
+

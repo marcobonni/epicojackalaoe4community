@@ -1,4 +1,4 @@
-import { redirect } from "next/navigation";
+﻿import { redirect } from "next/navigation";
 import LoadingLink from "@/app/components/LoadingLink";
 import EmailPasswordLoginForm from "@/app/components/auth/EmailPasswordLoginForm";
 import PasswordRecoveryRequestForm from "@/app/components/auth/PasswordRecoveryRequestForm";
@@ -67,7 +67,7 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
               className={`${index === 0 ? "cinematic-stat-card" : "cinematic-card-grid"} p-5`}
             >
               <h2 className="text-lg font-semibold text-white">{item.title}</h2>
-              <p className="mt-3 text-sm leading-7 text-slate-300/74">{item.text}</p>
+              <p className="mt-3 text-sm leading-7 text-[#d8cbb7]/74">{item.text}</p>
             </div>
           ))}
         </div>
@@ -85,7 +85,7 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
           ) : null}
 
           {infoMessage ? (
-            <div className="cinematic-panel-soft rounded-[1.6rem] border border-emerald-500/28 bg-emerald-500/10 p-4 text-sm leading-6 text-emerald-100">
+          <div className="cinematic-panel-soft rounded-[1.6rem] border border-[#d9b265]/28 bg-[#d9b265]/10 p-4 text-sm leading-6 text-[#f8edd7]">
               {infoMessage}
             </div>
           ) : null}
@@ -98,14 +98,14 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
                 <summary className="cursor-pointer list-none text-sm font-semibold text-white marker:hidden">
                   <span className="flex items-center justify-between gap-4">
                     <span>{messages.loginPage.forgotPassword}</span>
-                    <span className="text-xs text-slate-400 transition group-open:rotate-45">
+                    <span className="text-xs text-[#bcae9a] transition group-open:rotate-45">
                       +
                     </span>
                   </span>
                 </summary>
 
                 <div className="mt-4 space-y-4">
-                  <p className="text-sm leading-7 text-slate-300/74">
+                  <p className="text-sm leading-7 text-[#d8cbb7]/74">
                     {messages.loginPage.forgotDescription}
                   </p>
                   <PasswordRecoveryRequestForm />
@@ -118,7 +118,7 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
             </div>
           )}
 
-          <div className="cinematic-card-grid rounded-[1.7rem] p-5 text-sm leading-6 text-slate-300/84">
+          <div className="cinematic-card-grid rounded-[1.7rem] p-5 text-sm leading-6 text-[#d8cbb7]/84">
             {messages.loginPage.registerPrompt}
             <LoadingLink
               href="/register"
@@ -129,7 +129,7 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
             </LoadingLink>
           </div>
 
-          <div className="cinematic-card-grid rounded-[1.7rem] p-5 text-sm leading-6 text-slate-300/84">
+          <div className="cinematic-card-grid rounded-[1.7rem] p-5 text-sm leading-6 text-[#d8cbb7]/84">
             {messages.loginPage.callbackHelp}
           </div>
         </div>
@@ -137,3 +137,4 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
     </div>
   );
 }
+

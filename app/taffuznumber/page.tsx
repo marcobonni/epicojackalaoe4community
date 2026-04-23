@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import {
@@ -32,7 +32,7 @@ import {
  *
  * Important:
  * - Still browser-side and API-driven, so limits are necessary
- * - This is much more robust than the previous “search inside preloaded graph” approach
+ * - This is much more robust than the previous â€œsearch inside preloaded graphâ€ approach
  */
 
 type MatchEdge = {
@@ -351,11 +351,11 @@ function StatCard({
   value: React.ReactNode;
 }) {
   return (
-    <div className="rounded-2xl border border-amber-500/20 bg-slate-900/80 p-4 shadow-[0_0_0_1px_rgba(255,255,255,0.03)]">
+    <div className="rounded-2xl border border-amber-500/20 bg-[#140c0d]/80 p-4 shadow-[0_0_0_1px_rgba(255,255,255,0.03)]">
       <div className="flex items-center justify-between gap-4">
         <div>
           <div className="text-[11px] uppercase tracking-[0.18em] text-amber-300/70">{label}</div>
-          <div className="mt-2 text-2xl font-bold text-slate-100">{value}</div>
+          <div className="mt-2 text-2xl font-bold text-[#f5ecdc]">{value}</div>
         </div>
         <div className="flex h-12 w-12 items-center justify-center rounded-xl border border-amber-400/20 bg-amber-500/10 text-amber-300">
           {icon}
@@ -596,10 +596,10 @@ export default function TaffuzNumberPage() {
     }));
   }, [result.names, result.path]);
 
-  const targetCardValue = result.number === null ? "—" : result.number;
+  const targetCardValue = result.number === null ? "â€”" : result.number;
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#0b0f16] via-[#111827] to-[#0a0d14] text-slate-100">
+    <div className="min-h-screen bg-gradient-to-b from-[#0b0708] via-[#140c0d] to-[#070304] text-[#f5ecdc]">
       <div className="mx-auto max-w-7xl px-4 py-8 md:px-6 lg:px-8">
         <section className="overflow-hidden rounded-[28px] border border-amber-500/20 bg-[radial-gradient(circle_at_top,rgba(245,158,11,0.12),transparent_28%),linear-gradient(180deg,rgba(15,23,42,0.98),rgba(2,6,23,0.96))] shadow-2xl">
           <div className="border-b border-amber-500/15 px-6 py-8 md:px-8">
@@ -607,12 +607,12 @@ export default function TaffuzNumberPage() {
               <div className="max-w-3xl">
                 <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-amber-400/20 bg-amber-500/10 px-3 py-1 text-[11px] uppercase tracking-[0.2em] text-amber-300/85">
                   <Crown className="h-3.5 w-3.5" />
-                  AoE4 Win Chain · Robust Search
+                  AoE4 Win Chain Â· Robust Search
                 </div>
                 <h1 className="text-4xl font-black tracking-tight text-white md:text-5xl">
                   {TARGET_SLUG} Number
                 </h1>
-                <p className="mt-4 max-w-2xl text-sm leading-6 text-slate-300 md:text-base">
+                <p className="mt-4 max-w-2xl text-sm leading-6 text-[#d8cbb7] md:text-base">
                   Inserisci un giocatore e la pagina calcola il suo <strong className="text-amber-300">taffuz number</strong>
                   usando solo partite ranked 1v1 e una ricerca bidirezionale mirata verso <strong className="text-amber-300">{TARGET_NAME}</strong>.
                 </p>
@@ -624,12 +624,12 @@ export default function TaffuzNumberPage() {
                     Player input
                   </label>
                   <div className="relative">
-                    <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+                    <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[#bcae9a]" />
                     <input
                       value={search}
                       onChange={(e) => setSearch(e.target.value)}
                       placeholder="Inserisci nome player o profile id"
-                      className="w-full rounded-2xl border border-amber-500/20 bg-slate-950/70 py-3 pl-10 pr-4 text-sm text-slate-100 outline-none transition placeholder:text-slate-500 focus:border-amber-400/50"
+                      className="w-full rounded-2xl border border-amber-500/20 bg-[#0b0708]/70 py-3 pl-10 pr-4 text-sm text-[#f5ecdc] outline-none transition placeholder:text-[#8f7e69] focus:border-amber-400/50"
                     />
                   </div>
                 </div>
@@ -647,7 +647,7 @@ export default function TaffuzNumberPage() {
                     href={TARGET_PROFILE_URL}
                     target="_blank"
                     rel="noreferrer"
-                    className="inline-flex h-[46px] items-center gap-2 rounded-2xl border border-slate-700 bg-slate-950/70 px-4 text-sm font-semibold text-slate-200 transition hover:border-slate-600"
+className="inline-flex h-[46px] items-center gap-2 rounded-2xl border border-[#5a3a31] bg-[#0b0708]/70 px-4 text-sm font-semibold text-[#e8dcc8] transition hover:border-[#8c5a4c]"
                   >
                     <ExternalLink className="h-4 w-4" />
                     AoE4World
@@ -666,30 +666,30 @@ export default function TaffuzNumberPage() {
         </section>
 
         <div className="mt-6 grid gap-6 xl:grid-cols-[1.25fr_0.85fr]">
-          <section className="rounded-[28px] border border-amber-500/20 bg-slate-900/80 p-5 shadow-xl md:p-6">
+          <section className="rounded-[28px] border border-amber-500/20 bg-[#140c0d]/80 p-5 shadow-xl md:p-6">
             <h2 className="text-xl font-bold text-white">Taffuz Number Checker</h2>
-            <p className="mt-1 text-sm text-slate-400">
+            <p className="mt-1 text-sm text-[#bcae9a]">
               La ricerca parte dal player inserito e da Taffuz contemporaneamente, poi si incontra nel mezzo.
             </p>
 
-            <div className="mt-5 rounded-2xl border border-amber-500/15 bg-slate-950/50 p-5">
+            <div className="mt-5 rounded-2xl border border-amber-500/15 bg-[#0b0708]/50 p-5">
               {!search.trim() ? (
-                <div className="text-sm text-slate-400">Scrivi un nome o un profile id per cercare un giocatore.</div>
+                <div className="text-sm text-[#bcae9a]">Scrivi un nome o un profile id per cercare un giocatore.</div>
               ) : result.resolving ? (
-                <div className="flex items-center gap-3 text-sm text-slate-300">
+                <div className="flex items-center gap-3 text-sm text-[#d8cbb7]">
                   <Loader2 className="h-4 w-4 animate-spin text-amber-300" />
-                  Sto risolvendo il giocatore su AoE4World…
+                  Sto risolvendo il giocatore su AoE4Worldâ€¦
                 </div>
               ) : result.loading && !result.resolvedPlayer ? (
-                <div className="flex items-center gap-3 text-sm text-slate-300">
+                <div className="flex items-center gap-3 text-sm text-[#d8cbb7]">
                   <Loader2 className="h-4 w-4 animate-spin text-amber-300" />
-                  Sto caricando i match reali da AoE4World…
+                  Sto caricando i match reali da AoE4Worldâ€¦
                 </div>
               ) : result.error ? (
                 <div className="space-y-2 text-sm text-rose-300">
                   <div>{result.error}</div>
                   {result.resolvedPlayer && (
-                    <div className="text-slate-400">
+                    <div className="text-[#bcae9a]">
                       Ultimo player risolto: {result.resolvedPlayer.name} (ID {result.resolvedPlayer.profileId})
                     </div>
                   )}
@@ -700,38 +700,38 @@ export default function TaffuzNumberPage() {
                     <div>
                       <div className="text-xs uppercase tracking-[0.16em] text-amber-300/70">Matched player</div>
                       <div className="mt-2 text-2xl font-bold text-white">{result.resolvedPlayer.name}</div>
-                      <div className="mt-1 text-sm text-slate-400">ID {result.resolvedPlayer.profileId}</div>
+                      <div className="mt-1 text-sm text-[#bcae9a]">ID {result.resolvedPlayer.profileId}</div>
                     </div>
                     <div className="inline-flex min-w-[72px] items-center justify-center rounded-2xl border border-amber-400/15 bg-amber-500/10 px-4 py-3 text-3xl font-black text-amber-300">
-                      {result.number ?? "—"}
+                      {result.number ?? "â€”"}
                     </div>
                   </div>
 
-                  <div className="rounded-2xl border border-slate-800 bg-slate-900/80 p-4">
-                    <div className="text-xs uppercase tracking-[0.16em] text-slate-400">Tier</div>
-                    <div className="mt-2 inline-flex rounded-full border border-slate-700 bg-slate-800 px-3 py-1 text-xs font-medium text-slate-300">
+                  <div className="rounded-2xl border border-[#3a2621] bg-[#140c0d]/80 p-4">
+                    <div className="text-xs uppercase tracking-[0.16em] text-[#bcae9a]">Tier</div>
+                    <div className="mt-2 inline-flex rounded-full border border-[#5a3a31] bg-[#241618] px-3 py-1 text-xs font-medium text-[#d8cbb7]">
                       {getDistanceLabel(result.number ?? 99)}
                     </div>
                   </div>
 
                   {result.path ? (
                     <div>
-                      <div className="mb-3 text-xs uppercase tracking-[0.16em] text-slate-400">Shortest path to Taffuz</div>
+                      <div className="mb-3 text-xs uppercase tracking-[0.16em] text-[#bcae9a]">Shortest path to Taffuz</div>
                       <div className="flex flex-wrap items-center gap-2 text-sm">
                         {resultPathNames.map((step, index) => (
                           <React.Fragment key={`${step.id}-${index}`}>
                             <span
-                              className={`${index === resultPathNames.length - 1 ? "border-amber-400/20 bg-amber-500/10 text-amber-300" : "border-slate-700 bg-slate-800 text-slate-200"} rounded-xl border px-3 py-2`}
+                              className={`${index === resultPathNames.length - 1 ? "border-amber-400/20 bg-amber-500/10 text-amber-300" : "border-[#5a3a31] bg-[#241618] text-[#e8dcc8]"} rounded-xl border px-3 py-2`}
                             >
                               {step.name}
                             </span>
-                            {index < resultPathNames.length - 1 && <span className="text-slate-500">→</span>}
+                            {index < resultPathNames.length - 1 && <span className="text-[#8f7e69]">â†’</span>}
                           </React.Fragment>
                         ))}
                       </div>
                     </div>
                   ) : (
-                    <div className="text-sm text-slate-400">Nessun path trovato entro i limiti attuali.</div>
+                    <div className="text-sm text-[#bcae9a]">Nessun path trovato entro i limiti attuali.</div>
                   )}
                 </div>
               ) : null}
@@ -739,9 +739,9 @@ export default function TaffuzNumberPage() {
           </section>
 
           <aside className="space-y-6">
-            <section className="rounded-[28px] border border-amber-500/20 bg-slate-900/80 p-5 shadow-xl md:p-6">
+            <section className="rounded-[28px] border border-amber-500/20 bg-[#140c0d]/80 p-5 shadow-xl md:p-6">
               <h3 className="text-lg font-bold text-white">How it works</h3>
-              <div className="mt-4 space-y-3 text-sm leading-6 text-slate-300">
+              <div className="mt-4 space-y-3 text-sm leading-6 text-[#d8cbb7]">
                 <p>
                   <strong className="text-amber-300">{TARGET_NAME}</strong> parte da <strong className="text-amber-300">0</strong>.
                 </p>
@@ -752,14 +752,14 @@ export default function TaffuzNumberPage() {
                   Quando i due fronti si incontrano, hai trovato il path minimo nella rete di match 1v1 ranked.
                 </p>
                 <p>
-                  Questo approccio è più robusto del vecchio crawl singolo perché cerca la connessione direttamente per il player richiesto.
+                  Questo approccio Ã¨ piÃ¹ robusto del vecchio crawl singolo perchÃ© cerca la connessione direttamente per il player richiesto.
                 </p>
               </div>
             </section>
 
-            <section className="rounded-[28px] border border-amber-500/20 bg-slate-900/80 p-5 shadow-xl md:p-6">
+            <section className="rounded-[28px] border border-amber-500/20 bg-[#140c0d]/80 p-5 shadow-xl md:p-6">
               <h3 className="text-lg font-bold text-white">Search limits</h3>
-              <div className="mt-4 space-y-3 text-sm leading-6 text-slate-300">
+              <div className="mt-4 space-y-3 text-sm leading-6 text-[#d8cbb7]">
                 <p>
                   Max visited per side: <strong className="text-amber-300">{MAX_VISITED_PER_SIDE}</strong>
                 </p>
@@ -770,7 +770,7 @@ export default function TaffuzNumberPage() {
                   Max total requests: <strong className="text-amber-300">{MAX_TOTAL_REQUESTS}</strong>
                 </p>
                 <p>
-                  Meeting point: <strong className="text-amber-300">{result.meetingPlayerId ? (result.names[result.meetingPlayerId] ?? `Player ${result.meetingPlayerId}`) : "—"}</strong>
+                  Meeting point: <strong className="text-amber-300">{result.meetingPlayerId ? (result.names[result.meetingPlayerId] ?? `Player ${result.meetingPlayerId}`) : "â€”"}</strong>
                 </p>
                 {result.loading && (
                   <div className="flex items-center gap-2 text-amber-300">
@@ -786,3 +786,4 @@ export default function TaffuzNumberPage() {
     </div>
   );
 }
+

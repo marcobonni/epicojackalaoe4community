@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import TwitchStatusBadge from "@/app/components/home/TwitchStatusBadge";
 import { useTranslations } from "@/app/components/LanguageProvider";
@@ -49,7 +49,7 @@ export default function TwitchSection({
                 {primaryStreamer.name}
               </h3>
 
-              <div className="mt-4 flex flex-wrap items-center gap-3 text-sm text-slate-300/84 sm:text-base">
+              <div className="mt-4 flex flex-wrap items-center gap-3 text-sm text-[#d8cbb7]/84 sm:text-base">
                 <TwitchStatusBadge isLive={Boolean(primaryStreamer.isLive)} />
                 {primaryStreamer.gameName && <span>{primaryStreamer.gameName}</span>}
                 {typeof primaryStreamer.viewerCount === "number" ? (
@@ -93,7 +93,7 @@ export default function TwitchSection({
 
         <div>
           <div className="mb-4">
-            <p className="cinematic-kicker text-slate-300/74">{section.secondaryBadge}</p>
+            <p className="cinematic-kicker text-[#d8cbb7]/74">{section.secondaryBadge}</p>
             <h3 className="cinematic-title mt-3 text-2xl sm:text-[2rem]">
               {section.secondaryTitle}
             </h3>
@@ -113,7 +113,7 @@ export default function TwitchSection({
                         {streamer.name}
                       </h3>
 
-                      <div className="mt-3 flex flex-wrap items-center gap-3 text-sm text-slate-300/84">
+                      <div className="mt-3 flex flex-wrap items-center gap-3 text-sm text-[#d8cbb7]/84">
                         <TwitchStatusBadge isLive={Boolean(streamer.isLive)} />
                         {streamer.gameName && <span>{streamer.gameName}</span>}
                         {typeof streamer.viewerCount === "number" ? (
@@ -148,7 +148,7 @@ export default function TwitchSection({
                 </div>
               ))
             ) : (
-              <div className="cinematic-empty-state p-8 text-sm text-slate-300/74">
+              <div className="cinematic-empty-state p-8 text-sm text-[#d8cbb7]/74">
                 {section.empty}
               </div>
             )}
@@ -158,3 +158,4 @@ export default function TwitchSection({
     </section>
   );
 }
+

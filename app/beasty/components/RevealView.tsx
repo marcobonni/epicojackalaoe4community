@@ -1,4 +1,4 @@
-import ChatPanel from "./ChatPanel";
+﻿import ChatPanel from "./ChatPanel";
 import { getPlayerBadge } from "../utils/getPlayerBadge";
 
 type Room = {
@@ -80,14 +80,14 @@ export default function RevealView({
 }) {
   return (
     <div className="grid gap-6 lg:grid-cols-[1.2fr_1fr]">
-      <div className="relative rounded-3xl border border-emerald-400/20 bg-slate-900/70 p-6 shadow-[0_0_40px_rgba(0,0,0,0.35)] backdrop-blur-sm md:p-8">
-        <div className="mb-6 rounded-3xl border border-emerald-400/20 bg-slate-900/70 p-5 shadow-[0_0_40px_rgba(0,0,0,0.35)] backdrop-blur-sm">
+      <div className="relative rounded-3xl border border-[#d9b265]/20 bg-[#140c0d]/70 p-6 shadow-[0_0_40px_rgba(0,0,0,0.35)] backdrop-blur-sm md:p-8">
+        <div className="mb-6 rounded-3xl border border-[#d9b265]/20 bg-[#140c0d]/70 p-5 shadow-[0_0_40px_rgba(0,0,0,0.35)] backdrop-blur-sm">
           <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-            <div className="text-sm font-semibold uppercase tracking-[0.2em] text-emerald-300">
+            <div className="text-sm font-semibold uppercase tracking-[0.2em] text-[#f0d7a0]">
               {isResumeCountdownActive
                 ? `Ripresa tra ${resumeCountdownSeconds}`
                 : isPaused
-                ? `${pauseLabel} · ${revealTimeLeft} secondi residui`
+                ? `${pauseLabel} Â· ${revealTimeLeft} secondi residui`
                 : `Prossima domanda tra ${revealTimeLeft} secondi`}
             </div>
 
@@ -97,7 +97,7 @@ export default function RevealView({
                 disabled={togglingPause || isResumeCountdownActive}
                 className={`inline-flex items-center justify-center rounded-2xl px-4 py-2 text-sm font-semibold transition disabled:cursor-not-allowed disabled:opacity-60 ${
                   isPaused
-                    ? "border border-emerald-400/40 bg-emerald-500/10 text-emerald-300 hover:bg-emerald-500/15"
+                    ? "border border-[#d9b265]/40 bg-[#d9b265]/10 text-[#f0d7a0] hover:bg-[#d9b265]/15"
                     : "border border-amber-400/40 bg-amber-400/10 text-amber-200 hover:bg-amber-400/15"
                 }`}
               >
@@ -106,10 +106,10 @@ export default function RevealView({
             ) : null}
           </div>
 
-          <div className="mt-4 h-3 w-full overflow-hidden rounded-full bg-slate-800">
+          <div className="mt-4 h-3 w-full overflow-hidden rounded-full bg-[#241618]">
             <div
               className={`h-full rounded-full transition-all ${
-                isPaused ? "bg-amber-400" : "bg-emerald-400"
+                isPaused ? "bg-amber-400" : "bg-[#d9b265]"
               }`}
               style={{ width: `${revealTimerPercent}%` }}
             />
@@ -117,15 +117,15 @@ export default function RevealView({
         </div>
 
         {isPaused ? (
-          <div className="absolute inset-0 z-10 flex items-center justify-center rounded-3xl bg-slate-950/70 backdrop-blur-[2px]">
-            <div className="rounded-3xl border border-amber-400/30 bg-slate-950/90 px-8 py-6 text-center shadow-[0_0_30px_rgba(245,158,11,0.12)]">
+          <div className="absolute inset-0 z-10 flex items-center justify-center rounded-3xl bg-[#0b0708]/70 backdrop-blur-[2px]">
+            <div className="rounded-3xl border border-amber-400/30 bg-[#0b0708]/90 px-8 py-6 text-center shadow-[0_0_30px_rgba(245,158,11,0.12)]">
               <div className="text-sm font-semibold uppercase tracking-[0.3em] text-amber-300">
                 {pauseLabel}
               </div>
               <div className="mt-3 text-3xl font-black text-white">
                 {revealTimeLeft}s
               </div>
-              <p className="mt-2 text-sm text-slate-300">
+              <p className="mt-2 text-sm text-[#d8cbb7]">
                 In attesa che l&apos;host riprenda il quiz.
               </p>
             </div>
@@ -145,12 +145,12 @@ export default function RevealView({
           </div>
         ) : null}
 
-        <div className="rounded-2xl border border-slate-800 bg-slate-950/50 p-5">
+        <div className="rounded-2xl border border-[#3a2621] bg-[#0b0708]/50 p-5">
           <div className="flex flex-wrap items-center gap-3">
-            <p className="text-sm uppercase tracking-[0.2em] text-emerald-300/80">
+            <p className="text-sm uppercase tracking-[0.2em] text-[#f0d7a0]/80">
               {question.category}
             </p>
-            <span className="rounded-full border border-indigo-400/30 bg-indigo-500/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-indigo-300">
+            <span className="rounded-full border border-[#aa221d]/30 bg-[#7f1517]/12 px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-[#f2c7bd]">
               {question.difficulty}
             </span>
             <span className="rounded-full border border-fuchsia-400/30 bg-fuchsia-500/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-fuchsia-300">
@@ -174,8 +174,8 @@ export default function RevealView({
                 key={option}
                 className={`rounded-2xl border p-4 ${
                   index === reveal.correctIndex
-                    ? "border-emerald-400/40 bg-emerald-500/10"
-                    : "border-slate-800 bg-slate-950/50"
+                    ? "border-[#d9b265]/40 bg-[#d9b265]/10"
+                    : "border-[#3a2621] bg-[#0b0708]/50"
                 }`}
               >
                 <div className="flex items-center justify-between gap-4">
@@ -187,7 +187,7 @@ export default function RevealView({
                   </div>
 
                   {index === reveal.correctIndex ? (
-                    <span className="rounded-full border border-emerald-400/30 bg-emerald-500/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-emerald-300">
+                    <span className="rounded-full border border-[#d9b265]/30 bg-[#d9b265]/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-[#f0d7a0]">
                       Corretta
                     </span>
                   ) : null}
@@ -199,14 +199,14 @@ export default function RevealView({
                       <div
                         key={marker.playerId}
                         title={marker.playerName}
-                        className="inline-flex h-9 min-w-9 items-center justify-center rounded-full border border-slate-700 bg-slate-800 px-2 text-xs font-bold text-slate-100"
+                        className="inline-flex h-9 min-w-9 items-center justify-center rounded-full border border-[#4b312a] bg-[#241618] px-2 text-xs font-bold text-[#f5ecdc]"
                       >
                         {getPlayerBadge(marker.playerName)}
                       </div>
                     ))}
                   </div>
                 ) : (
-                  <div className="mt-4 text-sm text-slate-500">
+                  <div className="mt-4 text-sm text-[#8f7e69]">
                     Nessun giocatore ha scelto questa risposta.
                   </div>
                 )}
@@ -217,14 +217,14 @@ export default function RevealView({
       </div>
 
       <div className="space-y-6">
-        <div className="rounded-3xl border border-emerald-400/20 bg-slate-900/70 p-6 shadow-[0_0_40px_rgba(0,0,0,0.35)] backdrop-blur-sm md:p-8">
+        <div className="rounded-3xl border border-[#d9b265]/20 bg-[#140c0d]/70 p-6 shadow-[0_0_40px_rgba(0,0,0,0.35)] backdrop-blur-sm md:p-8">
           <h3 className="text-lg font-bold text-white">Recap round</h3>
 
           <div className="mt-4 space-y-3">
             {roundResults.map((result) => (
               <div
                 key={result.playerId}
-                className="rounded-2xl border border-slate-800 bg-slate-950/50 p-4"
+                className="rounded-2xl border border-[#3a2621] bg-[#0b0708]/50 p-4"
               >
                 <div className="flex items-center justify-between gap-3">
                   <span className="font-semibold text-white">
@@ -233,7 +233,7 @@ export default function RevealView({
                   <span
                     className={`rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] ${
                       result.isCorrect
-                        ? "border border-emerald-400/30 bg-emerald-500/10 text-emerald-300"
+                        ? "border border-[#d9b265]/30 bg-[#d9b265]/10 text-[#f0d7a0]"
                         : "border border-red-400/30 bg-red-500/10 text-red-300"
                     }`}
                   >
@@ -241,7 +241,7 @@ export default function RevealView({
                   </span>
                 </div>
 
-                <div className="mt-3 text-sm text-slate-300">
+                <div className="mt-3 text-sm text-[#d8cbb7]">
                   Risposta:{" "}
                   <span className="font-semibold text-white">
                     {result.selectedAnswer}
@@ -249,14 +249,14 @@ export default function RevealView({
                 </div>
 
                 <div className="mt-2 flex items-center justify-between text-sm">
-                  <span className="text-slate-400">Punti round</span>
+                  <span className="text-[#bcae9a]">Punti round</span>
                   <span className="font-semibold text-amber-300">
                     +{result.pointsEarned}
                   </span>
                 </div>
 
                 <div className="mt-1 flex items-center justify-between text-sm">
-                  <span className="text-slate-400">Totale</span>
+                  <span className="text-[#bcae9a]">Totale</span>
                   <span className="font-semibold text-white">
                     {result.totalScore}
                   </span>
@@ -266,7 +266,7 @@ export default function RevealView({
           </div>
         </div>
 
-        <div className="rounded-3xl border border-emerald-400/20 bg-slate-900/70 p-6 shadow-[0_0_40px_rgba(0,0,0,0.35)] backdrop-blur-sm md:p-8">
+        <div className="rounded-3xl border border-[#d9b265]/20 bg-[#140c0d]/70 p-6 shadow-[0_0_40px_rgba(0,0,0,0.35)] backdrop-blur-sm md:p-8">
           <ChatPanel
             roomCode={room.code}
             currentPlayerName={currentPlayerName}
@@ -279,3 +279,4 @@ export default function RevealView({
     </div>
   );
 }
+

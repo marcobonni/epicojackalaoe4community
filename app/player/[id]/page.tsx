@@ -20,13 +20,13 @@ export async function generateMetadata({
 
   if (!player) {
     return {
-      title: "Giocatore non trovato | Aoe4Community",
+      title: "Giocatore non trovato | AoE4 Italia Legacy",
       description: "Il profilo richiesto non è disponibile.",
     };
   }
 
   return {
-    title: `${player.name} | Dashboard giocatore AoE4`,
+    title: `${player.name} | Dashboard giocatore | AoE4 Italia Legacy`,
     description: `Statistiche, andamento ELO, ranked history e civiltà di ${player.name}.`,
   };
 }
@@ -46,8 +46,8 @@ export default async function PlayerPage({
   }
 
   return (
-    <main className="relative min-h-screen overflow-hidden bg-[#020617] text-white">
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(245,158,11,0.12),transparent_30%),radial-gradient(circle_at_bottom_right,rgba(59,130,246,0.10),transparent_28%)]" />
+    <main className="relative min-h-screen overflow-hidden bg-[#050409] text-white">
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(217,178,101,0.12),transparent_30%),radial-gradient(circle_at_bottom_right,rgba(127,21,23,0.14),transparent_28%)]" />
       <div className="relative">
         <PlayerDashboard player={player} civIcons={civIcons} />
       </div>

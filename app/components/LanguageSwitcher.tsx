@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useTransition } from "react";
 import { useRouter } from "next/navigation";
@@ -60,7 +60,7 @@ export default function LanguageSwitcher() {
               className={`inline-flex items-center gap-2 rounded-full border px-3 py-2 text-xs font-semibold transition ${
                 isActive
                   ? "border-amber-300 bg-amber-400/15 text-amber-100"
-                  : "border-slate-700 bg-slate-900/70 text-slate-300 hover:border-slate-500 hover:text-white"
+                  : "border-[#4b312a] bg-[#140c0d]/70 text-[#d8cbb7] hover:border-[#7a5b4d] hover:text-white"
               } ${isPending ? "cursor-not-allowed opacity-70" : ""}`}
             >
               <span
@@ -75,3 +75,4 @@ export default function LanguageSwitcher() {
     </div>
   );
 }
+

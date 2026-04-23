@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
@@ -43,26 +43,26 @@ const leaderboardTabs = [
   {
     label: "Nord",
     href: "/leaderboard/nord",
-    accent: "from-sky-400/70 via-sky-300/24 to-transparent",
+    accent: "from-[#d9b265]/70 via-[#d9b265]/24 to-transparent",
     activeClass:
-      "border-sky-300/34 border-b-transparent bg-[linear-gradient(180deg,rgba(11,79,116,0.98),rgba(8,39,77,0.98))] text-[#dff5ff] shadow-[0_22px_46px_rgba(14,102,150,0.3)]",
+      "border-[#d9b265]/34 border-b-transparent bg-[linear-gradient(180deg,rgba(94,67,13,0.98),rgba(46,33,8,0.98))] text-[#fff3d4] shadow-[0_22px_46px_rgba(112,76,10,0.3)]",
     inactiveClass:
-      "translate-y-3 border-sky-300/16 bg-[linear-gradient(180deg,rgba(9,64,95,0.76),rgba(8,32,59,0.82))] text-[#a9ddfb] shadow-[0_16px_32px_rgba(10,75,111,0.2)] hover:-translate-y-0.5 hover:border-sky-300/28 hover:bg-[linear-gradient(180deg,rgba(12,78,114,0.84),rgba(8,40,71,0.88))] hover:text-[#e3f7ff]",
+      "translate-y-3 border-[#d9b265]/16 bg-[linear-gradient(180deg,rgba(76,55,10,0.76),rgba(38,28,7,0.82))] text-[#f0d7a0] shadow-[0_16px_32px_rgba(86,61,8,0.2)] hover:-translate-y-0.5 hover:border-[#d9b265]/28 hover:bg-[linear-gradient(180deg,rgba(94,67,13,0.84),rgba(46,33,8,0.88))] hover:text-[#fff4cf]",
     dotClass:
-      "bg-sky-200 shadow-[0_0_14px_rgba(125,211,252,0.8)]",
-    dotInactiveClass: "bg-sky-200/45 group-hover:bg-sky-200/75",
+      "bg-[#f0d7a0] shadow-[0_0_14px_rgba(217,178,101,0.8)]",
+    dotInactiveClass: "bg-[#f0d7a0]/45 group-hover:bg-[#f0d7a0]/75",
   },
   {
     label: "Centro",
     href: "/leaderboard/centro",
-    accent: "from-slate-200/68 via-slate-100/18 to-transparent",
+    accent: "from-[#d8c4a6]/68 via-[#f5ecdc]/18 to-transparent",
     activeClass:
-      "border-slate-200/34 border-b-transparent bg-[linear-gradient(180deg,rgba(89,100,123,0.98),rgba(45,54,72,0.98))] text-[#f4f8ff] shadow-[0_22px_46px_rgba(74,86,109,0.28)]",
+      "border-[#d8cbb7]/34 border-b-transparent bg-[linear-gradient(180deg,rgba(131,100,72,0.98),rgba(64,42,28,0.98))] text-[#f8edd7] shadow-[0_22px_46px_rgba(92,63,34,0.28)]",
     inactiveClass:
-      "translate-y-3 border-slate-200/16 bg-[linear-gradient(180deg,rgba(70,80,102,0.76),rgba(37,44,59,0.84))] text-[#d7deeb] shadow-[0_16px_32px_rgba(64,74,93,0.18)] hover:-translate-y-0.5 hover:border-slate-200/28 hover:bg-[linear-gradient(180deg,rgba(88,99,121,0.84),rgba(44,53,71,0.9))] hover:text-white",
+      "translate-y-3 border-[#d8cbb7]/16 bg-[linear-gradient(180deg,rgba(109,81,58,0.76),rgba(58,38,27,0.84))] text-[#eadac0] shadow-[0_16px_32px_rgba(86,60,39,0.18)] hover:-translate-y-0.5 hover:border-[#d8cbb7]/28 hover:bg-[linear-gradient(180deg,rgba(130,96,69,0.84),rgba(69,46,32,0.9))] hover:text-white",
     dotClass:
-      "bg-slate-100 shadow-[0_0_14px_rgba(226,232,240,0.72)]",
-    dotInactiveClass: "bg-slate-100/45 group-hover:bg-slate-100/75",
+      "bg-[#f0c86e] shadow-[0_0_14px_rgba(240,200,110,0.72)]",
+    dotInactiveClass: "bg-[#f0c86e]/45 group-hover:bg-[#f0c86e]/75",
   },
   {
     label: "Sud",
@@ -79,22 +79,22 @@ const leaderboardTabs = [
   {
     label: "Elvetica",
     href: "/leaderboard/switzerland",
-    accent: "from-emerald-400/70 via-emerald-300/24 to-transparent",
+    accent: "from-[#aa221d]/70 via-[#d9b265]/24 to-transparent",
     activeClass:
-      "border-emerald-300/34 border-b-transparent bg-[linear-gradient(180deg,rgba(17,101,86,0.98),rgba(9,58,49,0.98))] text-[#ddfff6] shadow-[0_22px_46px_rgba(17,119,101,0.28)]",
+      "border-[#aa221d]/34 border-b-transparent bg-[linear-gradient(180deg,rgba(127,21,23,0.98),rgba(70,12,14,0.98))] text-[#fde8e1] shadow-[0_22px_46px_rgba(127,21,23,0.28)]",
     inactiveClass:
-      "translate-y-3 border-emerald-300/16 bg-[linear-gradient(180deg,rgba(13,79,67,0.76),rgba(8,45,39,0.84))] text-[#a8eadc] shadow-[0_16px_32px_rgba(13,90,76,0.18)] hover:-translate-y-0.5 hover:border-emerald-300/28 hover:bg-[linear-gradient(180deg,rgba(16,98,82,0.84),rgba(8,52,44,0.88))] hover:text-[#ebfff8]",
+      "translate-y-3 border-[#aa221d]/16 bg-[linear-gradient(180deg,rgba(103,18,20,0.78),rgba(58,11,13,0.84))] text-[#f2c7bd] shadow-[0_16px_32px_rgba(103,18,20,0.18)] hover:-translate-y-0.5 hover:border-[#aa221d]/28 hover:bg-[linear-gradient(180deg,rgba(127,21,23,0.86),rgba(70,12,14,0.9))] hover:text-[#fff0ec]",
     dotClass:
-      "bg-emerald-200 shadow-[0_0_14px_rgba(167,243,208,0.78)]",
-    dotInactiveClass: "bg-emerald-200/45 group-hover:bg-emerald-200/75",
+      "bg-[#f2c7bd] shadow-[0_0_14px_rgba(242,199,189,0.78)]",
+    dotInactiveClass: "bg-[#f2c7bd]/45 group-hover:bg-[#f2c7bd]/75",
   },
 ] as const;
 
 function getRankBadgeClass(position: number) {
-  if (position === 1) return "bg-[#f0b90b] text-[#07122d]";
-  if (position === 2) return "bg-[#c7d2e0] text-[#07122d]";
+  if (position === 1) return "bg-[#f0b90b] text-[#1a0d0c]";
+  if (position === 2) return "bg-[#d8c4a6] text-[#1a0d0c]";
   if (position === 3) return "bg-[#b97745] text-white";
-  return "bg-[#111d3a] text-white";
+  return "bg-[#1c1013] text-white";
 }
 
 function formatRating(
@@ -112,11 +112,11 @@ function formatRating(
   if (mode === "4v4") {
     if (position === 1) className = "text-red-400";
     else if (position === 2) className = "text-[#ffd54a]";
-    else if (position === 3) className = "text-[#c7d2e0]";
+    else if (position === 3) className = "text-[#d8c4a6]";
     else if (position === 4) className = "text-[#b97745]";
   } else {
     if (position === 1) className = "text-[#ffd54a]";
-    else if (position === 2) className = "text-[#c7d2e0]";
+    else if (position === 2) className = "text-[#d8c4a6]";
     else if (position === 3) className = "text-[#b97745]";
   }
 
@@ -316,12 +316,12 @@ export default function LeaderboardClient({
 
   function getSortArrow(key: SortKey) {
     if (sortKey !== key) {
-      return <span className="ml-2 text-[#4c5875]">↕</span>;
+      return <span className="ml-2 text-[#8f7e69]">â†•</span>;
     }
 
     return (
       <span className="ml-2 text-[#f0b90b]">
-        {sortDirection === "asc" ? "↑" : "↓"}
+        {sortDirection === "asc" ? "â†‘" : "â†“"}
       </span>
     );
   }
@@ -426,11 +426,11 @@ export default function LeaderboardClient({
             alt="background"
             className="h-full w-full object-cover brightness-200 saturate-200"
           />
-          <div className="absolute inset-0 bg-[#020b26]/80" />
+          <div className="absolute inset-0 bg-[#050409]/82" />
         </div>
       )}
 
-      {!activeBackground && <div className="absolute inset-0 bg-[#020b26]" />}
+      {!activeBackground && <div className="absolute inset-0 bg-[#050409]" />}
 
       <section className="relative z-10 mx-auto max-w-[1800px] px-4 py-10 sm:px-6 sm:py-12 lg:px-8 lg:py-16">
         <div className="mb-6 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
@@ -446,7 +446,7 @@ export default function LeaderboardClient({
             <div>
               <div className="flex items-center gap-3">
                 <div className="h-px w-10 bg-gradient-to-r from-amber-200/60 to-transparent" />
-                <div className="text-sm font-semibold uppercase tracking-[0.24em] text-[#94a4c5]">
+                <div className="text-sm font-semibold uppercase tracking-[0.24em] text-[#c6b498]">
                   {eyebrow}
                 </div>
               </div>
@@ -458,9 +458,9 @@ export default function LeaderboardClient({
 
           <Link
             href="/"
-            className="inline-flex items-center justify-center rounded-2xl border border-sky-300/28 bg-[linear-gradient(135deg,rgba(16,90,132,0.96),rgba(10,48,89,0.96))] px-5 py-3 text-sm font-semibold text-[#e6f7ff] shadow-[0_14px_36px_rgba(9,74,110,0.24)] transition hover:-translate-y-0.5 hover:border-sky-200/40 hover:bg-[linear-gradient(135deg,rgba(20,109,158,0.98),rgba(11,58,104,0.98))] hover:text-white"
+            className="inline-flex items-center justify-center rounded-2xl border border-[#aa221d]/28 bg-[linear-gradient(135deg,rgba(127,21,23,0.96),rgba(70,12,14,0.96))] px-5 py-3 text-sm font-semibold text-[#fde8e1] shadow-[0_14px_36px_rgba(103,18,20,0.24)] transition hover:-translate-y-0.5 hover:border-[#d04b44]/40 hover:bg-[linear-gradient(135deg,rgba(145,27,30,0.98),rgba(80,14,16,0.98))] hover:text-white"
           >
-            ← Torna alla home
+            â† Torna alla home
           </Link>
         </div>
 
@@ -489,7 +489,7 @@ export default function LeaderboardClient({
                     className={`pointer-events-none absolute inset-x-4 top-0 h-[2px] bg-gradient-to-r ${tab.accent}`}
                   />
                   {isActive ? (
-                    <span className="pointer-events-none absolute inset-x-4 bottom-[-1px] h-[3px] rounded-full bg-[#0f1a36]" />
+                    <span className="pointer-events-none absolute inset-x-4 bottom-[-1px] h-[3px] rounded-full bg-[#1a0d0c]" />
                   ) : null}
                   <span
                     className={`relative h-2.5 w-2.5 rounded-full transition ${
@@ -503,10 +503,10 @@ export default function LeaderboardClient({
           </div>
 
           <div className="relative">
-            <div className="pointer-events-none absolute inset-x-8 top-5 h-full rounded-[32px] border border-white/[0.04] bg-[linear-gradient(180deg,rgba(21,31,58,0.68),rgba(10,18,38,0.5))]" />
-            <div className="pointer-events-none absolute inset-x-3 top-2.5 h-full rounded-[32px] border border-white/[0.05] bg-[linear-gradient(180deg,rgba(17,27,52,0.84),rgba(10,18,39,0.72))]" />
+            <div className="pointer-events-none absolute inset-x-8 top-5 h-full rounded-[32px] border border-white/[0.04] bg-[linear-gradient(180deg,rgba(26,14,16,0.68),rgba(12,7,9,0.5))]" />
+            <div className="pointer-events-none absolute inset-x-3 top-2.5 h-full rounded-[32px] border border-white/[0.05] bg-[linear-gradient(180deg,rgba(21,12,15,0.84),rgba(11,7,9,0.72))]" />
 
-            <div className="relative overflow-hidden rounded-[30px] border border-white/10 bg-[linear-gradient(180deg,rgba(20,31,60,0.98),rgba(10,18,40,0.98))] p-4 shadow-[0_20px_60px_rgba(0,0,0,0.38)] sm:p-6 md:p-8">
+            <div className="relative overflow-hidden rounded-[30px] border border-white/10 bg-[linear-gradient(180deg,rgba(20,11,14,0.98),rgba(10,6,8,0.98))] p-4 shadow-[0_20px_60px_rgba(0,0,0,0.38)] sm:p-6 md:p-8">
               <div className="pointer-events-none absolute inset-x-0 top-0 h-24 bg-[linear-gradient(180deg,rgba(255,255,255,0.04),transparent)]" />
               <div className="pointer-events-none absolute inset-x-8 top-0 h-px bg-gradient-to-r from-transparent via-amber-200/34 to-transparent" />
 
@@ -522,7 +522,7 @@ export default function LeaderboardClient({
               return (
                 <div
                   key={player.profile_id}
-                  className="rounded-2xl bg-[#07122d] px-4 py-3 border border-white/5"
+                  className="rounded-2xl border border-white/5 bg-[#1a0d0c] px-4 py-3"
                 >
                   <div className="flex items-center gap-3">
                     <div
@@ -541,7 +541,7 @@ export default function LeaderboardClient({
                       <div className="truncate font-semibold text-white text-sm">
                         {player.name}
                       </div>
-                      <div className="text-xs text-[#8d99b3]">
+                      <div className="text-xs text-[#bcae9a]">
                         Rank Globale: {player.rank}
                       </div>
                     </div>
@@ -566,19 +566,19 @@ export default function LeaderboardClient({
 
                   <div className="mt-2 grid grid-cols-4 gap-1 text-center text-xs">
                     <div>
-                      <div className="text-[#7f8aa3] font-semibold">1v1</div>
+                      <div className="text-[#a58e69] font-semibold">1v1</div>
                       <div>{formatRating(player.rating1v1, pos1v1, "1v1", true)}</div>
                     </div>
                     <div>
-                      <div className="text-[#7f8aa3] font-semibold">2v2</div>
+                      <div className="text-[#a58e69] font-semibold">2v2</div>
                       <div>{formatRating(player.rating2v2, pos2v2, "2v2", true)}</div>
                     </div>
                     <div>
-                      <div className="text-[#7f8aa3] font-semibold">3v3</div>
+                      <div className="text-[#a58e69] font-semibold">3v3</div>
                       <div>{formatRating(player.rating3v3, pos3v3, "3v3", true)}</div>
                     </div>
                     <div>
-                      <div className="text-[#7f8aa3] font-semibold">4v4</div>
+                      <div className="text-[#a58e69] font-semibold">4v4</div>
                       <div>{formatRating(player.rating4v4, pos4v4, "4v4", true)}</div>
                     </div>
                   </div>
@@ -608,7 +608,7 @@ export default function LeaderboardClient({
                       href={`https://aoe4world.com/players/${player.profile_id}`}
                       target="_blank"
                       rel="noreferrer"
-                      className="inline-flex items-center justify-center rounded-xl border border-[#f0b90b]/25 bg-[#f0b90b]/10 px-3 py-1.5 text-xs font-semibold text-[#f7cf59] transition hover:bg-[#f0b90b]/20"
+                    className="inline-flex items-center justify-center rounded-xl border border-[#d9b265]/25 bg-[#d9b265]/10 px-3 py-1.5 text-xs font-semibold text-[#f8edd7] transition hover:bg-[#d9b265]/20"
                     >
                       View
                     </a>
@@ -622,7 +622,7 @@ export default function LeaderboardClient({
           <div className="relative hidden md:block overflow-x-auto">
             <table className="w-full min-w-[1360px] border-separate border-spacing-y-3">
               <thead>
-                <tr className="text-left text-sm uppercase tracking-[0.22em] text-[#7f8aa3]">
+                <tr className="text-left text-sm uppercase tracking-[0.22em] text-[#a58e69]">
                   <th className="px-3 py-2">Pos IT</th>
 
                   <th className="px-3 py-2">
@@ -704,7 +704,7 @@ export default function LeaderboardClient({
                   );
 
                   return (
-                    <tr key={player.profile_id} className="bg-[#07122d]">
+                    <tr key={player.profile_id} className="bg-[#1a0d0c]">
                       <td className="px-3 py-4">
                         <div
                           className={`inline-flex h-10 w-10 items-center justify-center rounded-xl font-bold ${getRankBadgeClass(
@@ -730,7 +730,7 @@ export default function LeaderboardClient({
                             <div className="truncate font-semibold text-white">
                               {player.name}
                             </div>
-                            <div className="mt-1 text-sm text-[#8d99b3]">
+                            <div className="mt-1 text-sm text-[#bcae9a]">
                               Profile ID: {player.profile_id}
                             </div>
                           </div>
@@ -809,11 +809,11 @@ export default function LeaderboardClient({
                       </td>
 
                       <td className="px-3 py-4">
-                        <a
+                    <a
                           href={`https://aoe4community.vercel.app/player/${player.profile_id}`}
                           target="_blank"
                           rel="noreferrer"
-                          className="inline-flex min-w-[76px] items-center justify-center rounded-xl border border-[#f0b90b]/25 bg-[#f0b90b]/10 px-3 py-2 text-sm font-semibold text-[#f7cf59] transition hover:-translate-y-0.5 hover:border-[#f0b90b]/40 hover:bg-[#f0b90b]/20 hover:text-[#ffe082]"
+                          className="inline-flex min-w-[76px] items-center justify-center rounded-xl border border-[#d9b265]/25 bg-[#d9b265]/10 px-3 py-2 text-sm font-semibold text-[#f8edd7] transition hover:-translate-y-0.5 hover:border-[#f0c86e]/40 hover:bg-[#d9b265]/20 hover:text-[#fff3d4]"
                         >
                           View
                         </a>
@@ -826,17 +826,17 @@ export default function LeaderboardClient({
           </div>
           {/* End desktop table view */}
 
-          <div className="relative mt-8 rounded-[24px] border border-white/8 bg-[linear-gradient(180deg,rgba(12,20,48,0.96),rgba(8,15,37,0.96))] px-5 py-4 shadow-[0_14px_36px_rgba(0,0,0,0.28)]">
+          <div className="relative mt-8 rounded-[24px] border border-white/8 bg-[linear-gradient(180deg,rgba(17,10,13,0.96),rgba(8,5,7,0.96))] px-5 py-4 shadow-[0_14px_36px_rgba(0,0,0,0.28)]">
             <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
               <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-3">
                 <Link
                   href="/"
-                  className="inline-flex h-11 items-center justify-center rounded-xl border border-sky-300/28 bg-[linear-gradient(135deg,rgba(16,90,132,0.96),rgba(10,48,89,0.96))] px-4 text-sm font-semibold text-[#e6f7ff] shadow-[0_12px_28px_rgba(9,74,110,0.2)] transition hover:-translate-y-0.5 hover:border-sky-200/40 hover:bg-[linear-gradient(135deg,rgba(20,109,158,0.98),rgba(11,58,104,0.98))] hover:text-white"
+                  className="inline-flex h-11 items-center justify-center rounded-xl border border-[#aa221d]/28 bg-[linear-gradient(135deg,rgba(127,21,23,0.96),rgba(70,12,14,0.96))] px-4 text-sm font-semibold text-[#fde8e1] shadow-[0_12px_28px_rgba(103,18,20,0.2)] transition hover:-translate-y-0.5 hover:border-[#d04b44]/40 hover:bg-[linear-gradient(135deg,rgba(145,27,30,0.98),rgba(80,14,16,0.98))] hover:text-white"
                 >
-                  ← Home
+                  â† Home
                 </Link>
 
-                <div className="inline-flex h-11 items-center gap-2 rounded-xl border border-violet-300/18 bg-[linear-gradient(135deg,rgba(46,34,92,0.88),rgba(20,30,70,0.88))] px-3 shadow-[0_12px_28px_rgba(34,28,81,0.18)]">
+                <div className="inline-flex h-11 items-center gap-2 rounded-xl border border-[#d9b265]/18 bg-[linear-gradient(135deg,rgba(42,24,17,0.88),rgba(20,12,10,0.88))] px-3 shadow-[0_12px_28px_rgba(42,24,17,0.18)]">
                   <span className="text-sm font-semibold text-[#b8c7e6]">
                     Pagina
                   </span>
@@ -856,7 +856,7 @@ export default function LeaderboardClient({
                         if (!Number.isNaN(page) && page > 0) goToPage(page);
                       }
                     }}
-                    className="h-8 w-14 rounded-lg border border-white/10 bg-[#07122d] px-2 text-center text-sm font-bold text-white outline-none transition focus:border-[#4f7edc] focus:bg-[#0a1733]"
+                    className="h-8 w-14 rounded-lg border border-white/10 bg-[#12090b] px-2 text-center text-sm font-bold text-white outline-none transition focus:border-[#d9b265] focus:bg-[#1a0d0c]"
                     placeholder="1"
                   />
 
@@ -878,7 +878,7 @@ export default function LeaderboardClient({
                   type="button"
                   onClick={goToPreviousPage}
                   disabled={currentPage === 1}
-                  className="h-11 rounded-xl border border-rose-300/24 bg-[linear-gradient(135deg,rgba(120,28,67,0.96),rgba(71,18,42,0.96))] px-5 text-sm font-semibold text-[#ffe6ef] shadow-[0_12px_28px_rgba(107,23,60,0.18)] transition hover:-translate-y-0.5 hover:border-rose-200/34 hover:bg-[linear-gradient(135deg,rgba(141,33,78,0.98),rgba(84,20,50,0.98))] disabled:cursor-not-allowed disabled:opacity-40"
+                  className="h-11 rounded-xl border border-[#aa221d]/24 bg-[linear-gradient(135deg,rgba(120,28,30,0.96),rgba(71,18,20,0.96))] px-5 text-sm font-semibold text-[#ffe6ef] shadow-[0_12px_28px_rgba(107,23,24,0.18)] transition hover:-translate-y-0.5 hover:border-[#d04b44]/34 hover:bg-[linear-gradient(135deg,rgba(141,33,36,0.98),rgba(84,20,22,0.98))] disabled:cursor-not-allowed disabled:opacity-40"
                 >
                   Precedente
                 </button>
@@ -887,7 +887,7 @@ export default function LeaderboardClient({
                   type="button"
                   onClick={goToNextPage}
                   disabled={!hasNextPage}
-                  className="h-11 rounded-xl border border-emerald-300/24 bg-[linear-gradient(135deg,rgba(18,110,89,0.96),rgba(10,67,55,0.96))] px-5 text-sm font-semibold text-[#e8fff7] shadow-[0_12px_28px_rgba(12,94,76,0.2)] transition hover:-translate-y-0.5 hover:border-emerald-200/34 hover:bg-[linear-gradient(135deg,rgba(23,132,107,0.98),rgba(11,82,66,0.98))] disabled:cursor-not-allowed disabled:opacity-40"
+                  className="h-11 rounded-xl border border-[#d9b265]/24 bg-[linear-gradient(135deg,rgba(185,133,95,0.96),rgba(120,82,52,0.96))] px-5 text-sm font-semibold text-[#fff3d4] shadow-[0_12px_28px_rgba(120,82,52,0.2)] transition hover:-translate-y-0.5 hover:border-[#f0c86e]/34 hover:bg-[linear-gradient(135deg,rgba(205,147,104,0.98),rgba(142,97,61,0.98))] disabled:cursor-not-allowed disabled:opacity-40"
                 >
                   Successiva
                 </button>
@@ -901,3 +901,4 @@ export default function LeaderboardClient({
     </main>
   );
 }
+

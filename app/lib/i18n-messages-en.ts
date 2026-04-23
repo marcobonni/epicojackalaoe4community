@@ -2,15 +2,15 @@ import type { Dictionary } from "@/app/lib/i18n-schema";
 
 export const enMessages: Dictionary = {
   metadata: {
-    siteTitle: "Aoe4 Community - Rankings, Quiz and Matchmaking",
+    siteTitle: "AoE4 Italia Legacy - Rankings, Quiz and Matchmaking",
     siteDescription:
-      "An Age of Empires 4 community with rankings, competitive quiz content and balanced matchmaking.",
-    homeTitle: "Aoe4 Community - Rankings, Streams and Quiz",
+      "AoE4 Italia Legacy is an Age of Empires 4 community with rankings, competitive quiz content and balanced matchmaking.",
+    homeTitle: "AoE4 Italia Legacy - Rankings, Streams and Quiz",
     homeDescription:
-      "Join the AoE4 community for rankings, quiz content and automatic matchmaking.",
-    loginTitle: "Tournament Login | AoE4 Community",
-    registerTitle: "Tournament Registration | AoE4 Community",
-    tournamentsTitle: "Tournaments | AoE4 Community",
+      "Join AoE4 Italia Legacy for rankings, quiz content and automatic matchmaking.",
+    loginTitle: "Tournament Login | AoE4 Italia Legacy",
+    registerTitle: "Tournament Registration | AoE4 Italia Legacy",
+    tournamentsTitle: "Tournaments | AoE4 Italia Legacy",
   },
   languageSwitcher: { label: "Site language", shortLabel: "Language" },
   common: {
@@ -24,11 +24,11 @@ export const enMessages: Dictionary = {
   },
   home: {
     hero: {
-      badge: "Age of Empires Community Discord",
+      badge: "AoE4 Italia Legacy",
       title: "Your Discord community for Age of Empires every single day",
       description:
         "A server built for Age of Empires fans: games, events, tournaments, strategy advice and a real community to queue up with.",
-      statsHeading: "AoE4 Community Hub",
+      statsHeading: "AoE4 Italia Legacy",
       ctaJoin: "Join Discord",
       ctaItalianLeaderboard: "Italian leaderboard",
       ctaNorthLeaderboard: "North leaderboard",

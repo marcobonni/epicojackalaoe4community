@@ -134,9 +134,6 @@ hover:bg-[linear-gradient(180deg,#f7d892,#efc15f)]
 hover:shadow-[0_24px_60px_rgba(217,178,101,0.5)]"
               >
                 <span>{hero.ctaJoin}</span>
-                <span className="ml-2.5 text-base transition duration-300 group-hover:translate-x-1">
-                  â†’
-                </span>
               </LoadingLink>
 
               <LoadingLink
@@ -162,12 +159,11 @@ hover:shadow-[0_24px_60px_rgba(217,178,101,0.5)]"
                   className={`group flex min-h-[clamp(2.8rem,2vw,3.05rem)] items-center justify-between rounded-[1.05rem] border px-[clamp(0.78rem,0.75vw,0.92rem)] py-[clamp(0.62rem,0.65vw,0.76rem)] text-[clamp(0.7rem,0.1vw+0.67rem,0.78rem)] font-semibold shadow-[inset_0_1px_0_rgba(255,255,255,0.05)] backdrop-blur-sm transition duration-300 hover:-translate-y-0.5 ${item.accent}`}
                 >
                   <span className="max-w-[8rem] leading-[0.95rem]">{item.label}</span>
-                  <span className="ml-3 flex items-center gap-2">
-                    {item.badge ? <NewBadge /> : null}
-                    <span className="text-[0.82rem] text-white/70 transition duration-300 group-hover:translate-x-1">
-                      â†’
+                  {item.badge ? (
+                    <span className="ml-3 flex items-center gap-2">
+                      <NewBadge />
                     </span>
-                  </span>
+                  ) : null}
                 </LoadingLink>
               ))}
             </div>

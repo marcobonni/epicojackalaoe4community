@@ -10,7 +10,7 @@ import {
 import { getPatchArchive, getPatchDetail } from "@/app/patch-notes/patchNotesApi";
 import {
   normalizePatchDisplayLine,
-  translatePatchLine,
+  translatePatchLines,
 } from "@/app/patch-notes/patchNotesTranslations";
 
 export const metadata: Metadata = {
@@ -112,6 +112,17 @@ export default async function PatchNotesPage({ searchParams }: PageProps) {
   const nerfCount = patchDetail.civilizations.filter((entry) => entry.state === "nerf").length;
   const reworkCount = patchDetail.civilizations.filter((entry) => entry.state === "rework").length;
   const noMentionCount = patchDetail.civilizations.filter((entry) => entry.state === "none").length;
+  const patchLinesToTranslate = [
+    ...patchDetail.generalChanges,
+    ...patchDetail.civilizations.flatMap((entry) => entry.officialText),
+  ];
+  const translatedPatchLines = await translatePatchLines(patchLinesToTranslate, "it");
+  const translationByLine = new Map(
+    patchLinesToTranslate.map((line, index) => [
+      normalizePatchDisplayLine(line),
+      translatedPatchLines[index],
+    ])
+  );
 
   return (
     <main className="min-h-screen overflow-hidden bg-[#050409] text-[#f5ecdc]">
@@ -312,7 +323,10 @@ export default async function PatchNotesPage({ searchParams }: PageProps) {
                   {patchDetail.generalChanges.map((line, index) => (
                     <li key={`general-italian-${index}`} className="flex gap-3">
                       <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-emerald-200/90" />
-                      <span>{translatePatchLine(line, "it")}</span>
+                      <span>
+                        {translationByLine.get(normalizePatchDisplayLine(line)) ??
+                          normalizePatchDisplayLine(line)}
+                      </span>
                     </li>
                   ))}
                 </ul>
@@ -446,7 +460,10 @@ export default async function PatchNotesPage({ searchParams }: PageProps) {
                         {entry.officialText.map((line, index) => (
                           <li key={`${entry.id}-italian-${index}`} className="flex gap-3">
                             <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-emerald-200/90" />
-                            <span>{translatePatchLine(line, "it")}</span>
+                            <span>
+                              {translationByLine.get(normalizePatchDisplayLine(line)) ??
+                                normalizePatchDisplayLine(line)}
+                            </span>
                           </li>
                         ))}
                       </ul>

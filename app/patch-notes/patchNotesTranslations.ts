@@ -5,6 +5,9 @@ type RegexRule = {
   replace: string | ((...args: string[]) => string);
 };
 
+const googleTranslateEndpoint = "https://translate.googleapis.com/translate_a/single";
+const remoteTranslationChunkSize = 2800;
+
 const exactLineTranslations: Partial<Record<Locale, Record<string, string>>> = {
   it: {
     "This civilization does not have dedicated notes in this patch.":
@@ -251,6 +254,127 @@ export function translatePatchLine(line: string, locale: Locale) {
   return normalizedLine;
 }
 
+export async function translatePatchLines(lines: string[], locale: Locale) {
+  const normalizedLines = lines.map(normalizeLine);
+
+  if (locale !== "it") {
+    return normalizedLines.map((line) => translatePatchLine(line, locale));
+  }
+
+  const uniqueLines = [...new Set(normalizedLines)];
+  const translatedByLine = new Map<string, string>();
+  const linesForRemoteTranslation: string[] = [];
+
+  uniqueLines.forEach((line) => {
+    const exactMatch = exactLineTranslations.it?.[line];
+    if (exactMatch) {
+      translatedByLine.set(line, exactMatch);
+      return;
+    }
+
+    linesForRemoteTranslation.push(line);
+  });
+
+  const remoteTranslations = await translateItalianLinesRemotely(linesForRemoteTranslation);
+
+  linesForRemoteTranslation.forEach((line, index) => {
+    translatedByLine.set(line, remoteTranslations[index] ?? translateItalianLine(line));
+  });
+
+  return normalizedLines.map((line) => translatedByLine.get(line) ?? translateItalianLine(line));
+}
+
 export function normalizePatchDisplayLine(line: string) {
   return normalizeLine(line);
+}
+
+async function translateItalianLinesRemotely(lines: string[]) {
+  if (lines.length === 0) {
+    return [];
+  }
+
+  const chunks = chunkLinesForRemoteTranslation(lines);
+  const translatedChunks = await Promise.all(
+    chunks.map(async (chunk) => {
+      try {
+        return await translateItalianChunkRemotely(chunk);
+      } catch {
+        return chunk.map(translateItalianLine);
+      }
+    })
+  );
+
+  return translatedChunks.flat();
+}
+
+function chunkLinesForRemoteTranslation(lines: string[]) {
+  const chunks: string[][] = [];
+  let currentChunk: string[] = [];
+  let currentLength = 0;
+
+  lines.forEach((line) => {
+    const lineLength = line.length + 1;
+
+    if (currentChunk.length > 0 && currentLength + lineLength > remoteTranslationChunkSize) {
+      chunks.push(currentChunk);
+      currentChunk = [];
+      currentLength = 0;
+    }
+
+    currentChunk.push(line);
+    currentLength += lineLength;
+  });
+
+  if (currentChunk.length > 0) {
+    chunks.push(currentChunk);
+  }
+
+  return chunks;
+}
+
+async function translateItalianChunkRemotely(lines: string[]) {
+  const params = new URLSearchParams({
+    client: "gtx",
+    sl: "en",
+    tl: "it",
+    dt: "t",
+    q: lines.join("\n"),
+  });
+
+  const response = await fetch(`${googleTranslateEndpoint}?${params.toString()}`, {
+    next: { revalidate: 60 * 60 * 24 * 7 },
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to translate patch notes.");
+  }
+
+  const payload = (await response.json()) as unknown;
+  const translatedText = extractGoogleTranslatedText(payload);
+  const translatedLines = translatedText
+    .split("\n")
+    .map((line) => line.trim())
+    .filter(Boolean);
+
+  if (translatedLines.length !== lines.length) {
+    return lines.map(translateItalianLine);
+  }
+
+  return translatedLines;
+}
+
+function extractGoogleTranslatedText(payload: unknown) {
+  if (!Array.isArray(payload) || !Array.isArray(payload[0])) {
+    throw new Error("Unexpected translation response.");
+  }
+
+  return payload[0]
+    .map((entry) => {
+      if (!Array.isArray(entry) || typeof entry[0] !== "string") {
+        return "";
+      }
+
+      return entry[0];
+    })
+    .join("");
 }

@@ -9,6 +9,11 @@ const exactLineTranslations: Partial<Record<Locale, Record<string, string>>> = {
   it: {
     "This civilization does not have dedicated notes in this patch.":
       "Questa civilta non ha note dedicate in questa patch.",
+    "Now has a new widget to indicate progression towards the next tier.":
+      "Ora ha un nuovo indicatore per mostrare l'avanzamento verso il livello successivo.",
+    "Ongoing...": "In corso...",
+    "Ongoingâ€¦": "In corso...",
+    "Ongoing…": "In corso...",
   },
   fr: {
     "This civilization does not have dedicated notes in this patch.":
@@ -38,6 +43,7 @@ const italianLiteralRules: Array<[RegExp, string]> = [
   [/\bImperial Age resources\b/gi, "risorse dell'Eta Imperiale"],
   [/\bon kill effect duration\b/gi, "durata dell'effetto all'uccisione"],
   [/\bbuild time\b/gi, "tempo di costruzione"],
+  [/\bproduction time\b/gi, "tempo di produzione"],
   [/\btrain time\b/gi, "tempo di addestramento"],
   [/\bresearch time\b/gi, "tempo di ricerca"],
   [/\bmovement speed\b/gi, "velocita di movimento"],
@@ -46,6 +52,7 @@ const italianLiteralRules: Array<[RegExp, string]> = [
   [/\breload time\b/gi, "tempo di ricarica"],
   [/\bgather rate\b/gi, "velocita di raccolta"],
   [/\bresource trickle\b/gi, "flusso di risorse"],
+  [/\bbatch size\b/gi, "dimensione del gruppo"],
   [/\bresource\b/gi, "risorsa"],
   [/\bresources\b/gi, "risorse"],
   [/\bhealth\b/gi, "salute"],
@@ -83,6 +90,32 @@ const italianLiteralRules: Array<[RegExp, string]> = [
   [/\btrader\b/gi, "mercante"],
   [/\btraders\b/gi, "mercanti"],
   [/\bmounted\b/gi, "a cavallo"],
+  [/\bGolden Age\b/g, "Eta dell'Oro"],
+  [/\bGrand Bazaar\b/g, "Gran Bazar"],
+  [/\bSpice Roads\b/g, "Vie delle Spezie"],
+  [/\bMarket\b/g, "Mercato"],
+  [/\bnext tier\b/gi, "livello successivo"],
+  [/\bprogression\b/gi, "avanzamento"],
+  [/\bplayer\b/gi, "giocatore"],
+  [/\bcollecting\b/gi, "raccogliere"],
+  [/\bcollected\b/gi, "raccolto"],
+  [/\bcollect\b/gi, "raccogliere"],
+  [/\busing\b/gi, "usando"],
+  [/\bif\b/gi, "se"],
+  [/\balso\b/gi, "anche"],
+  [/\bbeen researched\b/gi, "stata ricercata"],
+  [/\bhad\b/gi, "era"],
+  [/\bthe\b/gi, "il"],
+  [/\ba new\b/gi, "un nuovo"],
+  [/\bincrease\b/gi, "aumentare"],
+  [/\bincreases\b/gi, "aumenta"],
+  [/\bincreased\b/gi, "aumentato"],
+  [/\breduce\b/gi, "ridurre"],
+  [/\breduces\b/gi, "riduce"],
+  [/\breduced\b/gi, "ridotto"],
+  [/\bdecrease\b/gi, "ridurre"],
+  [/\bdecreases\b/gi, "riduce"],
+  [/\bdecreased\b/gi, "ridotto"],
 ];
 
 const italianRegexRules: RegexRule[] = [
@@ -97,6 +130,10 @@ const italianRegexRules: RegexRule[] = [
   {
     pattern: /^Fixed a bug where (.+)\.$/i,
     replace: (_full, rest) => `Corretto un bug per cui ${lowercaseFirst(rest)}.`,
+  },
+  {
+    pattern: /^Fixed a bug which prevented the player from (.+)\.$/i,
+    replace: (_full, rest) => `Corretto un bug che impediva al giocatore di ${lowercaseFirst(rest)}.`,
   },
   {
     pattern: /^(.+?) increased from (.+?) → (.+?)\.$/i,
@@ -173,7 +210,10 @@ function translateItalianTerms(value: string) {
     .replace(/\blower than intended\b/gi, "piu basso del previsto")
     .replace(/\bit was possible to\b/gi, "era possibile")
     .replace(/\bfrom\b/gi, "da")
-    .replace(/\bto\b/gi, "a");
+    .replace(/\bto\b/gi, "a")
+    .replace(/\bda il\b/gi, "dal")
+    .replace(/\bda la\b/gi, "dalla")
+    .replace(/\busando il Gran Bazar tecnologia\b/gi, "usando la tecnologia Gran Bazar");
 
   return translated;
 }

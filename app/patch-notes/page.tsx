@@ -8,7 +8,10 @@ import {
   type PatchBannerState,
 } from "@/app/patch-notes/patchNotesData";
 import { getPatchArchive, getPatchDetail } from "@/app/patch-notes/patchNotesApi";
-import { normalizePatchDisplayLine } from "@/app/patch-notes/patchNotesTranslations";
+import {
+  normalizePatchDisplayLine,
+  translatePatchLine,
+} from "@/app/patch-notes/patchNotesTranslations";
 
 export const metadata: Metadata = {
   title: "AoE4 Patch Archive | AoE4 Italia Legacy",
@@ -335,18 +338,34 @@ export default async function PatchNotesPage({ searchParams }: PageProps) {
                 </summary>
 
                 <div className="border-t border-white/8 px-4 pb-5 pt-5 sm:px-5 lg:px-6">
-                  <div className="cinematic-card-grid p-4 sm:p-5">
-                    <p className="text-xs font-semibold uppercase tracking-[0.28em] text-amber-100/80">
-                       Note ufficiali
-                    </p>
-                    <ul className="mt-3 space-y-3 text-sm leading-7 text-[#d8cbb7]/84">
-                      {entry.officialText.map((line) => (
-                        <li key={line} className="flex gap-3">
-                          <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-amber-200/90" />
-                          <span>{normalizePatchDisplayLine(line)}</span>
-                        </li>
-                      ))}
-                    </ul>
+                  <div className="grid gap-4 lg:grid-cols-2">
+                    <div className="cinematic-card-grid p-4 sm:p-5">
+                      <p className="text-xs font-semibold uppercase tracking-[0.28em] text-amber-100/80">
+                         Note ufficiali
+                      </p>
+                      <ul className="mt-3 space-y-3 text-sm leading-7 text-[#d8cbb7]/84">
+                        {entry.officialText.map((line, index) => (
+                          <li key={`${entry.id}-official-${index}`} className="flex gap-3">
+                            <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-amber-200/90" />
+                            <span>{normalizePatchDisplayLine(line)}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+
+                    <div className="cinematic-card-grid border-emerald-200/12 bg-emerald-200/[0.035] p-4 sm:p-5">
+                      <p className="text-xs font-semibold uppercase tracking-[0.28em] text-emerald-100/80">
+                         Traduzione italiana
+                      </p>
+                      <ul className="mt-3 space-y-3 text-sm leading-7 text-[#d8cbb7]/84">
+                        {entry.officialText.map((line, index) => (
+                          <li key={`${entry.id}-italian-${index}`} className="flex gap-3">
+                            <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-emerald-200/90" />
+                            <span>{translatePatchLine(line, "it")}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
                   </div>
                 </div>
               </details>

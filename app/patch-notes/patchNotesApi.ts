@@ -37,7 +37,16 @@ const EXCLUDED_PATCH_TITLE_PATTERN =
   /(pre-order|available now|everything in the expansion|public update preview|pup available|event|deep dive|rundown|what'?s coming|celebrating|corrections coming|content preview)/i;
 
 const MAJOR_SECTION_PATTERN =
-  /^(build spotlight|general|gameplay|balance|maps|mods|ai|ui|ux\/ui|general fixes|controls|campaign|ongoing|what'?s next|localization|release notes|download on|season|event|investigation|known issues|civilization balance and bugfixes|civilization specific changes|civilization improvements|balance - civilization specific|all civilizations)$/i;
+  /^(build spotlight|general|gameplay|balance|balance & bugfixes|maps|mods|ai|ui|ux\/ui|general fixes|controls|campaign|ongoing|what'?s next|localization|release notes|download on|season|event|investigation|known issues|civilization-specific changes|civilization balance and bugfixes|civilization specific changes|civilization improvements|balance - civilization specific|all civilizations)$/i;
+
+const CIVILIZATION_NOTES_SECTION_PATTERN =
+  /^(civilization-specific changes|civilization balance and bugfixes|civilization specific changes|civilization improvements|balance - civilization specific)$/i;
+
+const GENERAL_CHANGES_SECTION_PATTERN =
+  /^(general changes & bugfixes|general changes and bugfixes|general changes|general bugfixes|general fixes)$/i;
+
+const GENERAL_CHANGES_STOP_SECTION_PATTERN =
+  /^(design update\/rework|balance and gameplay changes(?: \(all civilizations\))?|civilization-specific changes|civilization balance and bugfixes|civilization specific changes|civilization improvements|balance - civilization specific|all civilizations|maps|ongoing|what'?s on the horizon|what'?s next|build spotlight|gameplay|ai update|hotkeys|ux\/ui.*|localization|investigation|known issues)$/i;
 
 function decodeHtmlEntities(value: string) {
   return value
@@ -132,6 +141,7 @@ function splitIntoLines(renderedHtml: string) {
 function normalizeForComparison(value: string) {
   return value
     .toLowerCase()
+    .replace(/\u2019/g, "'")
     .replace(/[’']/g, "'")
     .replace(/[^a-z0-9&' ]+/g, " ")
     .replace(/\s+/g, " ")
@@ -173,9 +183,34 @@ function appendLines(
 function extractCivilizationNotes(renderedHtml: string) {
   const lines = splitIntoLines(renderedHtml);
   const notesByCivilization = new Map<CivilizationId, string[]>();
+  const hasDedicatedCivilizationSection = lines.some((line) =>
+    CIVILIZATION_NOTES_SECTION_PATTERN.test(line)
+  );
+  let isCivilizationNotesSectionActive = !hasDedicatedCivilizationSection;
   let currentCivilizations: CivilizationDefinition[] = [];
 
   lines.forEach((line) => {
+    if (CIVILIZATION_NOTES_SECTION_PATTERN.test(line)) {
+      isCivilizationNotesSectionActive = true;
+      currentCivilizations = [];
+      return;
+    }
+
+    if (
+      hasDedicatedCivilizationSection &&
+      isCivilizationNotesSectionActive &&
+      MAJOR_SECTION_PATTERN.test(line) &&
+      !CIVILIZATION_NOTES_SECTION_PATTERN.test(line)
+    ) {
+      isCivilizationNotesSectionActive = false;
+      currentCivilizations = [];
+      return;
+    }
+
+    if (!isCivilizationNotesSectionActive) {
+      return;
+    }
+
     const matchedCivilizations = matchCivilizations(line);
 
     if (matchedCivilizations.length > 0 && !line.startsWith("- ")) {
@@ -212,6 +247,34 @@ function extractCivilizationNotes(renderedHtml: string) {
   return notesByCivilization;
 }
 
+function extractGeneralChanges(renderedHtml: string) {
+  const lines = splitIntoLines(renderedHtml);
+  const generalChanges: string[] = [];
+  let isGeneralChangesSectionActive = false;
+
+  lines.forEach((line) => {
+    if (GENERAL_CHANGES_SECTION_PATTERN.test(line)) {
+      isGeneralChangesSectionActive = true;
+      return;
+    }
+
+    if (!isGeneralChangesSectionActive) {
+      return;
+    }
+
+    if (GENERAL_CHANGES_STOP_SECTION_PATTERN.test(line)) {
+      isGeneralChangesSectionActive = false;
+      return;
+    }
+
+    if (line.startsWith("- ")) {
+      generalChanges.push(line);
+    }
+  });
+
+  return generalChanges;
+}
+
 function buildCivilizationEntries(
   notesByCivilization: Map<CivilizationId, string[]>
 ): CivilizationPatchEntry[] {
@@ -241,44 +304,183 @@ function classifyPatchState(
   hasOfficialText: boolean
 ): PatchBannerState {
   if (!hasOfficialText) {
-    return "rework";
+    return "none";
   }
 
   const joinedText = officialText.join(" ").toLowerCase();
 
-  const nerfSignals = [
-    "reduced",
-    "decreased",
-    "slower",
-    "lower",
-    "less",
-    "limited",
-    "fixed an exploit",
-    "higher than intended",
-    "no longer",
-    "removed",
-  ];
+  const impact = officialText.reduce(
+    (score, line) => {
+      const lineImpact = classifyPatchLineImpact(line);
+      score.buff += lineImpact.buff;
+      score.nerf += lineImpact.nerf;
+      score.rework += lineImpact.rework;
+      return score;
+    },
+    { buff: 0, nerf: 0, rework: 0 }
+  );
 
-  const buffSignals = [
-    "increased",
-    "improved",
-    "faster",
-    "more",
-    "added",
-    "now show",
-    "now reflects",
-    "bonus",
-  ];
-
-  if (nerfSignals.some((signal) => joinedText.includes(signal))) {
-    return "nerf";
+  if (
+    [
+      "rework",
+      "reworked",
+      "redesigned",
+      "revamped",
+      "overhauled",
+      "replaced",
+      "changed to",
+      "changed from",
+      "converted",
+      "renamed",
+      "rebalance",
+      "rebalanced",
+      "instead",
+    ].some((signal) => joinedText.includes(signal))
+  ) {
+    impact.rework += 2;
   }
 
-  if (buffSignals.some((signal) => joinedText.includes(signal))) {
+  if (
+    [
+      "reworked",
+      "redesigned",
+      "revamped",
+      "overhauled",
+      "changed from",
+      "changed to",
+    ].some((signal) => joinedText.includes(signal))
+  ) {
+    return "rework";
+  }
+
+  if (impact.buff > impact.nerf && impact.buff > impact.rework) {
     return "buff";
   }
 
+  if (impact.nerf > impact.buff && impact.nerf > impact.rework) {
+    return "nerf";
+  }
+
+  if (impact.rework > 0 || (impact.buff > 0 && impact.nerf > 0)) {
+    return "rework";
+  }
+
   return "rework";
+}
+
+function classifyPatchLineImpact(line: string) {
+  const text = line.replace(/^- /, "").toLowerCase();
+  const score = { buff: 0, nerf: 0, rework: 0 };
+
+  const buffSignals = [
+    "trained instantly",
+    "improved",
+    "more accurately",
+    "now correctly grants",
+    "now properly works",
+    "now benefit",
+    "would not benefit",
+    "now produces",
+    "now grants",
+    "now increases",
+    "spawns an extra",
+    "can now",
+    "immediately",
+  ];
+
+  const nerfSignals = [
+    "fixed an exploit",
+    "higher than intended",
+    "larger than intended",
+    "more than intended",
+    "less likely",
+    "more slowly",
+    "no longer receives",
+    "no longer grants",
+    "can no longer",
+    "removed",
+  ];
+
+  const reworkSignals = [
+    "reworked",
+    "replaced",
+    "instead",
+    "changed from",
+    "changed to",
+    "moved from",
+    "moved to",
+    "now generated",
+  ];
+
+  if (buffSignals.some((signal) => text.includes(signal))) {
+    score.buff += 1;
+  }
+
+  if (nerfSignals.some((signal) => text.includes(signal))) {
+    score.nerf += 1;
+  }
+
+  if (reworkSignals.some((signal) => text.includes(signal))) {
+    score.rework += 1;
+  }
+
+  if (/\b(cost|costs|production time|train time|training time|research time)\b.*\b(reduced|decreased)\b/.test(text)) {
+    score.buff += 1;
+  }
+
+  if (/\b(reduced|decreased)\b.*\b(cost|costs|production time|train time|training time|research time)\b/.test(text)) {
+    score.buff += 1;
+  }
+
+  if (/\b(health|damage|armor|range|bonus|income|generation|garrison slots|starting wood|movement speed|attack speed|projectiles|space)\b.*\b(reduced|decreased|lowered)\b/.test(text)) {
+    score.nerf += 1;
+  }
+
+  if (/\b(reduced|decreased|lowered)\b.*\b(health|damage|armor|range|bonus|income|generation|garrison slots|starting wood|movement speed|attack speed|projectiles|space)\b/.test(text)) {
+    score.nerf += 1;
+  }
+
+  if (/\b(health|damage|armor|range|movement speed|attack speed|income|generation|number of sheep|units spawned)\b.*\b(increased|improved)\b/.test(text)) {
+    score.buff += 1;
+  }
+
+  if (/\b(increased|improved)\b.*\b(health|damage|armor|range|movement speed|attack speed|income|generation|number of sheep|units spawned)\b/.test(text)) {
+    score.buff += 1;
+  }
+
+  if (/\b(cost|costs|production time|train time|training time|research time|cooldown)\b.*\bincreased\b/.test(text)) {
+    score.nerf += 1;
+  }
+
+  if (/\bincreased\b.*\b(cost|costs|production time|train time|training time|research time|cooldown)\b/.test(text)) {
+    score.nerf += 1;
+  }
+
+  if (/\bcooldown\b.*\b(reduced|decreased)\b/.test(text) || /\b(reduced|decreased)\b.*\bcooldown\b/.test(text)) {
+    score.buff += 1;
+  }
+
+  if (
+    ["increased", "faster", "added", "bonus"].some((signal) =>
+      text.includes(signal)
+    ) &&
+    score.buff === 0 &&
+    score.nerf === 0
+  ) {
+    score.buff += 1;
+  }
+
+  if (
+    ["reduced", "decreased", "slower", "lower", "limited", "no longer"].some(
+      (signal) => text.includes(signal)
+    ) &&
+    score.buff === 0 &&
+    score.nerf === 0
+  ) {
+    score.nerf += 1;
+  }
+
+  return score;
 }
 
 export async function getPatchArchive(): Promise<PatchArchiveItem[]> {
@@ -333,10 +535,12 @@ export async function getPatchDetail(slug: string): Promise<PatchDetail | null> 
   }
 
   const patch = toArchiveItem(post);
+  const generalChanges = extractGeneralChanges(post.content.rendered ?? "");
   const notesByCivilization = extractCivilizationNotes(post.content.rendered ?? "");
 
   return {
     patch,
+    generalChanges,
     civilizations: buildCivilizationEntries(notesByCivilization),
   };
 }

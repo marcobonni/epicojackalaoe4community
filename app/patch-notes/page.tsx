@@ -56,6 +56,21 @@ function PatchStateIcon({ state }: { state: PatchBannerState }) {
     );
   }
 
+  if (state === "rework") {
+    return (
+      <svg viewBox="0 0 24 24" aria-hidden="true" className="h-5 w-5">
+        <path
+          d="M17 3v5h-5M7 21v-5h5M17 8a7 7 0 0 0-11.4 2.2M7 16a7 7 0 0 0 11.4-2.2"
+          fill="none"
+          stroke="currentColor"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth="2.2"
+        />
+      </svg>
+    );
+  }
+
   return (
     <svg viewBox="0 0 24 24" aria-hidden="true" className="h-5 w-5">
       <path
@@ -96,6 +111,7 @@ export default async function PatchNotesPage({ searchParams }: PageProps) {
   const buffCount = patchDetail.civilizations.filter((entry) => entry.state === "buff").length;
   const nerfCount = patchDetail.civilizations.filter((entry) => entry.state === "nerf").length;
   const reworkCount = patchDetail.civilizations.filter((entry) => entry.state === "rework").length;
+  const noMentionCount = patchDetail.civilizations.filter((entry) => entry.state === "none").length;
 
   return (
     <main className="min-h-screen overflow-hidden bg-[#050409] text-[#f5ecdc]">
@@ -128,6 +144,11 @@ export default async function PatchNotesPage({ searchParams }: PageProps) {
               <Link href="/" className="cinematic-button-secondary">
                 Torna alla home
               </Link>
+              {patchDetail.generalChanges.length > 0 ? (
+                <a href="#general-changes" className="cinematic-button-secondary">
+                  Modifiche generali
+                </a>
+              ) : null}
               <a href="#civ-notes" className="cinematic-button-primary">
                 Vai alle civilta
               </a>
@@ -142,7 +163,7 @@ export default async function PatchNotesPage({ searchParams }: PageProps) {
             </div>
           </div>
 
-          <div className="grid gap-4 md:grid-cols-3">
+          <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
             <div className="cinematic-stat-card p-5">
               <p className="text-xs font-semibold uppercase tracking-[0.28em] text-amber-200/82">
                  Patch selezionata
@@ -179,15 +200,27 @@ export default async function PatchNotesPage({ searchParams }: PageProps) {
               </p>
             </div>
 
-            <div className="cinematic-stat-card p-5 md:col-span-3 xl:col-span-1">
-              <p className="text-xs font-semibold uppercase tracking-[0.28em] text-amber-200/82">
-                 Rework / Altro
+            <div className="cinematic-stat-card p-5">
+              <p className="text-xs font-semibold uppercase tracking-[0.28em] text-sky-200/82">
+                 Rework
               </p>
               <p className="mt-3 text-4xl font-semibold tracking-[-0.05em] text-white">
                 {reworkCount}
               </p>
               <p className="mt-2 text-sm leading-7 text-[#d8cbb7]/76">
-                 Civilta ritoccate, ribilanciate o non citate nelle note dedicate.
+                 Civilta rielaborate, ribilanciate o con comportamento modificato.
+              </p>
+            </div>
+
+            <div className="cinematic-stat-card p-5">
+              <p className="text-xs font-semibold uppercase tracking-[0.28em] text-amber-200/82">
+                 Non citate
+              </p>
+              <p className="mt-3 text-4xl font-semibold tracking-[-0.05em] text-white">
+                {noMentionCount}
+              </p>
+              <p className="mt-2 text-sm leading-7 text-[#d8cbb7]/76">
+                 Civilta senza note dedicate in questa patch.
               </p>
             </div>
           </div>
@@ -237,6 +270,58 @@ export default async function PatchNotesPage({ searchParams }: PageProps) {
         </div>
       </section>
 
+      {patchDetail.generalChanges.length > 0 ? (
+        <section
+          id="general-changes"
+          className="mx-auto w-full max-w-[1380px] px-4 pt-10 sm:px-6 lg:px-10"
+        >
+          <div className="cinematic-panel-soft p-5 sm:p-6 lg:p-7">
+            <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
+              <div>
+                <p className="cinematic-kicker">General Changes & Bugfixes</p>
+                <h2 className="mt-3 text-3xl font-semibold tracking-[-0.04em] text-white">
+                  Modifiche generali e bugfix
+                </h2>
+              </div>
+              <p className="max-w-xl text-sm leading-7 text-[#d8cbb7]/78">
+                Correzioni e modifiche generali della patch, separate dalle note dedicate
+                alle singole civilta.
+              </p>
+            </div>
+
+            <div className="grid gap-4 lg:grid-cols-2">
+              <div className="cinematic-card-grid p-4 sm:p-5">
+                <p className="text-xs font-semibold uppercase tracking-[0.28em] text-amber-100/80">
+                  Note ufficiali
+                </p>
+                <ul className="mt-3 space-y-3 text-sm leading-7 text-[#d8cbb7]/84">
+                  {patchDetail.generalChanges.map((line, index) => (
+                    <li key={`general-official-${index}`} className="flex gap-3">
+                      <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-amber-200/90" />
+                      <span>{normalizePatchDisplayLine(line)}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              <div className="cinematic-card-grid border-emerald-200/12 bg-emerald-200/[0.035] p-4 sm:p-5">
+                <p className="text-xs font-semibold uppercase tracking-[0.28em] text-emerald-100/80">
+                  Traduzione italiana
+                </p>
+                <ul className="mt-3 space-y-3 text-sm leading-7 text-[#d8cbb7]/84">
+                  {patchDetail.generalChanges.map((line, index) => (
+                    <li key={`general-italian-${index}`} className="flex gap-3">
+                      <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-emerald-200/90" />
+                      <span>{translatePatchLine(line, "it")}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          </div>
+        </section>
+      ) : null}
+
       <section id="civ-notes" className="mx-auto w-full max-w-[1380px] px-4 py-12 sm:px-6 lg:px-10 lg:py-16">
         <div className="mb-7 flex flex-wrap items-center justify-between gap-4">
           <div>
@@ -247,7 +332,7 @@ export default async function PatchNotesPage({ searchParams }: PageProps) {
           </div>
 
           <div className="flex flex-wrap gap-2 text-xs font-semibold uppercase tracking-[0.2em]">
-            {(["buff", "rework", "nerf"] as const).map((state) => {
+            {(["buff", "rework", "nerf", "none"] as const).map((state) => {
               const config = patchBannerStateConfig[state];
 
               return (

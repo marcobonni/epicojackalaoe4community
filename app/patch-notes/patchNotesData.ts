@@ -24,7 +24,7 @@ export type CivilizationId =
   | "tughlaq_dynasty"
   | "zhu_xis_legacy";
 
-export type PatchBannerState = "buff" | "nerf" | "rework";
+export type PatchBannerState = "buff" | "nerf" | "rework" | "none";
 
 export type CivilizationDefinition = {
   id: CivilizationId;
@@ -53,6 +53,7 @@ export type CivilizationPatchEntry = {
 
 export type PatchDetail = {
   patch: PatchArchiveItem;
+  generalChanges: string[];
   civilizations: CivilizationPatchEntry[];
 };
 
@@ -125,7 +126,7 @@ export const civilizationDefinitions: CivilizationDefinition[] = [
   {
     id: "macedonian_dynasty",
     name: "Macedonian Dynasty",
-    aliases: ["Macedonian Dynasty"],
+    aliases: ["Macedonian Dynasty", "Macedonians", "Macedonian"],
   },
   {
     id: "malians",
@@ -191,6 +192,12 @@ export const patchBannerStateConfig: Record<
     accent: "from-rose-300/70 via-red-200/24 to-transparent",
   },
   rework: {
+    label: "Rework",
+    badge: "border-sky-300/24 bg-sky-300/10 text-sky-100",
+    glow: "bg-sky-300/18 text-sky-100 ring-1 ring-inset ring-sky-300/28",
+    accent: "from-sky-300/70 via-cyan-200/24 to-transparent",
+  },
+  none: {
     label: "No Mention",
     badge: "border-[#d8cbb7]/18 bg-[#d8cbb7]/10 text-[#f5ecdc]",
     glow: "bg-[#d8cbb7]/14 text-[#f5ecdc] ring-1 ring-inset ring-[#d8cbb7]/22",
